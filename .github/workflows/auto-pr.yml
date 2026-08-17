@@ -1,0 +1,52 @@
+name: Create PR and request Copilot review
+
+on:
+  push:
+    branches:
+      - 'feat/**'
+      - 'fix/**'
+      - 'docs/**'
+      - 'refactor/**'
+      - 'chore/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  create-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create pull request and request Copilot review
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const head = `${context.repo.owner}:${context.ref_name}`;
+            const { data: openPulls } = await github.rest.pulls.list({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head,
+              base: 'main',
+              state: 'open'
+            });
+
+            const pull = openPulls[0] ?? (await github.rest.pulls.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              head: context.ref_name,
+              base: 'main',
+              title: context.payload.head_commit?.message?.split('\n')[0] ?? `Merge ${context.ref_name}`,
+              body: '## 변경 요약\n\n자동 생성된 PR입니다. 변경 목적과 영향 범위를 보완해 주세요.\n\n## 검증\n\n- [ ] `./scripts/verify`\n- [ ] Copilot 리뷰 확인\n- [ ] 사람 리뷰 확인'
+            })).data;
+
+            try {
+              await github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pull.number,
+                reviewers: ['copilot-pull-request-reviewer[bot]']
+              });
+              core.info(`Copilot review requested for PR #${pull.number}`);
+            } catch (error) {
+              core.warning(`PR #${pull.number} was created, but Copilot review could not be requested: ${error.message}`);
+            }

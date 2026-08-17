@@ -21,7 +21,8 @@ jobs:
         uses: actions/github-script@v8
         with:
           script: |
-            const head = `${context.repo.owner}:${context.ref_name}`;
+            const branch = context.ref.replace('refs/heads/', '');
+            const head = `${context.repo.owner}:${branch}`;
             const { data: openPulls } = await github.rest.pulls.list({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -33,7 +34,7 @@ jobs:
             const pull = openPulls[0] ?? (await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              head: context.ref_name,
+              head: branch,
               base: 'main',
               title: context.payload.head_commit?.message?.split('\n')[0] ?? `Merge ${context.ref_name}`,
               body: '## 변경 요약\n\n자동 생성된 PR입니다. 변경 목적과 영향 범위를 보완해 주세요.\n\n## 검증\n\n- [ ] `./scripts/verify`\n- [ ] Copilot 리뷰 확인\n- [ ] 사람 리뷰 확인'

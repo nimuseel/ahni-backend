@@ -31,14 +31,40 @@ jobs:
               state: 'open'
             });
 
+            const { data: comparison } = await github.rest.repos.compareCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              base: 'main',
+              head: branch
+            });
+            const commitLines = comparison.commits.map(({ sha, commit, html_url }) => {
+              const title = commit.message.split('\n')[0];
+              return `- [\`${sha.slice(0, 7)}\`](${html_url}) ${title}`;
+            });
+            const commitSection = `<!-- auto-generated-commits -->\n## 커밋 내역\n\n${commitLines.join('\n') || '- 변경 커밋 없음'}\n\n<!-- end-auto-generated-commits -->`;
+            const defaultBody = `## 변경 요약\n\n자동 생성된 PR입니다. 변경 목적과 영향 범위를 보완해 주세요.\n\n${commitSection}\n\n## 검증\n\n- [ ] \`./scripts/verify\`\n- [ ] Copilot 리뷰 확인\n- [ ] 사람 리뷰 확인`;
+
             const pull = openPulls[0] ?? (await github.rest.pulls.create({
               owner: context.repo.owner,
               repo: context.repo.repo,
               head: branch,
               base: 'main',
               title: context.payload.head_commit?.message?.split('\n')[0] ?? `Merge ${context.ref_name}`,
-              body: '## 변경 요약\n\n자동 생성된 PR입니다. 변경 목적과 영향 범위를 보완해 주세요.\n\n## 검증\n\n- [ ] `./scripts/verify`\n- [ ] Copilot 리뷰 확인\n- [ ] 사람 리뷰 확인'
+              body: defaultBody
             })).data;
+
+            if (openPulls[0]) {
+              const currentBody = pull.body ?? '';
+              const updatedBody = currentBody.includes('<!-- auto-generated-commits -->')
+                ? currentBody.replace(/<!-- auto-generated-commits -->[\s\S]*?<!-- end-auto-generated-commits -->/, commitSection)
+                : `${currentBody.trim()}\n\n${commitSection}`;
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: pull.number,
+                body: updatedBody.trim()
+              });
+            }
 
             try {
               await github.rest.pulls.requestReviewers({

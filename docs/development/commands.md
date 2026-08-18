@@ -29,15 +29,3 @@ set +a
 
 The Supabase profile runs Flyway against the configured PostgreSQL database. Never commit `.env` or print its values in logs.
 
-## Supabase local run
-
-Load the untracked `.env` file and run the Supabase profile explicitly:
-
-```bash
-set -a
-source .env
-set +a
-./gradlew bootRun --args='--spring.profiles.active=supabase'
-```
-
-The Supabase profile runs Flyway against the configured PostgreSQL database. Never commit `.env` or print its values in logs.

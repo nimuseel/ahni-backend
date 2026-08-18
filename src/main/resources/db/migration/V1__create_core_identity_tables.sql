@@ -1,0 +1,36 @@
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
+CREATE TABLE department (
+    department_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    name varchar(100) NOT NULL UNIQUE,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now(),
+    deleted_at timestamptz
+);
+
+CREATE TABLE student (
+    student_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    department_id uuid NOT NULL,
+    student_number varchar(30) NOT NULL UNIQUE,
+    name varchar(100) NOT NULL,
+    email varchar(320) NOT NULL UNIQUE,
+    password_hash varchar(255),
+    enrollment_status varchar(30) NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now(),
+    deleted_at timestamptz,
+    CONSTRAINT fk_student_department
+        FOREIGN KEY (department_id) REFERENCES department (department_id),
+    CONSTRAINT ck_student_enrollment_status
+        CHECK (enrollment_status IN ('ENROLLED', 'LEAVE', 'GRADUATED', 'WITHDRAWN'))
+);
+
+CREATE TABLE admin (
+    admin_id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+    email varchar(320) NOT NULL UNIQUE,
+    password_hash varchar(255) NOT NULL,
+    name varchar(100) NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now(),
+    updated_at timestamptz NOT NULL DEFAULT now(),
+    deleted_at timestamptz
+);

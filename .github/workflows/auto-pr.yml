@@ -17,6 +17,13 @@ jobs:
   create-pr:
     runs-on: ubuntu-latest
     steps:
+      - name: Validate GH_PAT secret
+        run: |
+          if [ -z "${{ secrets.GH_PAT }}" ]; then
+            echo "GH_PAT secret is required to create PRs as a user. Configure it in Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+
       - name: Create pull request as repository owner
         id: create-pr
         uses: actions/github-script@v8

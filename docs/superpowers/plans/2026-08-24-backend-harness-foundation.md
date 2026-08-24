@@ -23,7 +23,6 @@
 ## File Map
 
 - `build.gradle`: dependency versions and unit/integration task separation.
-- `src/test/java/com/ahni/backend/harness/RepositoryDocumentationTest.java`: required work-surface documentation guard.
 - `src/test/java/com/ahni/backend/architecture/LayerDependencyTest.java`: package dependency guard.
 - `src/test/java/com/ahni/backend/api/OpenApiContractTest.java`: runtime-versus-checked-in OpenAPI drift guard.
 - `src/test/java/com/ahni/backend/persistence/PostgreSqlMigrationIntegrationTest.java`: real PostgreSQL Flyway check.
@@ -34,10 +33,9 @@
 
 ---
 
-### Task 1: Make API documentation a tested completion rule
+### Task 1: Make API documentation an explicit completion rule
 
 **Files:**
-- Create: `src/test/java/com/ahni/backend/harness/RepositoryDocumentationTest.java`
 - Create: `docs/api/README.md`
 - Create: `docs/product/traceability.md`
 - Modify: `AGENTS.md`
@@ -52,59 +50,32 @@
 
 **Interfaces:**
 - Consumes: the approved cross-repository design.
-- Produces: `RepositoryDocumentationTest.requiredApiDocumentationRulesAreVisible()` and canonical API/traceability guides.
+- Produces: canonical API, identity, error, and traceability guides consumed by contributors and reviewers. Task 3 provides the behavioral API drift guard.
 
-- [ ] **Step 1: Write the failing repository documentation test**
+- [ ] **Step 1: Capture the current policy conflicts**
 
-```java
-package com.ahni.backend.harness;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import org.junit.jupiter.api.Test;
-
-class RepositoryDocumentationTest {
-    private static String read(String path) throws IOException {
-        return Files.readString(Path.of(path));
-    }
-
-    @Test
-    void requiredApiDocumentationRulesAreVisible() throws IOException {
-        assertTrue(read("AGENTS.md").contains("OpenAPI"));
-        assertTrue(read(".github/copilot-instructions.md").contains("OpenAPI"));
-        assertTrue(read(".github/pull_request_template.md").contains("API 문서"));
-        assertTrue(read("docs/decisions/0001-identity-and-verification.md").contains("Supabase Auth"));
-        assertTrue(Files.isRegularFile(Path.of("docs/api/README.md")));
-        assertTrue(Files.isRegularFile(Path.of("docs/product/traceability.md")));
-    }
-}
+```bash
+rg -n "password|OpenAPI|correlation" AGENTS.md .github docs
 ```
 
-- [ ] **Step 2: Verify the test fails for the missing work-surface rules**
+Expected: reveal the self-managed-password decision, missing API authoring guide, and incomplete concrete error shape.
 
-Run: `./gradlew test --tests '*RepositoryDocumentationTest'`
-
-Expected: FAIL because the API guide, traceability index, and explicit OpenAPI rules do not exist yet.
-
-- [ ] **Step 3: Add the exact documented API completion checklist**
+- [ ] **Step 2: Add the exact documented API completion checklist**
 
 Add the five required items to every work surface: implementation, unit/integration tests, OpenAPI requests/responses/examples, auth requirements, and stable errors. Update Decision 0001 and the security baseline to state that Supabase Auth owns student and administrator passwords. Define the error fields `code`, `message`, `correlationId`, and `fieldErrors` in the reliability guide. Record source conflicts for passwords, ERD revisions, meal naming, and institution expansion in `docs/product/traceability.md`.
 
 Record the existing `student.password_hash` and `admin.password_hash` columns as a blocking schema mismatch in `docs/exec-plans/tech-debt.md`. Assign their removal and replacement with Supabase identity references to a separate `fix/supabase-auth-schema` branch; do not mix that migration into the harness branch.
 
-- [ ] **Step 4: Verify the documentation guard passes**
+- [ ] **Step 3: Verify document structure and repository formatting**
 
-Run: `./gradlew test --tests '*RepositoryDocumentationTest'`
+Run: `test -f docs/api/README.md && test -f docs/product/traceability.md && git diff --check`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
-git add AGENTS.md .github docs src/test/java/com/ahni/backend/harness
+git add AGENTS.md .github docs
 git commit -m "chore(harness): enforce API documentation policy"
 ```
 

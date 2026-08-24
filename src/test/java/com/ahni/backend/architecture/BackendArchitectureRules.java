@@ -15,16 +15,16 @@ final class BackendArchitectureRules {
 			.should().dependOnClassesThat().resideInAnyPackage(
 				"org.springframework..",
 				"jakarta.persistence..",
+				"java.net.http..",
+				"jakarta.servlet..",
 				"..api..",
 				"..adapters.."
-			)
-			.allowEmptyShould(true);
+			);
 	}
 
 	static ArchRule apiIsolation() {
 		return noClasses()
 			.that().resideInAPackage("..api..")
-			.should().dependOnClassesThat().resideInAnyPackage("..adapters..")
-			.allowEmptyShould(true);
+			.should().dependOnClassesThat().resideInAnyPackage("..adapters..");
 	}
 }

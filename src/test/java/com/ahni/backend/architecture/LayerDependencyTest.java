@@ -2,6 +2,9 @@ package com.ahni.backend.architecture;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import com.ahni.backend.adapters.fixture.AdapterFixture;
+import com.ahni.backend.api.fixture.ApiDependentOnAdapterType;
+import com.ahni.backend.domain.fixture.HttpDependentDomainType;
 import com.ahni.backend.domain.fixture.ViolatingDomainType;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
@@ -16,6 +19,29 @@ class LayerDependencyTest {
 		assertThrows(
 			AssertionError.class,
 			() -> BackendArchitectureRules.domainIndependence().check(classes)
+		);
+	}
+
+	@Test
+	void domainRuleRejectsAnHttpDependency() {
+		var classes = new ClassFileImporter().importClasses(HttpDependentDomainType.class);
+
+		assertThrows(
+			AssertionError.class,
+			() -> BackendArchitectureRules.domainIndependence().check(classes)
+		);
+	}
+
+	@Test
+	void apiRuleRejectsAnAdapterDependency() {
+		var classes = new ClassFileImporter().importClasses(
+			ApiDependentOnAdapterType.class,
+			AdapterFixture.class
+		);
+
+		assertThrows(
+			AssertionError.class,
+			() -> BackendArchitectureRules.apiIsolation().check(classes)
 		);
 	}
 

@@ -18,7 +18,7 @@ scripts/                         repeatable verification commands
 
 | Task | Read first |
 | --- | --- |
-| Add an API | `ARCHITECTURE.md`, `docs/development/commands.md` |
+| Add an API | `ARCHITECTURE.md`, `docs/api/README.md`, `docs/development/commands.md` |
 | Change academic rules | `docs/domain/index.md`, `docs/development/testing.md` |
 | Change authentication or permissions | `docs/security/README.md`, `ARCHITECTURE.md` |
 | Diagnose a failure | `docs/reliability/errors.md`, `docs/development/commands.md` |
@@ -38,9 +38,10 @@ scripts/                         repeatable verification commands
 - External input is parsed and validated at the API boundary.
 - Student data access is scoped to the authenticated student or an authorized administrator.
 - Every public behavior change has a unit or integration test.
+- Every API change includes endpoint implementation, relevant unit and integration tests, OpenAPI request, response, and example updates, authentication and authorization requirements, and stable error codes and failure examples.
 - `./scripts/verify` must pass before a change is considered complete.
 
 ## Definition of Done
 
-Relevant tests pass, `./scripts/verify` passes, architecture or domain documentation is updated when behavior changes, and the diff has been reviewed for authorization, error handling, and data leakage.
+Relevant tests pass, `./scripts/verify` passes, architecture or domain documentation is updated when behavior changes, and the diff has been reviewed for authorization, error handling, and data leakage. API changes are complete only when implementation, unit/integration tests, OpenAPI requests/responses/examples, auth requirements, and stable errors are all updated.
 - 커밋 또는 PR 작업 | `docs/development/git-workflow.md`

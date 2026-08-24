@@ -20,7 +20,7 @@
 
 The default Gradle `test` task and `unitTest` exclude the JUnit `integration` tag. `integrationTest` includes only that tag. `scripts/verify` is the authoritative local and CI entry point and runs integration tests once, after the default verification lifecycle.
 
-The project uses the Gradle Wrapper. Do not require a globally installed Gradle version for development or CI. Docker must be available for the PostgreSQL Testcontainers test; when Docker is unavailable locally, JUnit reports that prerequisite as skipped.
+The project uses the Gradle Wrapper. Do not require a globally installed Gradle version for development or CI. Docker is a hard prerequisite for the PostgreSQL Testcontainers test; when Docker is unavailable, `integrationTest` and `scripts/verify` fail with a clear prerequisite message.
 
 ## Supabase local run
 

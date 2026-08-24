@@ -19,23 +19,35 @@ repositories {
 	mavenCentral()
 }
 
+configurations {
+	mockitoAgent {
+		canBeConsumed = false
+		canBeResolved = true
+		transitive = false
+	}
+}
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'org.springframework.boot:spring-boot-starter-flyway'
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.1.0'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-api:3.1.0'
 	runtimeOnly 'org.flywaydb:flyway-database-postgresql'
 	runtimeOnly 'org.postgresql:postgresql'
 	testImplementation 'org.springframework.boot:spring-boot-starter-actuator-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testImplementation 'com.tngtech.archunit:archunit-junit5:1.5.0'
-	testImplementation 'org.testcontainers:junit-jupiter:1.21.4'
 	testImplementation 'org.testcontainers:postgresql:1.21.4'
 	testRuntimeOnly 'com.h2database:h2'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	mockitoAgent 'org.mockito:mockito-core'
+}
+
+tasks.withType(Test).configureEach {
+	jvmArgs "-javaagent:${configurations.mockitoAgent.singleFile}"
 }
 
 tasks.named('test') {

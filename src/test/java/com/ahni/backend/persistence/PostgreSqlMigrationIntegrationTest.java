@@ -2,13 +2,11 @@ package com.ahni.backend.persistence;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.flywaydb.core.Flyway;
-import org.flywaydb.core.api.MigrationInfo;
 import org.flywaydb.core.api.MigrationState;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Tag;
@@ -46,15 +44,18 @@ class PostgreSqlMigrationIntegrationTest {
 
 	@Test
 	void appliesMigrationsOneAndTwoSuccessfully() {
-		Map<String, MigrationState> appliedMigrations = Arrays.stream(flyway.info().applied())
-			.collect(Collectors.toMap(
-				migration -> migration.getVersion().getVersion(),
-				MigrationInfo::getState
-			));
+		var appliedMigrations = Arrays.stream(flyway.info().applied())
+			.map(MigrationResult::from)
+			.toList();
+		var summary = MigrationSummary.from(appliedMigrations);
 
 		assertAll(
-			() -> assertEquals(MigrationState.SUCCESS, appliedMigrations.get("1")),
-			() -> assertEquals(MigrationState.SUCCESS, appliedMigrations.get("2"))
+			() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("1")),
+			() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("2"))
+		);
+		assertTrue(
+			summary.allAppliedSuccessfully(),
+			"Every applied versioned and repeatable migration must be successful"
 		);
 	}
 

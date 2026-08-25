@@ -3,7 +3,9 @@
 - `../ARCHITECTURE.md`: system boundaries and dependency direction
 - `development/commands.md`: setup and repeatable commands
 - `development/testing.md`: test layers and expectations
+- `api/README.md`: OpenAPI authoring and API completion workflow
 - `domain/index.md`: business rules to preserve
+- `product/traceability.md`: source requirements, ownership, and unresolved decisions
 - `reliability/errors.md`: error and logging policy
 - `security/README.md`: authentication and authorization constraints
 - `decisions/`: durable technical decisions

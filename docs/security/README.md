@@ -1,6 +1,6 @@
 # Security Baseline
 
-- Store passwords only as adaptive hashes; never log or return them.
+- Supabase Auth owns student and administrator passwords. AHNI must not store, compare, log, or return passwords or password hashes.
 - Authenticate every student and administrator endpoint.
 - Authorize by role and resource ownership, not by client-provided identifiers alone.
 - Validate file type, size, and content before OCR or storage.

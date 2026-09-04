@@ -19,7 +19,7 @@ Document successful and failure responses in OpenAPI, including the shared error
 1. Implement the endpoint and its authorization boundary.
 2. Add the relevant unit and integration tests.
 3. Update the OpenAPI request, response, and examples, including authentication requirements and stable failure codes.
-4. Regenerate and review the checked-in contract when the API contract guard is available.
+4. Run `./gradlew integrationTest --tests '*OpenApiContractTest'`; if the contract intentionally changed, review `build/openapi/openapi.json` and update `docs/api/openapi.json`, then rerun the test.
 5. Run `./scripts/verify` before requesting review.
 
-Task 3 of the harness foundation adds the generated-contract drift guard. Until then, this guide is the canonical authoring rule.
+`config.OpenApiContractTest` compares the generated runtime contract with the checked-in JSON semantically and fails on drift. Controllers use DTOs rather than exposing JPA entities.

@@ -1,22 +1,13 @@
 package com.ahni.backend.architecture;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.ahni.backend.adapters.fixture.AdapterAllowedDependencies;
-import com.ahni.backend.adapters.fixture.AdapterForbiddenDependencies;
-import com.ahni.backend.adapters.fixture.AdapterFixture;
-import com.ahni.backend.api.fixture.ApiBypassingApplicationDependencies;
-import com.ahni.backend.api.fixture.ApiDependentOnAdapterType;
-import com.ahni.backend.api.fixture.ApiFixture;
-import com.ahni.backend.application.fixture.ApplicationAllowedDependencies;
-import com.ahni.backend.application.fixture.ApplicationForbiddenDependencies;
-import com.ahni.backend.application.fixture.ApplicationFixture;
-import com.ahni.backend.domain.fixture.DomainFixture;
-import com.ahni.backend.domain.fixture.DomainForbiddenDependencies;
-import com.ahni.backend.domain.fixture.HttpDependentDomainType;
-import com.ahni.backend.domain.fixture.ViolatingDomainType;
-import com.ahni.backend.ports.fixture.PortFixture;
-import com.ahni.backend.ports.fixture.PortsForbiddenDependencies;
+import com.ahni.backend.controller.fixture.ControllerFixture;
+import com.ahni.backend.dto.fixture.DtoFixture;
+import com.ahni.backend.entity.fixture.EntityFixture;
+import com.ahni.backend.repository.fixture.RepositoryFixture;
+import com.ahni.backend.service.fixture.ServiceFixture;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
 import java.util.stream.Stream;
@@ -26,105 +17,26 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 class LayerDependencyTest {
 
-	@Test
-	void domainRuleRejectsAFrameworkDependency() {
-		var classes = new ClassFileImporter().importClasses(ViolatingDomainType.class);
+	@ParameterizedTest
+	@MethodSource("forbiddenDependencies")
+	void rejectsForbiddenDependencies(Class<?> violatingType) {
+		var classes = new ClassFileImporter().importClasses(violatingType);
 
-		assertThrows(
-			AssertionError.class,
-			() -> BackendArchitectureRules.domainIndependence().check(classes)
+		var violation = assertThrows(AssertionError.class, () ->
+			BackendArchitectureRules.all().forEach(rule -> rule.check(classes))
 		);
+		assertTrue(violation.getMessage().contains(violatingType.getName()),
+			"The failure must identify the violating class, not an empty rule selection");
 	}
 
 	@Test
-	void domainRuleRejectsAnHttpDependency() {
-		var classes = new ClassFileImporter().importClasses(HttpDependentDomainType.class);
-
-		assertThrows(
-			AssertionError.class,
-			() -> BackendArchitectureRules.domainIndependence().check(classes)
-		);
-	}
-
-	@Test
-	void apiRuleRejectsAnAdapterDependency() {
+	void allowsControllerServiceRepositoryFlowAndJpaEntities() {
 		var classes = new ClassFileImporter().importClasses(
-			ApiDependentOnAdapterType.class,
-			AdapterFixture.class
+			ControllerFixture.class, ServiceFixture.class, RepositoryFixture.class,
+			EntityFixture.class, DtoFixture.class
 		);
 
-		assertThrows(
-			AssertionError.class,
-			() -> BackendArchitectureRules.apiIsolation().check(classes)
-		);
-	}
-
-	@ParameterizedTest
-	@MethodSource("apiBypassingApplicationDependencies")
-	void apiRuleRejectsDependenciesThatBypassApplication(Class<?> violatingType) {
-		var classes = new ClassFileImporter().importClasses(violatingType);
-
-		assertThrows(
-			AssertionError.class,
-			() -> BackendArchitectureRules.apiIsolation().check(classes)
-		);
-	}
-
-	@ParameterizedTest
-	@MethodSource("applicationForbiddenDependencies")
-	void applicationRuleRejectsDependenciesOnOuterLayers(Class<?> violatingType) {
-		var classes = new ClassFileImporter().importClasses(violatingType);
-
-		assertThrows(
-			AssertionError.class,
-			() -> BackendArchitectureRules.applicationDependencies().check(classes)
-		);
-	}
-
-	@ParameterizedTest
-	@MethodSource("domainForbiddenLayerDependencies")
-	void domainRuleRejectsDependenciesOnOtherLayers(Class<?> violatingType) {
-		var classes = new ClassFileImporter().importClasses(violatingType);
-
-		assertThrows(
-			AssertionError.class,
-			() -> BackendArchitectureRules.domainIndependence().check(classes)
-		);
-	}
-
-	@ParameterizedTest
-	@MethodSource("portsForbiddenDependencies")
-	void portsRuleRejectsDependenciesOnOuterLayersAndFrameworks(Class<?> violatingType) {
-		var classes = new ClassFileImporter().importClasses(violatingType);
-
-		assertThrows(
-			AssertionError.class,
-			() -> BackendArchitectureRules.portsDependencies().check(classes)
-		);
-	}
-
-	@ParameterizedTest
-	@MethodSource("adapterForbiddenDependencies")
-	void adapterRuleRejectsDependenciesOnApiAndApplication(Class<?> violatingType) {
-		var classes = new ClassFileImporter().importClasses(violatingType);
-
-		assertThrows(
-			AssertionError.class,
-			() -> BackendArchitectureRules.adapterDependencies().check(classes)
-		);
-	}
-
-	@Test
-	void applicationAndAdaptersMayDependOnPortsAndDomain() {
-		var classes = new ClassFileImporter().importClasses(
-			ApplicationAllowedDependencies.class,
-			AdapterAllowedDependencies.class,
-			DomainFixture.class,
-			PortFixture.class
-		);
-
-		BackendArchitectureRules.applicationDependencies().check(classes);
-		BackendArchitectureRules.adapterDependencies().check(classes);
+		BackendArchitectureRules.all().forEach(rule -> rule.check(classes));
 	}
 
 	@Test
@@ -133,49 +45,27 @@ class LayerDependencyTest {
 			.withImportOption(ImportOption.Predefined.DO_NOT_INCLUDE_TESTS)
 			.importPackages("com.ahni.backend");
 
-		BackendArchitectureRules.domainIndependence().check(classes);
-		BackendArchitectureRules.apiIsolation().check(classes);
-		BackendArchitectureRules.applicationDependencies().check(classes);
-		BackendArchitectureRules.portsDependencies().check(classes);
-		BackendArchitectureRules.adapterDependencies().check(classes);
+		BackendArchitectureRules.all().forEach(rule -> rule.check(classes));
 	}
 
-	private static Stream<Class<?>> apiBypassingApplicationDependencies() {
+	private static Stream<Class<?>> forbiddenDependencies() {
 		return Stream.of(
-			ApiBypassingApplicationDependencies.Domain.class,
-			ApiBypassingApplicationDependencies.Ports.class
-		);
-	}
-
-	private static Stream<Class<?>> applicationForbiddenDependencies() {
-		return Stream.of(
-			ApplicationForbiddenDependencies.Api.class,
-			ApplicationForbiddenDependencies.Adapters.class
-		);
-	}
-
-	private static Stream<Class<?>> domainForbiddenLayerDependencies() {
-		return Stream.of(
-			DomainForbiddenDependencies.Api.class,
-			DomainForbiddenDependencies.Application.class,
-			DomainForbiddenDependencies.Ports.class,
-			DomainForbiddenDependencies.Adapters.class
-		);
-	}
-
-	private static Stream<Class<?>> portsForbiddenDependencies() {
-		return Stream.of(
-			PortsForbiddenDependencies.Api.class,
-			PortsForbiddenDependencies.Application.class,
-			PortsForbiddenDependencies.Adapters.class,
-			PortsForbiddenDependencies.Framework.class
-		);
-	}
-
-	private static Stream<Class<?>> adapterForbiddenDependencies() {
-		return Stream.of(
-			AdapterForbiddenDependencies.Api.class,
-			AdapterForbiddenDependencies.Application.class
+			ControllerFixture.RepositoryDependency.class,
+			ControllerFixture.EntityDependency.class,
+			ControllerFixture.JpaDependency.class,
+			ControllerFixture.JdbcDependency.class,
+			ServiceFixture.ControllerDependency.class,
+			RepositoryFixture.ControllerDependency.class,
+			RepositoryFixture.ServiceDependency.class,
+			EntityFixture.ControllerDependency.class,
+			EntityFixture.ServiceDependency.class,
+			EntityFixture.RepositoryDependency.class,
+			EntityFixture.DtoDependency.class,
+			DtoFixture.ControllerDependency.class,
+			DtoFixture.ServiceDependency.class,
+			DtoFixture.RepositoryDependency.class,
+			DtoFixture.EntityDependency.class,
+			DtoFixture.JpaDependency.class
 		);
 	}
 }

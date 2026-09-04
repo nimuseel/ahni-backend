@@ -1,6 +1,7 @@
 # Backend Documentation Map
 
 - `../ARCHITECTURE.md`: system boundaries and dependency direction
+- [Layered MVC decision](decisions/0002-layered-mvc-architecture.md): current backend package structure
 - `development/commands.md`: setup and repeatable commands
 - `development/testing.md`: test layers and expectations
 - `api/README.md`: OpenAPI authoring and API completion workflow

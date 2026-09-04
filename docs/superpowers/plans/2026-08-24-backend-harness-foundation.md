@@ -1,5 +1,7 @@
 # Backend Harness Foundation Implementation Plan
 
+> Historical plan: do not recreate its old backend packages. Package rules and OpenAPI source paths are superseded by [Decision 0002](../../decisions/0002-layered-mvc-architecture.md) and [ARCHITECTURE.md](../../../ARCHITECTURE.md).
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Make the Spring Boot repository enforce architecture, test layers, PostgreSQL migrations, API documentation, and contributor workflow through one reproducible verification command.

@@ -1,5 +1,7 @@
 # AHNI Cross-Repository Harness Design
 
+> Historical design: backend package/dependency instructions are superseded by [Decision 0002](../../decisions/0002-layered-mvc-architecture.md) and [ARCHITECTURE.md](../../../ARCHITECTURE.md). Unrelated product and security decisions remain in effect.
+
 **Status:** Approved
 
 **Date:** 2026-08-24

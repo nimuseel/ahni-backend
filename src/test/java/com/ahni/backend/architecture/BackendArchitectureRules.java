@@ -1,62 +1,33 @@
 package com.ahni.backend.architecture;
 
-import com.tngtech.archunit.lang.ArchRule;
-
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
+
+import com.tngtech.archunit.lang.ArchRule;
+import java.util.List;
 
 final class BackendArchitectureRules {
 
 	private BackendArchitectureRules() {
 	}
 
-	static ArchRule domainIndependence() {
-		return noClasses()
-			.that().resideInAPackage("..domain..")
-			.should().dependOnClassesThat().resideInAnyPackage(
-				"org.springframework..",
-				"jakarta.persistence..",
-				"java.net.http..",
-				"jakarta.servlet..",
-				"..api..",
-				"..application..",
-				"..ports..",
-				"..adapters.."
-			);
+	static List<ArchRule> all() {
+		return List.of(
+			forbid("..controller..", "..repository..", "..entity..",
+				"jakarta.persistence..", "org.springframework.data..",
+				"org.springframework.jdbc..", "java.sql..", "javax.sql.."),
+			forbid("..service..", "..controller.."),
+			forbid("..repository..", "..controller..", "..service.."),
+			forbid("..entity..", "..controller..", "..service..", "..repository..", "..dto.."),
+			forbid("..dto..", "..controller..", "..service..", "..repository..", "..entity..",
+				"jakarta.persistence..")
+		);
 	}
 
-	static ArchRule apiIsolation() {
+	private static ArchRule forbid(String sourcePackage, String... targetPackages) {
 		return noClasses()
-			.that().resideInAPackage("..api..")
-			.should().dependOnClassesThat().resideInAnyPackage(
-				"..domain..",
-				"..ports..",
-				"..adapters.."
-			);
-	}
-
-	static ArchRule applicationDependencies() {
-		return noClasses()
-			.that().resideInAPackage("..application..")
-			.should().dependOnClassesThat().resideInAnyPackage("..api..", "..adapters..");
-	}
-
-	static ArchRule portsDependencies() {
-		return noClasses()
-			.that().resideInAPackage("..ports..")
-			.should().dependOnClassesThat().resideInAnyPackage(
-				"org.springframework..",
-				"jakarta.persistence..",
-				"java.net.http..",
-				"jakarta.servlet..",
-				"..api..",
-				"..application..",
-				"..adapters.."
-			);
-	}
-
-	static ArchRule adapterDependencies() {
-		return noClasses()
-			.that().resideInAPackage("..adapters..")
-			.should().dependOnClassesThat().resideInAnyPackage("..api..", "..application..");
+			.that().resideInAPackage(sourcePackage)
+			.should().dependOnClassesThat().resideInAnyPackage(targetPackages)
+			// Feature packages are created on demand; fixture tests exercise each boundary.
+			.allowEmptyShould(true);
 	}
 }

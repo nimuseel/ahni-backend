@@ -1,4 +1,4 @@
-package com.ahni.backend.api.config;
+package com.ahni.backend.config;
 
 import java.util.List;
 

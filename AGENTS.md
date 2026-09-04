@@ -7,7 +7,7 @@
 ## Repository Map
 
 ```text
-src/main/java/com/ahni/backend/  application entry point and future modules
+src/main/java/com/ahni/backend/  application entry point and layered packages
 src/main/resources/              runtime configuration
 src/test/java/                   unit and Spring integration tests
 docs/                            architecture, domain, development, reliability
@@ -33,8 +33,9 @@ scripts/                         repeatable verification commands
 
 ## Non-Negotiable Invariants
 
-- HTTP controllers depend on application services, never directly on persistence.
-- Domain rules do not depend on Spring, HTTP, or database classes.
+- Follow Controller → Service → Repository. Controllers never access persistence directly or expose JPA entities.
+- Services own business rules and transaction boundaries; JPA entities belong in `entity`, API contracts in `dto`.
+- Follow the dependency rules in `ARCHITECTURE.md`; create packages only when their first implementation is needed.
 - External input is parsed and validated at the API boundary.
 - Student data access is scoped to the authenticated student or an authorized administrator.
 - Every public behavior change has a unit or integration test.

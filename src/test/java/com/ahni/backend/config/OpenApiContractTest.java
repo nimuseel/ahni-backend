@@ -1,4 +1,4 @@
-package com.ahni.backend.api;
+package com.ahni.backend.config;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

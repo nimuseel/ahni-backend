@@ -2,16 +2,18 @@
 
 ## Layers
 
-- Unit: pure domain calculations and policy decisions. Fast, no Spring context.
-- Integration: Spring boundary, serialization, persistence, and external adapter contracts.
-- Architecture: dependency direction once domain/application modules exist.
+- Unit: service business rules, entity behavior, and pure calculations. Fast, no Spring context; mock repositories or external clients when needed.
+- Integration: controller HTTP contracts, validation, authorization, serialization, JPA persistence, and external integration boundaries.
+- Architecture: Controller → Service → Repository dependencies, controller persistence isolation, and entity/DTO separation, enforced by ArchUnit.
 - E2E: API scenarios covering a user-visible outcome when the HTTP surface is available.
 
 ## Rules
 
-Write a failing test before a new domain behavior. Use real value objects where possible, keep test names behavior-focused, and run the narrowest test during development before `./scripts/verify`.
+Write a failing test before a new business behavior. Use real entities and DTOs where possible, keep test names behavior-focused, and run the narrowest test during development before `./scripts/verify`.
 
-Current baseline: `AhniBackendApplicationTests` proves the Spring context starts. Domain unit tests are added with the first GPA and graduation-rule implementation.
+Current baseline: context startup, OpenAPI drift, PostgreSQL migrations, migration-summary unit tests, and ArchUnit rules. `LayerDependencyTest` tests forbidden edges and permitted service/repository/JPA dependencies with non-component fixtures, then checks production classes only. Empty feature packages are allowed because they are created on demand, not filled with markers.
+
+Run `./gradlew test --tests '*LayerDependencyTest'` for architecture changes and `./gradlew integrationTest --tests '*OpenApiContractTest'` for the API contract. New controller/service/repository behavior gets its own tests with the corresponding feature; architecture fixtures are not business implementations.
 
 ## API completion rule
 

@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -108,5 +109,30 @@ class DepartmentRepositoryIntegrationTest {
 
         assertThat(updated.getCreatedAt()).isEqualTo(createdAt);
         assertThat(updated.getUpdatedAt()).isAfter(previousUpdatedAt);
+    }
+
+    @Test
+    void 삭제되지_않은_학과를_이름순으로_조회한다() {
+        departmentRepository.saveAllAndFlush(List.of(
+            new Department("소프트웨어융합공학과"),
+            new Department("산업경영학과"),
+            new Department("메카트로닉스공학과"),
+            new Department("금융투자학과"),
+            new Department("반도체산업융합학과")
+        ));
+
+        entityManager.clear();
+
+        List<Department> departments = departmentRepository.findAllByDeletedAtIsNullOrderByNameAsc();
+
+        assertThat(departments)
+            .extracting(Department::getName)
+            .containsExactly(
+                "금융투자학과",
+                "메카트로닉스공학과",
+                "반도체산업융합학과",
+                "산업경영학과",
+                "소프트웨어융합공학과"
+            );
     }
 }

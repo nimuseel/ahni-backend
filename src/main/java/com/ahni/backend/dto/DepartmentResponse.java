@@ -1,4 +1,9 @@
 package com.ahni.backend.dto;
 
-public class DepartmentResponse {
+import java.util.UUID;
+
+public record DepartmentResponse(
+    UUID entityId,
+    String name
+) {
 }

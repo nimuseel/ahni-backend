@@ -2,7 +2,6 @@ package com.ahni.backend.repository;
 
 import com.ahni.backend.entity.Department;
 import jakarta.persistence.EntityManager;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -15,11 +14,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.PostgreSQLContainer;
 
 import java.time.Instant;
-import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -40,8 +38,8 @@ class DepartmentRepositoryIntegrationTest {
             "spring.datasource.driver-class-name",
             POSTGRES::getDriverClassName
         );
-        registry.add("spring.flyway.enabled", () -> false);
-        registry.add("spring.jpa.hibernate.ddl-auto", () -> "create-drop");
+        registry.add("spring.flyway.enabled", () -> true);
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
     }
 
     @AfterAll

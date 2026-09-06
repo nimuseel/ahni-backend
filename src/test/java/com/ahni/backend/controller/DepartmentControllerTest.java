@@ -1,11 +1,14 @@
 package com.ahni.backend.controller;
 
+import com.ahni.backend.config.SecurityConfiguration;
 import com.ahni.backend.dto.DepartmentResponse;
 import com.ahni.backend.service.DepartmentService;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -17,6 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(DepartmentController.class)
+@Import(SecurityConfiguration.class)
 @Tag("integration")
 class DepartmentControllerTest {
     @Autowired
@@ -24,6 +28,9 @@ class DepartmentControllerTest {
 
     @MockitoBean
     private DepartmentService departmentService;
+
+    @MockitoBean
+    private JwtDecoder jwtDecoder;
 
     @Test
     void 학과_목록을_조회한다() throws Exception {

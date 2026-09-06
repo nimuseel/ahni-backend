@@ -43,7 +43,7 @@ class PostgreSqlMigrationIntegrationTest {
 	private Flyway flyway;
 
 	@Test
-	void appliesMigrationsOneAndTwoSuccessfully() {
+	void appliesAllMigrationsSuccessfully() {
 		var appliedMigrations = Arrays.stream(flyway.info().applied())
 			.map(MigrationResult::from)
 			.toList();
@@ -51,7 +51,8 @@ class PostgreSqlMigrationIntegrationTest {
 
 		assertAll(
 			() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("1")),
-			() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("2"))
+			() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("2")),
+			() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("3"))
 		);
 		assertTrue(
 			summary.allAppliedSuccessfully(),

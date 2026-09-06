@@ -3,6 +3,7 @@ package com.ahni.backend.config;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.nio.file.Files;
@@ -41,6 +42,13 @@ class OpenApiContractTest {
 		Path expected = Path.of("docs/api/openapi.json");
 		assertTrue(Files.exists(expected), "copy build/openapi/openapi.json to docs/api/openapi.json");
 		assertEquals(objectMapper.readTree(Files.readString(expected)), objectMapper.readTree(actual));
+	}
+
+	@Test
+	void swaggerUiIsAvailable() throws Exception {
+		mockMvc.perform(get("/swagger-ui/index.html"))
+			.andExpect(status().isOk())
+			.andExpect(content().contentTypeCompatibleWith("text/html"));
 	}
 
 }

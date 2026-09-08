@@ -26,7 +26,7 @@ public class Student {
     private String email;
 
     @Column(nullable = false)
-    private Short admissionYear;
+    private Integer admissionYear;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 30, nullable = false)
@@ -55,7 +55,7 @@ public class Student {
     ) {
         this.authUserId = authUserId;
         this.email = email;
-        this.admissionYear = (short) admissionYear;
+        this.admissionYear = admissionYear;
         this.enrollmentStatus = enrollmentStatus;
         this.nickname = nickname;
     }

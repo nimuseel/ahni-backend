@@ -1,5 +1,6 @@
 package com.ahni.backend.repository;
 
+import com.ahni.backend.domain.EnrollmentStatus;
 import com.ahni.backend.entity.*;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;

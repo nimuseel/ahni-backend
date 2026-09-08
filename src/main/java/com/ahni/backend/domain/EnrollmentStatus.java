@@ -1,4 +1,4 @@
-package com.ahni.backend.entity;
+package com.ahni.backend.domain;
 
 public enum EnrollmentStatus {
     ENROLLED,

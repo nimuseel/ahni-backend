@@ -1,9 +1,13 @@
 package com.ahni.backend.entity;
 
+import com.ahni.backend.domain.AccountStatus;
+import com.ahni.backend.domain.EnrollmentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.time.Instant;
+import java.time.Year;
+import java.time.ZoneId;
 import java.util.UUID;
 
 @Entity
@@ -26,7 +30,7 @@ public class Student {
     private String email;
 
     @Column(nullable = false)
-    private Short admissionYear;
+    private Integer admissionYear;
 
     @Enumerated(EnumType.STRING)
     @Column(length = 30, nullable = false)
@@ -44,6 +48,9 @@ public class Student {
 
     private Instant deletedAt;
 
+    private static final int MIN_ADMISSION_YEAR = 2000;
+    private static final ZoneId SERVICE_ZONE_ID = ZoneId.of("Asia/Seoul");
+
     protected Student() { }
 
     public Student(
@@ -53,11 +60,21 @@ public class Student {
         EnrollmentStatus enrollmentStatus,
         String nickname
     ) {
+        validateAdmissionYear(admissionYear);
+
         this.authUserId = authUserId;
         this.email = email;
-        this.admissionYear = (short) admissionYear;
+        this.admissionYear = admissionYear;
         this.enrollmentStatus = enrollmentStatus;
         this.nickname = nickname;
+    }
+
+    private static void validateAdmissionYear(int admissionYear) {
+        int currentYear = Year.now(SERVICE_ZONE_ID).getValue();
+
+        if (admissionYear < MIN_ADMISSION_YEAR || admissionYear > currentYear) {
+            throw new IllegalArgumentException(String.format("입학연도는 %d년부터 %d년 사이여야 합니다.", MIN_ADMISSION_YEAR, currentYear));
+        }
     }
 
     @PrePersist

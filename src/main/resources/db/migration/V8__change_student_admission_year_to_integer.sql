@@ -1,0 +1,1 @@
+ALTER TABLE student ALTER COLUMN admission_year TYPE INTEGER;

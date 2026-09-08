@@ -1,7 +1,7 @@
 package com.ahni.backend.dto;
 
-import com.ahni.backend.entity.AccountStatus;
-import com.ahni.backend.entity.EnrollmentStatus;
+import com.ahni.backend.domain.AccountStatus;
+import com.ahni.backend.domain.EnrollmentStatus;
 
 import java.util.UUID;
 

@@ -1,5 +1,6 @@
 package com.ahni.backend.service;
 
+import com.ahni.backend.domain.EnrollmentStatus;
 import com.ahni.backend.dto.DepartmentResponse;
 import com.ahni.backend.dto.StudentProfileRegistrationRequest;
 import com.ahni.backend.dto.StudentProfileResponse;
@@ -34,19 +35,15 @@ public class StudentService {
             throw new StudentAlreadyRegisteredException();
         }
 
-        EnrollmentStatus status = request.enrollmentStatus();
+        EnrollmentStatus enrollmentStatus = request.enrollmentStatus();
 
-        if (status != EnrollmentStatus.ENROLLED && status != EnrollmentStatus.LEAVE) {
+        if (enrollmentStatus != EnrollmentStatus.ENROLLED && enrollmentStatus != EnrollmentStatus.LEAVE) {
             throw new InvalidEnrollmentStatusException();
         }
 
         String nickname = getNickname(request.nickname());
 
-        if (nickname.isEmpty()) {
-            nickname = null;
-        }
-
-        Student student = new Student(authUserId, email, request.admissionYear(), request.enrollmentStatus(), nickname);
+        Student student = new Student(authUserId, email, request.admissionYear(), enrollmentStatus, nickname);
         Department department = departmentRepository.findByEntityId(request.primaryDepartmentEntityId()).filter(dp -> dp.getDeletedAt() == null).orElseThrow(DepartmentNotFoundException::new);
 
         Student savedStudent = studentRepository.save(student);

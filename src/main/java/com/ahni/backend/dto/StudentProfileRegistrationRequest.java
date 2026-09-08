@@ -1,6 +1,6 @@
 package com.ahni.backend.dto;
 
-import com.ahni.backend.entity.EnrollmentStatus;
+import com.ahni.backend.domain.EnrollmentStatus;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;

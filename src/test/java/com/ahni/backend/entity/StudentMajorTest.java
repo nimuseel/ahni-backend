@@ -1,5 +1,6 @@
 package com.ahni.backend.entity;
 
+import com.ahni.backend.domain.EnrollmentStatus;
 import org.junit.jupiter.api.Test;
 
 import java.util.UUID;

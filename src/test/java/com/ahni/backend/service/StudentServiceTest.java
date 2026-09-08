@@ -1,5 +1,6 @@
 package com.ahni.backend.service;
 
+import com.ahni.backend.domain.EnrollmentStatus;
 import com.ahni.backend.dto.StudentProfileRegistrationRequest;
 import com.ahni.backend.dto.StudentProfileResponse;
 import com.ahni.backend.entity.*;

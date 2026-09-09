@@ -1,0 +1,265 @@
+package com.ahni.backend.controller;
+
+import com.ahni.backend.config.SecurityConfiguration;
+import com.ahni.backend.domain.AccountStatus;
+import com.ahni.backend.domain.EnrollmentStatus;
+import com.ahni.backend.dto.DepartmentResponse;
+import com.ahni.backend.dto.StudentProfileRegistrationRequest;
+import com.ahni.backend.dto.StudentProfileResponse;
+import com.ahni.backend.exception.DepartmentNotFoundException;
+import com.ahni.backend.exception.InvalidEnrollmentStatusException;
+import com.ahni.backend.exception.StudentAlreadyRegisteredException;
+import com.ahni.backend.service.StudentService;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.UUID;
+
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(StudentController.class)
+@Import(SecurityConfiguration.class)
+@Tag("integration")
+class StudentControllerTest {
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockitoBean
+    private StudentService studentService;
+
+    @MockitoBean
+    private JwtDecoder jwtDecoder;
+
+    @Test
+    void 인증된_학생이_프로필을_등록한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        UUID departmentEntityId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        UUID studentEntityId = UUID.fromString("00000000-0000-0000-0000-000000000020");
+        String email = "student@inha.edu";
+        StudentProfileRegistrationRequest request = new StudentProfileRegistrationRequest(
+            departmentEntityId,
+            2024,
+            EnrollmentStatus.ENROLLED,
+            "인하"
+        );
+
+        when(studentService.registerProfile(authUserId, email, request))
+            .thenReturn(new StudentProfileResponse(
+                studentEntityId,
+                email,
+                "인하",
+                new DepartmentResponse(departmentEntityId, "소프트웨어융합공학과"),
+                2024,
+                EnrollmentStatus.ENROLLED,
+                AccountStatus.ACTIVE
+            ));
+
+        mockMvc.perform(post("/api/v1/students/me")
+                .with(jwt().jwt(token -> token
+                    .subject(authUserId.toString())
+                    .claim("email", email)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "primaryDepartmentEntityId": "00000000-0000-0000-0000-000000000001",
+                      "admissionYear": 2024,
+                      "enrollmentStatus": "ENROLLED",
+                      "nickname": "인하"
+                    }
+                    """))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.studentEntityId").value(studentEntityId.toString()))
+            .andExpect(jsonPath("$.email").value(email))
+            .andExpect(jsonPath("$.primaryDepartment.entityId").value(departmentEntityId.toString()))
+            .andExpect(jsonPath("$.enrollmentStatus").value("ENROLLED"))
+            .andExpect(jsonPath("$.accountStatus").value("ACTIVE"));
+
+        verify(studentService).registerProfile(authUserId, email, request);
+    }
+
+    @Test
+    void 인증되지_않은_사용자는_프로필을_등록할_수_없다() throws Exception {
+        mockMvc.perform(post("/api/v1/students/me")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+            .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(studentService);
+    }
+
+    @Test
+    void 필수_요청값이_없으면_프로필을_등록할_수_없다() throws Exception {
+        mockMvc.perform(post("/api/v1/students/me")
+                .with(jwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+
+        verifyNoInteractions(studentService);
+    }
+
+    @Test
+    void 이미_등록된_학생이면_409를_반환한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        UUID departmentEntityId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        String email = "student@inha.edu";
+        StudentProfileRegistrationRequest request = new StudentProfileRegistrationRequest(
+            departmentEntityId,
+            2024,
+            EnrollmentStatus.ENROLLED,
+            "인하"
+        );
+
+        when(studentService.registerProfile(authUserId, email, request))
+            .thenThrow(new StudentAlreadyRegisteredException());
+
+        mockMvc.perform(post("/api/v1/students/me")
+                .with(jwt().jwt(token -> token
+                    .subject(authUserId.toString())
+                    .claim("email", email)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "primaryDepartmentEntityId": "00000000-0000-0000-0000-000000000001",
+                      "admissionYear": 2024,
+                      "enrollmentStatus": "ENROLLED",
+                      "nickname": "인하"
+                    }
+                    """))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.code").value("STUDENT_ALREADY_REGISTERED"));
+    }
+
+    @Test
+    void 존재하지_않는_학과이면_404를_반환한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        UUID departmentEntityId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        String email = "student@inha.edu";
+        StudentProfileRegistrationRequest request = new StudentProfileRegistrationRequest(
+            departmentEntityId,
+            2024,
+            EnrollmentStatus.ENROLLED,
+            "인하"
+        );
+
+        when(studentService.registerProfile(authUserId, email, request))
+            .thenThrow(new DepartmentNotFoundException());
+
+        mockMvc.perform(post("/api/v1/students/me")
+                .with(jwt().jwt(token -> token
+                    .subject(authUserId.toString())
+                    .claim("email", email)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "primaryDepartmentEntityId": "00000000-0000-0000-0000-000000000001",
+                      "admissionYear": 2024,
+                      "enrollmentStatus": "ENROLLED",
+                      "nickname": "인하"
+                    }
+                    """))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value("DEPARTMENT_NOT_FOUND"));
+    }
+
+    @Test
+    void 가입할_수_없는_재학_상태이면_400을_반환한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        UUID departmentEntityId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        String email = "student@inha.edu";
+        StudentProfileRegistrationRequest request = new StudentProfileRegistrationRequest(
+            departmentEntityId,
+            2024,
+            EnrollmentStatus.GRADUATED,
+            "인하"
+        );
+
+        when(studentService.registerProfile(authUserId, email, request))
+            .thenThrow(new InvalidEnrollmentStatusException());
+
+        mockMvc.perform(post("/api/v1/students/me")
+                .with(jwt().jwt(token -> token
+                    .subject(authUserId.toString())
+                    .claim("email", email)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "primaryDepartmentEntityId": "00000000-0000-0000-0000-000000000001",
+                      "admissionYear": 2024,
+                      "enrollmentStatus": "GRADUATED",
+                      "nickname": "인하"
+                    }
+                    """))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("INVALID_ENROLLMENT_STATUS"));
+    }
+
+    @Test
+    void 정의되지_않은_재학_상태이면_400을_반환한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+
+        mockMvc.perform(post("/api/v1/students/me")
+                .with(jwt().jwt(token -> token
+                    .subject(authUserId.toString())
+                    .claim("email", "student@inha.edu")))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "primaryDepartmentEntityId": "00000000-0000-0000-0000-000000000001",
+                      "admissionYear": 2024,
+                      "enrollmentStatus": "UNKNOWN",
+                      "nickname": "인하"
+                    }
+                    """))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+
+        verifyNoInteractions(studentService);
+    }
+
+    @Test
+    void 유효하지_않은_입학연도이면_400을_반환한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        UUID departmentEntityId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        String email = "student@inha.edu";
+        StudentProfileRegistrationRequest request = new StudentProfileRegistrationRequest(
+            departmentEntityId,
+            9999,
+            EnrollmentStatus.ENROLLED,
+            "인하"
+        );
+
+        when(studentService.registerProfile(authUserId, email, request))
+            .thenThrow(new IllegalArgumentException("입학연도가 올바르지 않습니다."));
+
+        mockMvc.perform(post("/api/v1/students/me")
+                .with(jwt().jwt(token -> token
+                    .subject(authUserId.toString())
+                    .claim("email", email)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "primaryDepartmentEntityId": "00000000-0000-0000-0000-000000000001",
+                      "admissionYear": 9999,
+                      "enrollmentStatus": "ENROLLED",
+                      "nickname": "인하"
+                    }
+                    """))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+    }
+}

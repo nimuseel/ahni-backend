@@ -68,7 +68,8 @@ class PostgreSqlMigrationIntegrationTest {
 					() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("5")),
 					() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("6")),
 					() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("7")),
-					() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("8"))
+					() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("8")),
+					() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("9"))
 				);
 				assertTrue(
 					summary.allAppliedSuccessfully(),

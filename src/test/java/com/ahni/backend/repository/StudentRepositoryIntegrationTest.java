@@ -5,6 +5,7 @@ import com.ahni.backend.entity.*;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,11 @@ class StudentRepositoryIntegrationTest {
 
     @Autowired
     private EntityManager entityManager;
+
+    @BeforeEach
+    void removeSeededDepartments() {
+        departmentRepository.deleteAllInBatch();
+    }
 
     @Test
     void authUserId로_학생을_조회할_수_있다() {

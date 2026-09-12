@@ -3,6 +3,7 @@ package com.ahni.backend.repository;
 import com.ahni.backend.entity.Department;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,11 @@ class DepartmentRepositoryIntegrationTest {
 
     @Autowired
     private EntityManager entityManager;
+
+    @BeforeEach
+    void removeSeededDepartments() {
+        departmentRepository.deleteAllInBatch();
+    }
 
     @Test
     void 학과를_저장한다() {

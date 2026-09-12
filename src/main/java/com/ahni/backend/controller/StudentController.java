@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,52 @@ public class StudentController {
 
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
+    }
+
+    @Operation(
+        summary = "내 학생 프로필 조회",
+        description = "[인증 O] JWT의 사용자 식별자로 학생 프로필과 주전공을 조회합니다.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "학생 프로필 조회 성공",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = StudentProfileResponse.class),
+                examples = @ExampleObject(value = """
+                    {
+                      "studentEntityId": "00000000-0000-0000-0000-000000000020",
+                      "email": "student@inha.edu",
+                      "nickname": "인하",
+                      "primaryDepartment": {
+                        "entityId": "00000000-0000-0000-0000-000000000001",
+                        "name": "소프트웨어융합공학과"
+                      },
+                      "admissionYear": 2024,
+                      "enrollmentStatus": "ENROLLED",
+                      "accountStatus": "ACTIVE"
+                    }
+                    """)
+            )
+        ),
+        @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content),
+        @ApiResponse(
+            responseCode = "404",
+            description = "등록된 학생 프로필이 없음",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = com.ahni.backend.dto.ApiErrorResponse.class),
+                examples = @ExampleObject(value = """
+                    {"code":"STUDENT_NOT_FOUND","message":"학생 프로필을 찾을 수 없습니다."}
+                    """)
+            )
+        )
+    })
+    @GetMapping("/me")
+    public StudentProfileResponse getProfile(@AuthenticationPrincipal Jwt jwt) {
+        return studentService.getProfile(UUID.fromString(jwt.getSubject()));
     }
 
     @Operation(

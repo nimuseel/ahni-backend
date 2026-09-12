@@ -3,4 +3,14 @@ set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo_root"
-./gradlew bootRun
+
+if [[ ! -f .env ]]; then
+  echo "Missing .env file. Create it in the repository root before running the API." >&2
+  exit 1
+fi
+
+set -a
+source .env
+set +a
+
+exec ./gradlew bootRun --args='--spring.profiles.active=supabase'

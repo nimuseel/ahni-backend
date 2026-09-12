@@ -18,6 +18,12 @@ public class GlobalExceptionHandler {
         return new ApiErrorResponse("STUDENT_ALREADY_REGISTERED", exception.getMessage());
     }
 
+    @ExceptionHandler(StudentNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiErrorResponse handleStudentNotFound(StudentNotFoundException exception) {
+        return new ApiErrorResponse("STUDENT_NOT_FOUND", exception.getMessage());
+    }
+
     @ExceptionHandler(DepartmentNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiErrorResponse handleDepartmentNotFound(DepartmentNotFoundException exception) {

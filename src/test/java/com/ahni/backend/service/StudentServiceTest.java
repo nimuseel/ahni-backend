@@ -7,6 +7,7 @@ import com.ahni.backend.entity.*;
 import com.ahni.backend.exception.DepartmentNotFoundException;
 import com.ahni.backend.exception.InvalidEnrollmentStatusException;
 import com.ahni.backend.exception.StudentAlreadyRegisteredException;
+import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.repository.DepartmentRepository;
 import com.ahni.backend.repository.StudentMajorRepository;
 import com.ahni.backend.repository.StudentRepository;
@@ -37,6 +38,47 @@ class StudentServiceTest {
 
     @InjectMocks
     private StudentService studentService;
+
+    @Test
+    void 인증된_학생의_프로필을_조회한다() {
+        UUID authUserId = UUID.randomUUID();
+        Department department = new Department("소프트웨어융합공학과");
+        Student student = new Student(
+            authUserId,
+            "student@inha.edu",
+            2024,
+            EnrollmentStatus.ENROLLED,
+            "인하"
+        );
+        StudentMajor primaryMajor = new StudentMajor(student, department, MajorType.PRIMARY);
+
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.of(student));
+        when(studentMajorRepository.findByStudentAndMajorTypeAndDeletedAtIsNull(student, MajorType.PRIMARY))
+            .thenReturn(Optional.of(primaryMajor));
+
+        StudentProfileResponse response = studentService.getProfile(authUserId);
+
+        assertThat(response.studentEntityId()).isEqualTo(student.getEntityId());
+        assertThat(response.email()).isEqualTo("student@inha.edu");
+        assertThat(response.nickname()).isEqualTo("인하");
+        assertThat(response.primaryDepartment().entityId()).isEqualTo(department.getEntityId());
+        assertThat(response.primaryDepartment().name()).isEqualTo("소프트웨어융합공학과");
+        assertThat(response.admissionYear()).isEqualTo(2024);
+        assertThat(response.enrollmentStatus()).isEqualTo(EnrollmentStatus.ENROLLED);
+        assertThat(response.accountStatus()).isEqualTo(student.getAccountStatus());
+    }
+
+    @Test
+    void 등록되지_않은_학생의_프로필은_조회할_수_없다() {
+        UUID authUserId = UUID.randomUUID();
+
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> studentService.getProfile(authUserId))
+            .isInstanceOf(StudentNotFoundException.class);
+
+        verifyNoInteractions(studentMajorRepository);
+    }
 
     @Test
     void 학생_프로필과_주전공을_등록한다() {

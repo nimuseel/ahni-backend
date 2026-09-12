@@ -134,6 +134,33 @@ class StudentRepositoryIntegrationTest {
     }
 
     @Test
+    void 학생의_활성_주전공을_조회할_수_있다() {
+        Student student = studentRepository.saveAndFlush(
+            new Student(
+                UUID.randomUUID(),
+                "primary-major@inha.edu",
+                2024,
+                EnrollmentStatus.ENROLLED,
+                "인하"
+            )
+        );
+        Department department = departmentRepository.saveAndFlush(
+            new Department("소프트웨어융합공학과")
+        );
+        studentMajorRepository.saveAndFlush(
+            new StudentMajor(student, department, MajorType.PRIMARY)
+        );
+
+        entityManager.clear();
+
+        StudentMajor found = studentMajorRepository
+            .findByStudentAndMajorTypeAndDeletedAtIsNull(student, MajorType.PRIMARY)
+            .orElseThrow();
+
+        assertThat(found.getDepartment().getEntityId()).isEqualTo(department.getEntityId());
+    }
+
+    @Test
     void 학생은_활성_주전공을_하나만_가질_수_있다() {
         Student student = studentRepository.saveAndFlush(
             new Student(

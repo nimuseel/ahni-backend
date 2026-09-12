@@ -9,6 +9,7 @@ import com.ahni.backend.dto.StudentProfileResponse;
 import com.ahni.backend.exception.DepartmentNotFoundException;
 import com.ahni.backend.exception.InvalidEnrollmentStatusException;
 import com.ahni.backend.exception.StudentAlreadyRegisteredException;
+import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.service.StudentService;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -42,6 +44,54 @@ class StudentControllerTest {
 
     @MockitoBean
     private JwtDecoder jwtDecoder;
+
+    @Test
+    void 인증된_학생이_자신의_프로필을_조회한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        UUID departmentEntityId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        UUID studentEntityId = UUID.fromString("00000000-0000-0000-0000-000000000020");
+
+        when(studentService.getProfile(authUserId)).thenReturn(new StudentProfileResponse(
+            studentEntityId,
+            "student@inha.edu",
+            "인하",
+            new DepartmentResponse(departmentEntityId, "소프트웨어융합공학과"),
+            2024,
+            EnrollmentStatus.ENROLLED,
+            AccountStatus.ACTIVE
+        ));
+
+        mockMvc.perform(get("/api/v1/students/me")
+                .with(jwt().jwt(token -> token.subject(authUserId.toString()))))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.studentEntityId").value(studentEntityId.toString()))
+            .andExpect(jsonPath("$.email").value("student@inha.edu"))
+            .andExpect(jsonPath("$.primaryDepartment.entityId").value(departmentEntityId.toString()))
+            .andExpect(jsonPath("$.enrollmentStatus").value("ENROLLED"))
+            .andExpect(jsonPath("$.accountStatus").value("ACTIVE"));
+
+        verify(studentService).getProfile(authUserId);
+    }
+
+    @Test
+    void 인증되지_않은_사용자는_프로필을_조회할_수_없다() throws Exception {
+        mockMvc.perform(get("/api/v1/students/me"))
+            .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(studentService);
+    }
+
+    @Test
+    void 등록되지_않은_학생의_프로필을_조회하면_404를_반환한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+
+        when(studentService.getProfile(authUserId)).thenThrow(new StudentNotFoundException());
+
+        mockMvc.perform(get("/api/v1/students/me")
+                .with(jwt().jwt(token -> token.subject(authUserId.toString()))))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value("STUDENT_NOT_FOUND"));
+    }
 
     @Test
     void 인증된_학생이_프로필을_등록한다() throws Exception {

@@ -8,6 +8,7 @@ import com.ahni.backend.entity.*;
 import com.ahni.backend.exception.DepartmentNotFoundException;
 import com.ahni.backend.exception.InvalidEnrollmentStatusException;
 import com.ahni.backend.exception.StudentAlreadyRegisteredException;
+import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.repository.DepartmentRepository;
 import com.ahni.backend.repository.StudentMajorRepository;
 import com.ahni.backend.repository.StudentRepository;
@@ -27,6 +28,16 @@ public class StudentService {
         this.studentRepository = studentRepository;
         this.departmentRepository = departmentRepository;
         this.studentMajorRepository = studentMajorRepository;
+    }
+
+    public StudentProfileResponse getProfile(UUID authUserId) {
+        Student student = studentRepository.findByAuthUserId(authUserId)
+            .orElseThrow(StudentNotFoundException::new);
+        StudentMajor primaryMajor = studentMajorRepository
+            .findByStudentAndMajorTypeAndDeletedAtIsNull(student, MajorType.PRIMARY)
+            .orElseThrow(() -> new IllegalStateException("학생의 주전공을 찾을 수 없습니다."));
+
+        return toResponse(student, primaryMajor.getDepartment());
     }
 
     @Transactional
@@ -51,6 +62,11 @@ public class StudentService {
         StudentMajor primaryMajor = new StudentMajor(savedStudent, department, MajorType.PRIMARY);
         studentMajorRepository.save(primaryMajor);
 
+        return toResponse(student, department);
+
+    }
+
+    private static StudentProfileResponse toResponse(Student student, Department department) {
         return new StudentProfileResponse(
             student.getEntityId(),
             student.getEmail(),
@@ -63,7 +79,6 @@ public class StudentService {
             student.getEnrollmentStatus(),
             student.getAccountStatus()
         );
-
     }
 
     private static String getNickname(String nickname) {

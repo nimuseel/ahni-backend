@@ -24,13 +24,10 @@ The project uses the Gradle Wrapper. Do not require a globally installed Gradle 
 
 ## Supabase local run
 
-Load the untracked `.env` file and run the Supabase profile explicitly:
+`scripts/dev` loads the untracked `.env` file and runs the Supabase profile:
 
 ```bash
-set -a
-source .env
-set +a
-./gradlew bootRun --args='--spring.profiles.active=supabase'
+./scripts/dev
 ```
 
 The Supabase profile runs Flyway against the configured PostgreSQL database. Never commit `.env` or print its values in logs.

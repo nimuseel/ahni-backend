@@ -18,6 +18,12 @@ public class GlobalExceptionHandler {
         return new ApiErrorResponse("STUDENT_ALREADY_REGISTERED", exception.getMessage());
     }
 
+    @ExceptionHandler(StudentEmailAlreadyRegisteredException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiErrorResponse handleStudentEmailAlreadyRegistered(StudentEmailAlreadyRegisteredException exception) {
+        return new ApiErrorResponse("STUDENT_EMAIL_ALREADY_REGISTERED", exception.getMessage());
+    }
+
     @ExceptionHandler(StudentNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiErrorResponse handleStudentNotFound(StudentNotFoundException exception) {

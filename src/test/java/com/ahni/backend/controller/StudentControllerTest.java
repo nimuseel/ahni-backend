@@ -9,6 +9,7 @@ import com.ahni.backend.dto.StudentProfileResponse;
 import com.ahni.backend.exception.DepartmentNotFoundException;
 import com.ahni.backend.exception.InvalidEnrollmentStatusException;
 import com.ahni.backend.exception.StudentAlreadyRegisteredException;
+import com.ahni.backend.exception.StudentEmailAlreadyRegisteredException;
 import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.service.StudentService;
 import org.junit.jupiter.api.Tag;
@@ -192,6 +193,35 @@ class StudentControllerTest {
                     """))
             .andExpect(status().isConflict())
             .andExpect(jsonPath("$.code").value("STUDENT_ALREADY_REGISTERED"));
+    }
+
+    @Test
+    void 이미_등록된_이메일이면_409와_안정적인_오류_코드를_반환한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        String email = "student@inha.edu";
+
+        when(studentService.registerProfile(authUserId, email, new StudentProfileRegistrationRequest(
+            UUID.fromString("00000000-0000-0000-0000-000000000001"),
+            2024,
+            EnrollmentStatus.ENROLLED,
+            "인하"
+        ))).thenThrow(new StudentEmailAlreadyRegisteredException());
+
+        mockMvc.perform(post("/api/v1/students/me")
+                .with(jwt().jwt(token -> token
+                    .subject(authUserId.toString())
+                    .claim("email", email)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "primaryDepartmentEntityId": "00000000-0000-0000-0000-000000000001",
+                      "admissionYear": 2024,
+                      "enrollmentStatus": "ENROLLED",
+                      "nickname": "인하"
+                    }
+                    """))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.code").value("STUDENT_EMAIL_ALREADY_REGISTERED"));
     }
 
     @Test

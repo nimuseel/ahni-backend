@@ -7,6 +7,7 @@ import com.ahni.backend.entity.*;
 import com.ahni.backend.exception.DepartmentNotFoundException;
 import com.ahni.backend.exception.InvalidEnrollmentStatusException;
 import com.ahni.backend.exception.StudentAlreadyRegisteredException;
+import com.ahni.backend.exception.StudentEmailAlreadyRegisteredException;
 import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.repository.DepartmentRepository;
 import com.ahni.backend.repository.StudentMajorRepository;
@@ -133,6 +134,28 @@ class StudentServiceTest {
 
         assertThatThrownBy(() -> studentService.registerProfile(authUserId, "student@inha.edu", request))
             .isInstanceOf(StudentAlreadyRegisteredException.class);
+
+        verify(studentRepository, never()).save(any());
+        verifyNoInteractions(departmentRepository, studentMajorRepository);
+    }
+
+    @Test
+    void 같은_이메일로_등록된_학생이_있으면_등록할_수_없다() {
+        UUID authUserId = UUID.randomUUID();
+        String email = "student@inha.edu";
+        StudentProfileRegistrationRequest request =
+            new StudentProfileRegistrationRequest(
+                UUID.randomUUID(),
+                2024,
+                EnrollmentStatus.ENROLLED,
+                "인하"
+            );
+
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.empty());
+        when(studentRepository.existsByEmailIgnoreCase(email)).thenReturn(true);
+
+        assertThatThrownBy(() -> studentService.registerProfile(authUserId, email, request))
+            .isInstanceOf(StudentEmailAlreadyRegisteredException.class);
 
         verify(studentRepository, never()).save(any());
         verifyNoInteractions(departmentRepository, studentMajorRepository);

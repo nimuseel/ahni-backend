@@ -24,7 +24,7 @@ Every HTTP error uses this documented shape:
 
 - Client errors return a stable error shape and safe user-facing message.
 - Unexpected failures are logged with a correlation identifier and stack trace on the server.
-- External OCR, source-verification, map, and push failures are distinguishable from domain validation failures.
+- External OCR, map, notification, and push failures are distinguishable from domain validation failures.
 - Retry and timeout policy belongs at the external adapter boundary.
 - Error logs must not contain passwords, tokens, raw documents, or unnecessary student data.
 

@@ -1,6 +1,6 @@
 # Backend Harness Foundation Implementation Plan
 
-> Historical plan: do not recreate its old backend packages. Package rules and OpenAPI source paths are superseded by [Decision 0002](../../decisions/0002-layered-mvc-architecture.md) and [ARCHITECTURE.md](../../../ARCHITECTURE.md).
+> Historical plan: do not recreate its old backend packages. Package rules and OpenAPI source paths are superseded by [Decision 0002](../../decisions/0002-layered-mvc-architecture.md) and [ARCHITECTURE.md](../../../ARCHITECTURE.md). References to application-owned enrollment verification and password-schema debt are superseded by [Decision 0001](../../decisions/0001-identity-and-verification.md) and migrations V3 through V6.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
@@ -17,7 +17,7 @@
 - Work only on `chore/harness-foundation`, created from current `origin/main`.
 - Use Java 26 and the Gradle Wrapper; use stable dependency releases only.
 - Clients never access Supabase PostgreSQL directly.
-- Supabase Auth owns passwords; AHNI owns enrollment-verification state.
+- Supabase Auth owns passwords; the current signup and account policy follows Decision 0001.
 - Every future HTTP API change includes tests, OpenAPI examples, authorization requirements, and stable error codes.
 - Keep commits atomic and use the `chore` Conventional Commit type.
 - Run `./scripts/verify` before each final repository commit.
@@ -66,7 +66,7 @@ Expected: reveal the self-managed-password decision, missing API authoring guide
 
 Add the five required items to every work surface: implementation, unit/integration tests, OpenAPI requests/responses/examples, auth requirements, and stable errors. Update Decision 0001 and the security baseline to state that Supabase Auth owns student and administrator passwords. Define the error fields `code`, `message`, `correlationId`, and `fieldErrors` in the reliability guide. Record source conflicts for passwords, ERD revisions, meal naming, and institution expansion in `docs/product/traceability.md`.
 
-Record the existing `student.password_hash` and `admin.password_hash` columns as a blocking schema mismatch in `docs/exec-plans/tech-debt.md`. Assign their removal and replacement with Supabase identity references to a separate `fix/supabase-auth-schema` branch; do not mix that migration into the harness branch.
+This historical task originally recorded `student.password_hash` and `admin.password_hash` as blocking schema debt. Migrations V3 through V6 later replaced local password storage with Supabase identity references and removed the enrollment-verification table, so this is no longer active debt.
 
 - [ ] **Step 3: Verify document structure and repository formatting**
 

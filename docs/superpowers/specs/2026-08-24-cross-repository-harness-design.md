@@ -1,6 +1,6 @@
 # AHNI Cross-Repository Harness Design
 
-> Historical design: backend package/dependency instructions are superseded by [Decision 0002](../../decisions/0002-layered-mvc-architecture.md) and [ARCHITECTURE.md](../../../ARCHITECTURE.md). Unrelated product and security decisions remain in effect.
+> Historical design: backend package/dependency instructions are superseded by [Decision 0002](../../decisions/0002-layered-mvc-architecture.md) and [ARCHITECTURE.md](../../../ARCHITECTURE.md). The enrollment-certificate and administrator-review flow is superseded by [Decision 0001](../../decisions/0001-identity-and-verification.md).
 
 **Status:** Approved
 
@@ -40,7 +40,7 @@ This design uses the supplied mini specifications, use-case specifications, wire
 - Authorization and authenticated ownership checks.
 - Supabase Auth integration and session validation.
 - PostgreSQL persistence and migrations.
-- External enrollment-certificate verification orchestration.
+- School-email access policy and authenticated student profile ownership.
 - Academic domain rules and administrator operations.
 - Stable error codes, request correlation identifiers, and audit-safe logging.
 
@@ -57,29 +57,29 @@ Domain code must not depend on Spring MVC, persistence frameworks, Supabase SDKs
 
 `ahni-frontend` is the Flutter student application. It owns presentation state, device concerns, secure token storage, and student-facing flows. It communicates with the backend through the documented API and never connects directly to the database.
 
-Enrollment documents are uploaded through the backend. The mobile app displays verification states but does not decide document authenticity.
+The mobile app completes Supabase email confirmation before creating a student profile. It does not collect enrollment certificates during signup.
 
 ### Admin
 
 `ahni-admin` is the React, Vite, and TypeScript administrator application. It owns administrator-facing presentation and interactions for notices, inquiries, academic reference data, and error-log views. Administrator authorization is enforced by the backend, not inferred from hidden UI controls.
 
-## Identity and Enrollment Verification
+## Identity and Signup Access
 
 Supabase Auth is the identity provider. AHNI does not store or compare user passwords in its own student table.
 
-Initial student activation remains a separate domain process:
+Initial signup uses this flow:
 
-1. The student authenticates through the approved Supabase Auth flow.
-2. The client submits the required enrollment evidence to the backend.
-3. The backend validates input and sends the document or extracted attributes to the external source-verification adapter.
-4. The backend records the verification state and provider-safe result metadata.
-5. Protected student features require both a valid identity and an approved enrollment state.
+1. Supabase allows signup only when the normalized email domain appears in `allowed_signup_email_domain`.
+2. The user confirms control of the school email address through Supabase Auth.
+3. The mobile client uses the authenticated session to register a local student profile.
+4. The backend derives ownership from the JWT subject and email claims.
+5. Protected student features require a valid identity and an active local account.
 
-Provider credentials, raw secrets, and private endpoints stay on the backend. Raw identity documents require an explicit retention and deletion policy before production storage is enabled.
+Email confirmation does not independently prove current enrollment. Enrollment status is initially self-reported, and any stronger verification policy requires a new approved decision.
 
 ## Multi-University Readiness
 
-The initial deployment is limited by configured institution, college, and department data. Authorization and domain services use stable identifiers rather than checking Korean display names or Inha-specific constants. Institution-specific verification providers and academic policies are selected through ports and configuration.
+The initial deployment is limited by configured signup domains, college, and department data. Authorization and domain services use stable identifiers rather than checking Korean display names. Future school domains are added as exact allowlist entries.
 
 No speculative multi-tenant administration UI is included in phase one. The harness only prevents irreversible coupling to one college.
 

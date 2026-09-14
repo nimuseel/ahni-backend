@@ -205,4 +205,51 @@ class StudentRepositoryIntegrationTest {
         ).isInstanceOf(DataIntegrityViolationException.class);
     }
 
+    @Test
+    void 학생은_같은_유형의_활성_전공을_두_개_가질_수_없다() {
+        Student student = studentRepository.saveAndFlush(new Student(
+            UUID.randomUUID(),
+            "major-type@inha.edu",
+            2024,
+            EnrollmentStatus.ENROLLED,
+            "인하"
+        ));
+        Department first = departmentRepository.saveAndFlush(
+            new Department("금융투자학과")
+        );
+        Department second = departmentRepository.saveAndFlush(
+            new Department("산업경영학과")
+        );
+
+        studentMajorRepository.saveAndFlush(
+            new StudentMajor(student, first, MajorType.DOUBLE_MAJOR)
+        );
+
+        assertThatThrownBy(() -> studentMajorRepository.saveAndFlush(
+            new StudentMajor(student, second, MajorType.DOUBLE_MAJOR)
+        )).isInstanceOf(DataIntegrityViolationException.class);
+    }
+
+    @Test
+    void 학생은_같은_학과를_다른_전공_유형으로_중복할_수_없다() {
+        Student student = studentRepository.saveAndFlush(new Student(
+            UUID.randomUUID(),
+            "major-department@inha.edu",
+            2024,
+            EnrollmentStatus.ENROLLED,
+            "인하"
+        ));
+        Department department = departmentRepository.saveAndFlush(
+            new Department("반도체산업융합학과")
+        );
+
+        studentMajorRepository.saveAndFlush(
+            new StudentMajor(student, department, MajorType.PRIMARY)
+        );
+
+        assertThatThrownBy(() -> studentMajorRepository.saveAndFlush(
+            new StudentMajor(student, department, MajorType.MINOR)
+        )).isInstanceOf(DataIntegrityViolationException.class);
+    }
+
 }

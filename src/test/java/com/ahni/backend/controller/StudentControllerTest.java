@@ -4,6 +4,7 @@ import com.ahni.backend.config.SecurityConfiguration;
 import com.ahni.backend.domain.AccountStatus;
 import com.ahni.backend.domain.EnrollmentStatus;
 import com.ahni.backend.dto.DepartmentResponse;
+import com.ahni.backend.dto.StudentMajorUpdateRequest;
 import com.ahni.backend.dto.StudentProfileRegistrationRequest;
 import com.ahni.backend.dto.StudentProfileResponse;
 import com.ahni.backend.exception.DepartmentNotFoundException;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -455,5 +457,137 @@ class StudentControllerTest {
                     """))
             .andExpect(status().isBadRequest())
             .andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+    }
+
+    @Test
+    void 인증된_학생이_전공_구성을_전체_교체한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        UUID primaryDepartmentId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        UUID minorDepartmentId = UUID.fromString("00000000-0000-0000-0000-000000000003");
+        StudentMajorUpdateRequest request = new StudentMajorUpdateRequest(
+            primaryDepartmentId,
+            null,
+            minorDepartmentId
+        );
+        when(studentService.replaceMajors(authUserId, request))
+            .thenReturn(new StudentProfileResponse(
+                UUID.fromString("00000000-0000-0000-0000-000000000020"),
+                "student@inha.edu",
+                "인하",
+                new DepartmentResponse(primaryDepartmentId, "소프트웨어융합공학과"),
+                null,
+                new DepartmentResponse(minorDepartmentId, "산업경영학과"),
+                2024,
+                EnrollmentStatus.ENROLLED,
+                AccountStatus.ACTIVE
+            ));
+
+        mockMvc.perform(put("/api/v1/students/me/majors")
+                .with(jwt().jwt(token -> token.subject(authUserId.toString())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "primaryDepartmentEntityId": "00000000-0000-0000-0000-000000000001",
+                      "doubleMajorDepartmentEntityId": null,
+                      "minorDepartmentEntityId": "00000000-0000-0000-0000-000000000003"
+                    }
+                    """))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.primaryDepartment.entityId")
+                .value(primaryDepartmentId.toString()))
+            .andExpect(jsonPath("$.doubleMajorDepartment").doesNotExist())
+            .andExpect(jsonPath("$.minorDepartment.entityId")
+                .value(minorDepartmentId.toString()));
+
+        verify(studentService).replaceMajors(authUserId, request);
+    }
+
+    @Test
+    void 인증되지_않은_사용자는_전공을_변경할_수_없다() throws Exception {
+        mockMvc.perform(put("/api/v1/students/me/majors")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+            .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(studentService);
+    }
+
+    @Test
+    void 주전공이_없으면_전공을_변경할_수_없다() throws Exception {
+        mockMvc.perform(put("/api/v1/students/me/majors")
+                .with(jwt())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+
+        verifyNoInteractions(studentService);
+    }
+
+    @Test
+    void 등록되지_않은_학생의_전공_변경은_404를_반환한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        StudentMajorUpdateRequest request = new StudentMajorUpdateRequest(
+            UUID.fromString("00000000-0000-0000-0000-000000000001"),
+            null,
+            null
+        );
+        when(studentService.replaceMajors(authUserId, request))
+            .thenThrow(new StudentNotFoundException());
+
+        mockMvc.perform(put("/api/v1/students/me/majors")
+                .with(jwt().jwt(token -> token.subject(authUserId.toString())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {"primaryDepartmentEntityId":"00000000-0000-0000-0000-000000000001"}
+                    """))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value("STUDENT_NOT_FOUND"));
+    }
+
+    @Test
+    void 존재하지_않는_학과로_전공을_변경하면_404를_반환한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        StudentMajorUpdateRequest request = new StudentMajorUpdateRequest(
+            UUID.fromString("00000000-0000-0000-0000-000000000001"),
+            null,
+            null
+        );
+        when(studentService.replaceMajors(authUserId, request))
+            .thenThrow(new DepartmentNotFoundException());
+
+        mockMvc.perform(put("/api/v1/students/me/majors")
+                .with(jwt().jwt(token -> token.subject(authUserId.toString())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {"primaryDepartmentEntityId":"00000000-0000-0000-0000-000000000001"}
+                    """))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value("DEPARTMENT_NOT_FOUND"));
+    }
+
+    @Test
+    void 같은_학과를_여러_전공으로_변경하면_400을_반환한다() throws Exception {
+        UUID authUserId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+        UUID departmentId = UUID.fromString("00000000-0000-0000-0000-000000000001");
+        StudentMajorUpdateRequest request = new StudentMajorUpdateRequest(
+            departmentId,
+            null,
+            departmentId
+        );
+        when(studentService.replaceMajors(authUserId, request))
+            .thenThrow(new DuplicateMajorDepartmentException());
+
+        mockMvc.perform(put("/api/v1/students/me/majors")
+                .with(jwt().jwt(token -> token.subject(authUserId.toString())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "primaryDepartmentEntityId": "00000000-0000-0000-0000-000000000001",
+                      "minorDepartmentEntityId": "00000000-0000-0000-0000-000000000001"
+                    }
+                    """))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("DUPLICATE_MAJOR_DEPARTMENT"));
     }
 }

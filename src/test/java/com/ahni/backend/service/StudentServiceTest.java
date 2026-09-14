@@ -1,6 +1,7 @@
 package com.ahni.backend.service;
 
 import com.ahni.backend.domain.EnrollmentStatus;
+import com.ahni.backend.dto.StudentMajorUpdateRequest;
 import com.ahni.backend.dto.StudentProfileRegistrationRequest;
 import com.ahni.backend.dto.StudentProfileResponse;
 import com.ahni.backend.entity.*;
@@ -17,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -191,6 +193,139 @@ class StudentServiceTest {
 
         verifyNoInteractions(departmentRepository, studentMajorRepository);
         verify(studentRepository, never()).save(any());
+    }
+
+    @Test
+    void 학생의_전공_구성을_전체_교체한다() {
+        UUID authUserId = UUID.randomUUID();
+        Student student = new Student(
+            authUserId,
+            "student@inha.edu",
+            2024,
+            EnrollmentStatus.ENROLLED,
+            "인하"
+        );
+        Department primary = new Department("소프트웨어융합공학과");
+        Department oldDoubleMajor = new Department("금융투자학과");
+        Department oldMinor = new Department("산업경영학과");
+        Department newMinor = new Department("메카트로닉스공학과");
+        StudentMajor primaryAssignment = new StudentMajor(
+            student,
+            primary,
+            MajorType.PRIMARY
+        );
+        StudentMajor doubleMajorAssignment = new StudentMajor(
+            student,
+            oldDoubleMajor,
+            MajorType.DOUBLE_MAJOR
+        );
+        StudentMajor minorAssignment = new StudentMajor(
+            student,
+            oldMinor,
+            MajorType.MINOR
+        );
+        UUID primaryAssignmentEntityId = primaryAssignment.getEntityId();
+        StudentMajorUpdateRequest request = new StudentMajorUpdateRequest(
+            primary.getEntityId(),
+            null,
+            newMinor.getEntityId()
+        );
+        when(studentRepository.findByAuthUserId(authUserId))
+            .thenReturn(Optional.of(student));
+        when(departmentRepository.findByEntityId(primary.getEntityId()))
+            .thenReturn(Optional.of(primary));
+        when(departmentRepository.findByEntityId(newMinor.getEntityId()))
+            .thenReturn(Optional.of(newMinor));
+        when(studentMajorRepository.findAllByStudentAndDeletedAtIsNull(student))
+            .thenReturn(List.of(
+                primaryAssignment,
+                doubleMajorAssignment,
+                minorAssignment
+            ));
+
+        StudentProfileResponse response = studentService.replaceMajors(authUserId, request);
+
+        assertThat(primaryAssignment.getEntityId()).isEqualTo(primaryAssignmentEntityId);
+        assertThat(primaryAssignment.getDeletedAt()).isNull();
+        assertThat(doubleMajorAssignment.getDeletedAt()).isNotNull();
+        assertThat(minorAssignment.getDeletedAt()).isNotNull();
+        assertThat(response.doubleMajorDepartment()).isNull();
+        assertThat(response.minorDepartment().entityId()).isEqualTo(newMinor.getEntityId());
+
+        InOrder inOrder = inOrder(studentMajorRepository);
+        inOrder.verify(studentMajorRepository).flush();
+        inOrder.verify(studentMajorRepository).saveAll(anyList());
+    }
+
+    @Test
+    void 같은_학과를_여러_전공으로_변경할_수_없다() {
+        UUID authUserId = UUID.randomUUID();
+        UUID departmentEntityId = UUID.randomUUID();
+        Student student = new Student(
+            authUserId,
+            "student@inha.edu",
+            2024,
+            EnrollmentStatus.ENROLLED,
+            "인하"
+        );
+        StudentMajorUpdateRequest request = new StudentMajorUpdateRequest(
+            departmentEntityId,
+            null,
+            departmentEntityId
+        );
+        when(studentRepository.findByAuthUserId(authUserId))
+            .thenReturn(Optional.of(student));
+
+        assertThatThrownBy(() -> studentService.replaceMajors(authUserId, request))
+            .isInstanceOf(DuplicateMajorDepartmentException.class);
+
+        verifyNoInteractions(departmentRepository, studentMajorRepository);
+    }
+
+    @Test
+    void 등록되지_않은_학생은_전공을_변경할_수_없다() {
+        UUID authUserId = UUID.randomUUID();
+        StudentMajorUpdateRequest request = new StudentMajorUpdateRequest(
+            UUID.randomUUID(),
+            null,
+            null
+        );
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> studentService.replaceMajors(authUserId, request))
+            .isInstanceOf(StudentNotFoundException.class);
+
+        verifyNoInteractions(departmentRepository, studentMajorRepository);
+    }
+
+    @Test
+    void 사용할_수_없는_학과로_전공을_변경할_수_없다() {
+        UUID authUserId = UUID.randomUUID();
+        UUID departmentEntityId = UUID.randomUUID();
+        Student student = new Student(
+            authUserId,
+            "student@inha.edu",
+            2024,
+            EnrollmentStatus.ENROLLED,
+            "인하"
+        );
+        StudentMajorUpdateRequest request = new StudentMajorUpdateRequest(
+            departmentEntityId,
+            null,
+            null
+        );
+        when(studentRepository.findByAuthUserId(authUserId))
+            .thenReturn(Optional.of(student));
+        when(departmentRepository.findByEntityId(departmentEntityId))
+            .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> studentService.replaceMajors(authUserId, request))
+            .isInstanceOf(DepartmentNotFoundException.class);
+
+        verify(studentMajorRepository, never())
+            .findAllByStudentAndDeletedAtIsNull(any());
+        verify(studentMajorRepository, never()).flush();
+        verify(studentMajorRepository, never()).saveAll(any());
     }
 
     @Test

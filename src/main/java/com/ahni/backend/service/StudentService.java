@@ -2,6 +2,7 @@ package com.ahni.backend.service;
 
 import com.ahni.backend.domain.EnrollmentStatus;
 import com.ahni.backend.dto.DepartmentResponse;
+import com.ahni.backend.dto.StudentMajorUpdateRequest;
 import com.ahni.backend.dto.StudentProfileRegistrationRequest;
 import com.ahni.backend.dto.StudentProfileResponse;
 import com.ahni.backend.entity.*;
@@ -17,6 +18,7 @@ import com.ahni.backend.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.List;
@@ -84,6 +86,44 @@ public class StudentService {
 
         return toResponse(savedStudent, majors);
 
+    }
+
+    @Transactional
+    public StudentProfileResponse replaceMajors(
+        UUID authUserId,
+        StudentMajorUpdateRequest request
+    ) {
+        Student student = studentRepository.findByAuthUserId(authUserId)
+            .orElseThrow(StudentNotFoundException::new);
+        EnumMap<MajorType, Department> requested = resolveDepartments(
+            request.primaryDepartmentEntityId(),
+            request.doubleMajorDepartmentEntityId(),
+            request.minorDepartmentEntityId()
+        );
+        List<StudentMajor> active = studentMajorRepository
+            .findAllByStudentAndDeletedAtIsNull(student);
+        List<StudentMajor> retained = new ArrayList<>();
+
+        for (StudentMajor current : active) {
+            Department requestedDepartment = requested.get(current.getMajorType());
+            if (requestedDepartment != null && current.isAssignedTo(requestedDepartment)) {
+                retained.add(current);
+                requested.remove(current.getMajorType());
+            } else {
+                current.softDelete();
+            }
+        }
+
+        studentMajorRepository.flush();
+
+        List<StudentMajor> created = requested.entrySet().stream()
+            .map(entry -> new StudentMajor(student, entry.getValue(), entry.getKey()))
+            .toList();
+        studentMajorRepository.saveAll(created);
+
+        List<StudentMajor> result = new ArrayList<>(retained);
+        result.addAll(created);
+        return toResponse(student, result);
     }
 
     private EnumMap<MajorType, Department> resolveDepartments(

@@ -13,6 +13,12 @@ public record StudentProfileRegistrationRequest(
     @Schema(description = "주전공 학과 식별자", example = "00000000-0000-0000-0000-000000000001")
     UUID primaryDepartmentEntityId,
 
+    @Schema(description = "복수전공 학과 식별자", nullable = true)
+    UUID doubleMajorDepartmentEntityId,
+
+    @Schema(description = "부전공 학과 식별자", nullable = true)
+    UUID minorDepartmentEntityId,
+
     @NotNull
     @Min(2000)
     @Schema(description = "입학연도", example = "2024", minimum = "2000")

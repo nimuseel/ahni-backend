@@ -34,7 +34,7 @@ public class StudentController {
 
     @Operation(
         summary = "내 학생 프로필 조회",
-        description = "[인증 O] JWT의 사용자 식별자로 학생 프로필과 주전공을 조회합니다.",
+        description = "[인증 O] JWT의 사용자 식별자로 학생 프로필과 전공 구성을 조회합니다.",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -52,6 +52,14 @@ public class StudentController {
                       "primaryDepartment": {
                         "entityId": "00000000-0000-0000-0000-000000000001",
                         "name": "소프트웨어융합공학과"
+                      },
+                      "doubleMajorDepartment": {
+                        "entityId": "00000000-0000-0000-0000-000000000002",
+                        "name": "금융투자학과"
+                      },
+                      "minorDepartment": {
+                        "entityId": "00000000-0000-0000-0000-000000000003",
+                        "name": "산업경영학과"
                       },
                       "admissionYear": 2024,
                       "enrollmentStatus": "ENROLLED",
@@ -80,7 +88,7 @@ public class StudentController {
 
     @Operation(
         summary = "학생 프로필 등록",
-        description = "[인증 O] JWT의 사용자 정보로 학생 프로필과 주전공을 등록합니다.",
+        description = "[인증 O] JWT의 사용자 정보로 학생 프로필과 전공 구성을 등록합니다.",
         security = @SecurityRequirement(name = "bearerAuth"),
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             required = true,
@@ -90,6 +98,8 @@ public class StudentController {
                 examples = @ExampleObject(value = """
                     {
                       "primaryDepartmentEntityId": "00000000-0000-0000-0000-000000000001",
+                      "doubleMajorDepartmentEntityId": "00000000-0000-0000-0000-000000000002",
+                      "minorDepartmentEntityId": "00000000-0000-0000-0000-000000000003",
                       "admissionYear": 2024,
                       "enrollmentStatus": "ENROLLED",
                       "nickname": "인하"
@@ -114,6 +124,14 @@ public class StudentController {
                         "entityId": "00000000-0000-0000-0000-000000000001",
                         "name": "소프트웨어융합공학과"
                       },
+                      "doubleMajorDepartment": {
+                        "entityId": "00000000-0000-0000-0000-000000000002",
+                        "name": "금융투자학과"
+                      },
+                      "minorDepartment": {
+                        "entityId": "00000000-0000-0000-0000-000000000003",
+                        "name": "산업경영학과"
+                      },
                       "admissionYear": 2024,
                       "enrollmentStatus": "ENROLLED",
                       "accountStatus": "ACTIVE"
@@ -123,7 +141,7 @@ public class StudentController {
         ),
         @ApiResponse(
             responseCode = "400",
-            description = "요청값 또는 재학 상태 오류",
+            description = "요청값, 재학 상태 또는 전공 구성 오류",
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = com.ahni.backend.dto.ApiErrorResponse.class),
@@ -133,6 +151,9 @@ public class StudentController {
                         """),
                     @ExampleObject(name = "재학 상태 오류", value = """
                         {"code":"INVALID_ENROLLMENT_STATUS","message":"재학 또는 휴학 상태만 선택할 수 있습니다."}
+                        """),
+                    @ExampleObject(name = "전공 학과 중복", value = """
+                        {"code":"DUPLICATE_MAJOR_DEPARTMENT","message":"같은 학과를 여러 전공 유형으로 선택할 수 없습니다."}
                         """)
                 }
             )

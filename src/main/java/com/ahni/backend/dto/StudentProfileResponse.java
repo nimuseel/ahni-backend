@@ -18,6 +18,12 @@ public record StudentProfileResponse(
 
     DepartmentResponse primaryDepartment,
 
+    @Schema(description = "복수전공 학과", nullable = true)
+    DepartmentResponse doubleMajorDepartment,
+
+    @Schema(description = "부전공 학과", nullable = true)
+    DepartmentResponse minorDepartment,
+
     @Schema(description = "입학연도", example = "2024")
     Integer admissionYear,
 

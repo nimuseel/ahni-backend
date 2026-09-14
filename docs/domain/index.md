@@ -11,7 +11,7 @@ AHNI connects student academic records to decisions about the next semester.
 When a rule is implemented, document the invariant and add a unit test beside it. Criteria data is configuration; calculation results are derived state.
 
 - `student`: local profile linked to a Supabase user ID, including self-reported enrollment state.
-- `student_major`: the student's primary, double-major, or minor department relationship.
+- `student_major`: exactly one active primary major and at most one active double major and minor per student. "Multiple majors" is the product umbrella for double-major and minor assignments, not a stored major type.
 - `department`: academic department referenced by student and later course data.
 - `admin`: administrator profile linked to a Supabase user ID for management functions.
 - `allowed_signup_email_domain`: exact school domains accepted by the Supabase before-user-created hook.

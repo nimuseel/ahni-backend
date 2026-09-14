@@ -42,6 +42,14 @@ public class GlobalExceptionHandler {
         return new ApiErrorResponse("INVALID_ENROLLMENT_STATUS", exception.getMessage());
     }
 
+    @ExceptionHandler(DuplicateMajorDepartmentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse handleDuplicateMajorDepartment(
+        DuplicateMajorDepartmentException exception
+    ) {
+        return new ApiErrorResponse("DUPLICATE_MAJOR_DEPARTMENT", exception.getMessage());
+    }
+
     @ExceptionHandler({
         MethodArgumentNotValidException.class,
         HttpMessageNotReadableException.class,

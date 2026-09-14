@@ -8,6 +8,7 @@ import com.ahni.backend.entity.*;
 import com.ahni.backend.exception.DepartmentNotFoundException;
 import com.ahni.backend.exception.InvalidEnrollmentStatusException;
 import com.ahni.backend.exception.StudentAlreadyRegisteredException;
+import com.ahni.backend.exception.StudentEmailAlreadyRegisteredException;
 import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.repository.DepartmentRepository;
 import com.ahni.backend.repository.StudentMajorRepository;
@@ -44,6 +45,9 @@ public class StudentService {
     public StudentProfileResponse registerProfile(UUID authUserId, String email, StudentProfileRegistrationRequest request) {
         if (studentRepository.findByAuthUserId(authUserId).isPresent()) {
             throw new StudentAlreadyRegisteredException();
+        }
+        if (studentRepository.existsByEmailIgnoreCase(email)) {
+            throw new StudentEmailAlreadyRegisteredException();
         }
 
         EnrollmentStatus enrollmentStatus = request.enrollmentStatus();

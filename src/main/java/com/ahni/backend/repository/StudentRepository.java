@@ -8,4 +8,6 @@ import java.util.UUID;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
     Optional<Student> findByAuthUserId(UUID authUserId);
+
+    boolean existsByEmailIgnoreCase(String email);
 }

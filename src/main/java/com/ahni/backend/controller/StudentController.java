@@ -151,13 +151,18 @@ public class StudentController {
         ),
         @ApiResponse(
             responseCode = "409",
-            description = "이미 등록된 학생",
+            description = "이미 등록된 학생 또는 이메일",
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = com.ahni.backend.dto.ApiErrorResponse.class),
-                examples = @ExampleObject(value = """
-                    {"code":"STUDENT_ALREADY_REGISTERED","message":"이미 가입된 학생입니다."}
-                    """)
+                examples = {
+                    @ExampleObject(name = "학생 중복", value = """
+                        {"code":"STUDENT_ALREADY_REGISTERED","message":"이미 가입된 학생입니다."}
+                        """),
+                    @ExampleObject(name = "이메일 중복", value = """
+                        {"code":"STUDENT_EMAIL_ALREADY_REGISTERED","message":"이 이메일로 등록된 학생 정보가 이미 있습니다."}
+                        """)
+                }
             )
         )
     })

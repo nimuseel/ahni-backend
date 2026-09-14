@@ -45,6 +45,16 @@ public class StudentMajor {
         this.majorType = majorType;
     }
 
+    public boolean isAssignedTo(Department department) {
+        return this.department.getEntityId().equals(department.getEntityId());
+    }
+
+    public void softDelete() {
+        if (deletedAt == null) {
+            deletedAt = Instant.now();
+        }
+    }
+
     @PrePersist
     void onCreate() {
         Instant now = Instant.now();

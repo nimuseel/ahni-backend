@@ -5,8 +5,11 @@ import com.ahni.backend.entity.Student;
 import com.ahni.backend.entity.StudentMajor;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface StudentMajorRepository extends JpaRepository<StudentMajor, Long> {
     Optional<StudentMajor> findByStudentAndMajorTypeAndDeletedAtIsNull(Student student, MajorType majorType);
+
+    List<StudentMajor> findAllByStudentAndDeletedAtIsNull(Student student);
 }

@@ -20,7 +20,10 @@ public record CourseResponse(
     BigDecimal credit,
     @Schema(description = "과목 분류", example = "MAJOR")
     CourseCategory category,
-    @Schema(description = "소속 학과. 공통 교양·선택 과목은 null일 수 있습니다.")
+    @Schema(
+        description = "소속 학과. 공통 교양·선택 과목은 null일 수 있습니다.",
+        nullable = true
+    )
     DepartmentResponse department
 ) {
 }

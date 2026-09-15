@@ -130,7 +130,7 @@ git commit -m "feat(course): 과목 카탈로그 스키마 추가"
 **Interfaces:**
 - Produces: `Course(Department, String, String, BigDecimal, CourseCategory)` and getters used by persistence and mapping.
 
-- [ ] **Step 1: Write failing entity tests**
+- [x] **Step 1: Write failing entity tests**
 
 Cover these observable behaviors with literal expectations:
 
@@ -151,7 +151,7 @@ void 전공_과목은_학과가_필수다() {
 
 Also test blank/overlong code, blank/overlong name, null/out-of-range/more-than-one-decimal credit, null category, and that a department-less general course is valid.
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 ```bash
 ./gradlew test --tests '*CourseTest'
@@ -159,17 +159,17 @@ Also test blank/overlong code, blank/overlong name, null/out-of-range/more-than-
 
 Expected: FAIL because `Course` and `CourseCategory` do not exist.
 
-- [ ] **Step 3: Implement the enum and entity**
+- [x] **Step 3: Implement the enum and entity**
 
 Use `Locale.ROOT` for uppercase normalization and `BigDecimal.compareTo` for bounds. Reject `credit.stripTrailingZeros().scale() > 1`. Map credit with `precision = 4, scale = 1`; map category with `EnumType.STRING`; set timestamps in `@PrePersist` and update `updatedAt` in `@PreUpdate`.
 
-- [ ] **Step 4: Verify GREEN**
+- [x] **Step 4: Verify GREEN**
 
 ```bash
 ./gradlew test --tests '*CourseTest'
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/main/java/com/ahni/backend/domain/CourseCategory.java \

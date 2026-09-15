@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 @RestControllerAdvice
 @Hidden
@@ -42,6 +43,12 @@ public class GlobalExceptionHandler {
         return new ApiErrorResponse("INVALID_ENROLLMENT_STATUS", exception.getMessage());
     }
 
+    @ExceptionHandler(InvalidCourseCategoryException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse handleInvalidCourseCategory(InvalidCourseCategoryException exception) {
+        return new ApiErrorResponse("INVALID_COURSE_CATEGORY", exception.getMessage());
+    }
+
     @ExceptionHandler(DuplicateMajorDepartmentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrorResponse handleDuplicateMajorDepartment(
@@ -53,6 +60,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
         MethodArgumentNotValidException.class,
         HttpMessageNotReadableException.class,
+        MethodArgumentTypeMismatchException.class,
         IllegalArgumentException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)

@@ -51,4 +51,21 @@ class OpenApiContractTest {
 			.andExpect(content().contentTypeCompatibleWith("text/html"));
 	}
 
+	@Test
+	void courseDepartmentIsDocumentedAsNullable() throws Exception {
+		String actual = mockMvc.perform(get("/v3/api-docs"))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		var departmentSchema = objectMapper.readTree(actual)
+			.at("/components/schemas/CourseResponse/properties/department");
+
+		assertEquals("null", departmentSchema.path("type").asText());
+		assertEquals(
+			"#/components/schemas/DepartmentResponse",
+			departmentSchema.path("$ref").asText()
+		);
+	}
+
 }

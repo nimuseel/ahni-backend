@@ -10,5 +10,7 @@ import java.util.UUID;
 public interface DepartmentRepository extends JpaRepository<Department, Long> {
     Optional<Department> findByEntityId(UUID entityId);
 
+    Optional<Department> findByEntityIdAndDeletedAtIsNull(UUID entityId);
+
     List<Department> findAllByDeletedAtIsNullOrderByNameAsc();
 }

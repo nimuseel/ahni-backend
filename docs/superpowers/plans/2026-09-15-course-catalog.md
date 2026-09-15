@@ -351,7 +351,7 @@ git commit -m "feat(course): 과목 목록 API 추가"
 **Interfaces:**
 - Produces: runtime and checked-in OpenAPI semantic equality plus durable course-domain rules.
 
-- [ ] **Step 1: Run the OpenAPI contract test and verify RED**
+- [x] **Step 1: Run the OpenAPI contract test and verify RED**
 
 ```bash
 ./gradlew integrationTest --tests '*OpenApiContractTest.generatedContractMatchesCheckedInContract'
@@ -359,15 +359,15 @@ git commit -m "feat(course): 과목 목록 API 추가"
 
 Expected: FAIL and generate `build/openapi/openapi.json` because `/api/v1/courses` is absent from the checked-in contract.
 
-- [ ] **Step 2: Review and copy the generated contract**
+- [x] **Step 2: Review and copy the generated contract**
 
 Confirm the generated operation contains bearer security, both optional parameters, the complete `CourseResponse`, nullable department, and documented `200`, `400`, `401`, and `404` responses. Then copy `build/openapi/openapi.json` to `docs/api/openapi.json`.
 
-- [ ] **Step 3: Update domain and traceability docs**
+- [x] **Step 3: Update domain and traceability docs**
 
 Record that `course` owns stable code/name/credit/category/active state while future `required_course` owns requirement classification. Add the course catalog source row with the protecting migration, entity, repository, service, controller, and OpenAPI tests.
 
-- [ ] **Step 4: Verify the complete harness**
+- [x] **Step 4: Verify the complete harness**
 
 ```bash
 ./scripts/verify
@@ -375,7 +375,7 @@ Record that `course` owns stable code/name/credit/category/active state while fu
 
 Expected: formatting/lint, unit tests, PostgreSQL integration tests, architecture rules, and OpenAPI contract all pass without warnings.
 
-- [ ] **Step 5: Commit and push**
+- [x] **Step 5: Commit and push**
 
 ```bash
 git add docs/api/openapi.json docs/domain/index.md docs/product/traceability.md

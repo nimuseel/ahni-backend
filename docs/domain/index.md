@@ -13,8 +13,11 @@ When a rule is implemented, document the invariant and add a unit test beside it
 - `student`: local profile linked to a Supabase user ID, including self-reported enrollment state.
 - `student_major`: exactly one active primary major and at most one active double major and minor per student. "Multiple majors" is the product umbrella for double-major and minor assignments, not a stored major type.
 - `department`: academic department referenced by student and later course data.
+- `course`: active catalog entry with a globally unique uppercase code, normalized name, exact decimal credit, broad category, and optional department. `MAJOR` courses require a department; shared general-education and elective courses may omit it.
 - `admin`: administrator profile linked to a Supabase user ID for management functions.
 - `allowed_signup_email_domain`: exact school domains accepted by the Supabase before-user-created hook.
+
+Course category describes the broad academic area (`MAJOR`, `GENERAL_EDUCATION`, or `ELECTIVE`). It does not say whether a course is required for graduation. A future graduation-requirement relation owns required-course classification because that rule varies by department and admission year. Student grades, graduation analysis, and course guidance must reference the shared course catalog instead of duplicating course code, name, or credit.
 
 Supabase email confirmation is the signup gate. `PENDING` describes a Supabase user before email confirmation and is not a persisted student account status. The backend creates a student profile only from an authenticated JWT and derives ownership from its subject and email claims.
 

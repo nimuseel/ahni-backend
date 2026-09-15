@@ -63,7 +63,7 @@
 - Consumes: `department(id)` from V1 and `ahni_korean` collation.
 - Produces: constrained `course` table for JPA validation and repository tests.
 
-- [ ] **Step 1: Make the migration test require V11**
+- [x] **Step 1: Make the migration test require V11**
 
 Add a literal assertion for version `11` in `appliesAllMigrationsSuccessfully()`.
 
@@ -71,7 +71,7 @@ Add a literal assertion for version `11` in `appliesAllMigrationsSuccessfully()`
 () -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("11"))
 ```
 
-- [ ] **Step 2: Run the focused migration test and verify RED**
+- [x] **Step 2: Run the focused migration test and verify RED**
 
 ```bash
 ./gradlew integrationTest --tests '*PostgreSqlMigrationIntegrationTest.appliesAllMigrationsSuccessfully'
@@ -79,7 +79,7 @@ Add a literal assertion for version `11` in `appliesAllMigrationsSuccessfully()`
 
 Expected: FAIL because migration version 11 is absent.
 
-- [ ] **Step 3: Add V11 with database constraints**
+- [x] **Step 3: Add V11 with database constraints**
 
 Create the table with this shape:
 
@@ -108,11 +108,11 @@ CREATE INDEX idx_course_department ON public.course (department_id);
 CREATE INDEX idx_course_active_category ON public.course (is_active, category);
 ```
 
-- [ ] **Step 4: Verify GREEN**
+- [x] **Step 4: Verify GREEN**
 
 Run the focused migration test again. Expected: PASS for V1-V11.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/main/resources/db/migration/V11__create_course_catalog.sql \
@@ -382,4 +382,3 @@ git add docs/api/openapi.json docs/domain/index.md docs/product/traceability.md
 git commit -m "docs(course): 과목 카탈로그 계약 문서화"
 git push -u origin feat/course-catalog
 ```
-

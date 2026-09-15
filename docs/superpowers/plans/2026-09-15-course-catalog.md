@@ -302,17 +302,17 @@ git commit -m "feat(course): 과목 조회 서비스 추가"
 - Produces: `GET /api/v1/courses?departmentEntityId=<uuid>&category=<value>`.
 - Returns: `List<CourseResponse>` or the existing `ApiErrorResponse`.
 
-- [ ] **Step 1: Write failing MockMvc tests**
+- [x] **Step 1: Write failing MockMvc tests**
 
 Test with `jwt()` that the controller serializes code, decimal credit, enum category, and nullable/non-null department. Assert the endpoint forwards both query values through the service by returning distinct literal fixtures. Add tests for empty `[]`, no JWT `401`, invalid category `400 INVALID_COURSE_CATEGORY`, malformed UUID `400 INVALID_REQUEST`, and missing department `404 DEPARTMENT_NOT_FOUND`.
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 ```bash
 ./gradlew integrationTest --tests '*CourseControllerTest'
 ```
 
-- [ ] **Step 3: Implement controller and stable error mapping**
+- [x] **Step 3: Implement controller and stable error mapping**
 
 The controller signature is:
 
@@ -328,11 +328,11 @@ public List<CourseResponse> getCourses(
 
 Document bearer security, both filters, a complete success example, `400`, `401`, and `404` examples. Map `InvalidCourseCategoryException` to `400` and code `INVALID_COURSE_CATEGORY`. Add `MethodArgumentTypeMismatchException` to the existing `INVALID_REQUEST` handler.
 
-- [ ] **Step 4: Verify GREEN**
+- [x] **Step 4: Verify GREEN**
 
 Run `CourseControllerTest`, `SecurityConfigurationTest`, and architecture tests.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/main/java/com/ahni/backend/controller/CourseController.java \

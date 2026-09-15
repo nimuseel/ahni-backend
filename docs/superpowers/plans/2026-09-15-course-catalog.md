@@ -247,7 +247,7 @@ git commit -m "feat(course): 활성 과목 조회 저장소 추가"
 - Produces: `List<CourseResponse> getCourses(UUID departmentEntityId, String category)`.
 - Uses: exact active department lookup and the four Task 3 repository methods.
 
-- [ ] **Step 1: Write failing service tests**
+- [x] **Step 1: Write failing service tests**
 
 Write one test per filter combination. Assert returned DTO values rather than only Mockito calls. Include:
 
@@ -266,21 +266,21 @@ assertThat(result).containsExactly(new CourseResponse(
 
 Also prove lowercase category normalization, invalid category failure, missing/inactive department failure, and nullable department mapping.
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 ```bash
 ./gradlew test --tests '*CourseServiceTest'
 ```
 
-- [ ] **Step 3: Implement minimal service behavior**
+- [x] **Step 3: Implement minimal service behavior**
 
 Parse non-null category with `trim().toUpperCase(Locale.ROOT)` and convert with `CourseCategory.valueOf`. Translate conversion failures to `InvalidCourseCategoryException`. Resolve non-null department IDs with `findByEntityIdAndDeletedAtIsNull`; then choose exactly one repository query from the four input combinations. Map nullable departments to nullable `DepartmentResponse`.
 
-- [ ] **Step 4: Verify GREEN**
+- [x] **Step 4: Verify GREEN**
 
 Run `CourseServiceTest` and the existing `DepartmentServiceTest`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/main/java/com/ahni/backend/dto/CourseResponse.java \

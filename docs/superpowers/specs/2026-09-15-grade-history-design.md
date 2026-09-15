@@ -1,6 +1,6 @@
 # Grade History Design
 
-**Status:** Approved direction, pending written-spec review
+**Status:** Approved
 
 **Date:** 2026-09-15
 

@@ -187,7 +187,7 @@ git commit -m "feat(course): 과목 도메인 모델 추가"
 **Interfaces:**
 - Produces four active query methods accepting `Department` and/or `CourseCategory` and ordered by `code`.
 
-- [ ] **Step 1: Write failing PostgreSQL repository tests**
+- [x] **Step 1: Write failing PostgreSQL repository tests**
 
 Tests must persist real `Department` and `Course` rows and prove:
 
@@ -203,7 +203,7 @@ assertThat(courseRepository.findAllByActiveTrueAndDepartmentAndCategoryOrderByCo
 
 Add separate tests for category-only and department-only filters, inactive exclusion, nullable department persistence, duplicate code rejection, lowercase-code rejection through native SQL, invalid credit, invalid category, and major-without-department rejection.
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 ```bash
 ./gradlew integrationTest --tests '*CourseRepositoryIntegrationTest'
@@ -211,7 +211,7 @@ Add separate tests for category-only and department-only filters, inactive exclu
 
 Expected: FAIL because the repository is absent.
 
-- [ ] **Step 3: Add the repository**
+- [x] **Step 3: Add the repository**
 
 ```java
 public interface CourseRepository extends JpaRepository<Course, Long> {
@@ -222,11 +222,11 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
 }
 ```
 
-- [ ] **Step 4: Verify GREEN**
+- [x] **Step 4: Verify GREEN**
 
 Run the focused integration test and ensure every constraint/query test passes against PostgreSQL 18.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/main/java/com/ahni/backend/repository/CourseRepository.java \

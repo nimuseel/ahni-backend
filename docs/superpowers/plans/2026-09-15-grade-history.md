@@ -70,7 +70,7 @@
 - Consumes: `student(id)` and `course(id)` from existing migrations.
 - Produces: constrained `student_grade` storage used by the JPA entity and repository tests.
 
-- [ ] **Step 1: Make the migration test require V12**
+- [x] **Step 1: Make the migration test require V12**
 
 Add this literal assertion to `appliesAllMigrationsSuccessfully()`:
 
@@ -78,7 +78,7 @@ Add this literal assertion to `appliesAllMigrationsSuccessfully()`:
 () -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("12"))
 ```
 
-- [ ] **Step 2: Run the focused migration test and verify RED**
+- [x] **Step 2: Run the focused migration test and verify RED**
 
 ```bash
 ./gradlew integrationTest --tests '*PostgreSqlMigrationIntegrationTest.appliesAllMigrationsSuccessfully'
@@ -86,7 +86,7 @@ Add this literal assertion to `appliesAllMigrationsSuccessfully()`:
 
 Expected: FAIL because migration version 12 is absent.
 
-- [ ] **Step 3: Add V12 with database constraints**
+- [x] **Step 3: Add V12 with database constraints**
 
 ```sql
 CREATE TABLE public.student_grade (
@@ -155,11 +155,11 @@ CREATE INDEX idx_student_grade_course
     ON public.student_grade (course_id);
 ```
 
-- [ ] **Step 4: Verify GREEN**
+- [x] **Step 4: Verify GREEN**
 
 Run the focused migration test again. Expected: V1-V12 all report `SUCCESS` on PostgreSQL 18.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/main/resources/db/migration/V12__create_student_grade.sql \

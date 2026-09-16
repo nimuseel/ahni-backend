@@ -418,7 +418,7 @@ git commit -m "feat(grade): 학생 성적 저장소 추가"
 - Produces: `GradeResponse register(UUID authUserId, GradeRegistrationRequest request)`.
 - Produces: `List<GradeResponse> getGrades(UUID authUserId)`.
 
-- [ ] **Step 1: Write failing service tests**
+- [x] **Step 1: Write failing service tests**
 
 Use complete entity fixtures and assert returned values, not only Mockito interactions. Cover:
 
@@ -451,7 +451,7 @@ Add separate tests for:
 - listing sorts year descending, term sequence descending, then code ascending;
 - no records returns an empty list.
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 ```bash
 ./gradlew test --tests '*GradeServiceTest'
@@ -459,7 +459,7 @@ Add separate tests for:
 
 Expected: compilation fails because the service, DTOs, and exceptions do not exist.
 
-- [ ] **Step 3: Add DTOs and exceptions**
+- [x] **Step 3: Add DTOs and exceptions**
 
 ```java
 public record GradeRegistrationRequest(
@@ -508,7 +508,7 @@ new GradeAlreadyRegisteredException()      // "해당 학기의 과목 성적이
 new InvalidGradeException(cause.getMessage())
 ```
 
-- [ ] **Step 4: Implement minimal service behavior**
+- [x] **Step 4: Implement minimal service behavior**
 
 Registration selects the student and course, checks the tuple, constructs the entity, and flushes inside a persistence-conflict translation boundary:
 
@@ -555,13 +555,13 @@ private static final Comparator<StudentGrade> NEWEST_FIRST =
         .thenComparing(grade -> grade.getCourse().getCode());
 ```
 
-- [ ] **Step 5: Verify GREEN**
+- [x] **Step 5: Verify GREEN**
 
 ```bash
 ./gradlew test --tests '*GradeServiceTest' --tests '*StudentServiceTest' --tests '*CourseServiceTest'
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/main/java/com/ahni/backend/dto/GradeRegistrationRequest.java \

@@ -69,6 +69,12 @@ public class GlobalExceptionHandler {
         return new ApiErrorResponse("GRADE_ALREADY_REGISTERED", exception.getMessage());
     }
 
+    @ExceptionHandler(GradeNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiErrorResponse handleGradeNotFound(GradeNotFoundException exception) {
+        return new ApiErrorResponse("GRADE_NOT_FOUND", exception.getMessage());
+    }
+
     @ExceptionHandler(DuplicateMajorDepartmentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrorResponse handleDuplicateMajorDepartment(

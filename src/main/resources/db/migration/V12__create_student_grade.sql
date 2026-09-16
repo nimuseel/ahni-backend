@@ -3,7 +3,7 @@ CREATE TABLE public.student_grade (
     entity_id uuid NOT NULL DEFAULT gen_random_uuid(),
     student_id bigint NOT NULL,
     course_id bigint NOT NULL,
-    academic_year smallint NOT NULL,
+    academic_year integer NOT NULL,
     term varchar(20) NOT NULL,
     grade_code varchar(20),
     grade_point numeric(3,2),

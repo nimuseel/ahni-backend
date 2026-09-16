@@ -321,7 +321,7 @@ git commit -m "feat(grade): 성적 이력 도메인 모델 추가"
 **Interfaces:**
 - Produces duplicate detection, current-student list loading with eager course data, and active course lookup.
 
-- [ ] **Step 1: Write failing PostgreSQL repository tests**
+- [x] **Step 1: Write failing PostgreSQL repository tests**
 
 Persist real `Student`, `Department`, `Course`, and `StudentGrade` rows. Prove these behaviors with separate tests:
 
@@ -357,7 +357,7 @@ Also prove:
 
 Cleanup order in `@BeforeEach` is `student_grade`, `course`, `student_major`, `student`, then `department` to respect foreign keys.
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 ```bash
 ./gradlew integrationTest --tests '*StudentGradeRepositoryIntegrationTest'
@@ -365,7 +365,7 @@ Cleanup order in `@BeforeEach` is `student_grade`, `course`, `student_major`, `s
 
 Expected: compilation fails because `StudentGradeRepository` and the active external-ID method are absent.
 
-- [ ] **Step 3: Add repository interfaces**
+- [x] **Step 3: Add repository interfaces**
 
 ```java
 public interface StudentGradeRepository extends JpaRepository<StudentGrade, Long> {
@@ -387,13 +387,13 @@ Add to `CourseRepository`:
 Optional<Course> findByEntityIdAndActiveTrue(UUID entityId);
 ```
 
-- [ ] **Step 4: Verify GREEN against PostgreSQL 18**
+- [x] **Step 4: Verify GREEN against PostgreSQL 18**
 
 ```bash
 ./gradlew integrationTest --tests '*StudentGradeRepositoryIntegrationTest'
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/main/java/com/ahni/backend/repository/StudentGradeRepository.java \

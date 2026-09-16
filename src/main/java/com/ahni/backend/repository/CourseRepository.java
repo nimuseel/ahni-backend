@@ -6,8 +6,12 @@ import com.ahni.backend.entity.Department;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
+    Optional<Course> findByEntityIdAndActiveTrue(UUID entityId);
+
     List<Course> findAllByActiveTrueOrderByCodeAsc();
 
     List<Course> findAllByActiveTrueAndDepartmentOrderByCodeAsc(Department department);

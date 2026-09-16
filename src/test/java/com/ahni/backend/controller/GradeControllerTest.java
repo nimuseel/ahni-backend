@@ -184,6 +184,9 @@ class GradeControllerTest {
                 {"academicYear":2025,"term":"SECOND","gradeCode":"A_PLUS","credit":3.0}
                 """,
             """
+                {"courseEntityId":"00000000-0000-0000-0000-000000000101","term":"SECOND","gradeCode":"A_PLUS","credit":3.0}
+                """,
+            """
                 {"courseEntityId":"00000000-0000-0000-0000-000000000101","academicYear":2025,"gradeCode":"A_PLUS","credit":3.0}
                 """,
             """

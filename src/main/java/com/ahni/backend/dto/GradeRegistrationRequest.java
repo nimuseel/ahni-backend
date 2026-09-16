@@ -17,9 +17,10 @@ public record GradeRegistrationRequest(
     @Schema(description = "과목 식별자", example = "00000000-0000-0000-0000-000000000101")
     UUID courseEntityId,
 
+    @NotNull
     @Min(2000)
     @Schema(description = "수강연도", example = "2025", minimum = "2000")
-    int academicYear,
+    Integer academicYear,
 
     @NotNull
     @Schema(description = "수강학기", example = "SECOND")

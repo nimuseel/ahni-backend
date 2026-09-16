@@ -712,7 +712,7 @@ git commit -m "feat(grade): 성적 등록 및 조회 API 추가"
 **Interfaces:**
 - Produces runtime and checked-in OpenAPI semantic equality plus durable grade-history rules.
 
-- [ ] **Step 1: Add focused nullable-contract assertions**
+- [x] **Step 1: Add focused nullable-contract assertions**
 
 Add a test that fetches `/v3/api-docs` and asserts the object reference uses `type: null` and nullable scalar types include `null`:
 
@@ -734,7 +734,7 @@ assertEquals(
 
 Run the focused test and ensure it passes against the controller annotations before refreshing the checked-in file.
 
-- [ ] **Step 2: Run the checked-in contract test and verify RED**
+- [x] **Step 2: Run the checked-in contract test and verify RED**
 
 ```bash
 ./gradlew integrationTest --tests '*OpenApiContractTest.generatedContractMatchesCheckedInContract'
@@ -742,7 +742,7 @@ Run the focused test and ensure it passes against the controller annotations bef
 
 Expected: FAIL and generate `build/openapi/openapi.json` because the grade paths and schemas are absent from the checked-in contract.
 
-- [ ] **Step 3: Review and copy the generated contract**
+- [x] **Step 3: Review and copy the generated contract**
 
 Inspect with:
 
@@ -760,7 +760,7 @@ Confirm bearer security, request required fields/default booleans, nullable RPL 
 cp build/openapi/openapi.json docs/api/openapi.json
 ```
 
-- [ ] **Step 4: Update durable domain and traceability docs**
+- [x] **Step 4: Update durable domain and traceability docs**
 
 Add to `docs/domain/index.md`:
 
@@ -770,7 +770,7 @@ Add to `docs/domain/index.md`:
 
 Add a UC-S03 row to `docs/product/traceability.md` naming V12, entity, repository, service, controller, and OpenAPI tests. State that GPA, OCR, and retake calculation remain planned consumers rather than behavior in this slice.
 
-- [ ] **Step 5: Verify the complete harness**
+- [x] **Step 5: Verify the complete harness**
 
 ```bash
 ./scripts/verify
@@ -778,7 +778,7 @@ Add a UC-S03 row to `docs/product/traceability.md` naming V12, entity, repositor
 
 Expected: unit tests, PostgreSQL 18 migration/repository integration tests, MVC/security tests, architecture rules, and OpenAPI contract all pass.
 
-- [ ] **Step 6: Commit and push**
+- [x] **Step 6: Commit and push**
 
 ```bash
 git add src/test/java/com/ahni/backend/config/OpenApiContractTest.java \

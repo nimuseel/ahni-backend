@@ -586,7 +586,7 @@ git commit -m "feat(grade): 성적 등록 및 조회 서비스 추가"
 - Produces: authenticated `POST /api/v1/grades` and `GET /api/v1/grades`.
 - Returns: `GradeResponse`, `List<GradeResponse>`, or the existing `ApiErrorResponse`.
 
-- [ ] **Step 1: Write failing MockMvc tests**
+- [x] **Step 1: Write failing MockMvc tests**
 
 The success test must use a literal JWT subject and complete response fixture:
 
@@ -621,7 +621,7 @@ Add separate tests for:
 - missing student and course return their stable `404` codes;
 - duplicate grade returns `409 GRADE_ALREADY_REGISTERED`.
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 ```bash
 ./gradlew integrationTest --tests '*GradeControllerTest'
@@ -629,7 +629,7 @@ Add separate tests for:
 
 Expected: compilation fails because `GradeController` does not exist.
 
-- [ ] **Step 3: Add stable error mappings**
+- [x] **Step 3: Add stable error mappings**
 
 Add handlers to `GlobalExceptionHandler`:
 
@@ -653,7 +653,7 @@ public ApiErrorResponse handleGradeAlreadyRegistered(GradeAlreadyRegisteredExcep
 }
 ```
 
-- [ ] **Step 4: Add the controller and OpenAPI annotations**
+- [x] **Step 4: Add the controller and OpenAPI annotations**
 
 ```java
 @RestController
@@ -683,7 +683,7 @@ public class GradeController {
 
 Annotate both operations with `@Operation(security = @SecurityRequirement(name = "bearerAuth"))`. Document complete request and response examples. POST documents `201`, `400`, `401`, `404`, and `409`; GET documents `200`, `401`, and `404`. Use `ApiErrorResponse` schemas and stable literal examples for every application error code.
 
-- [ ] **Step 5: Verify GREEN**
+- [x] **Step 5: Verify GREEN**
 
 ```bash
 ./gradlew integrationTest \
@@ -692,7 +692,7 @@ Annotate both operations with `@Operation(security = @SecurityRequirement(name =
   --tests '*LayerDependencyTest'
 ```
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add src/main/java/com/ahni/backend/controller/GradeController.java \

@@ -192,6 +192,59 @@ class StudentGradeRepositoryIntegrationTest {
         )).isEmpty();
     }
 
+    @Test
+    void 외부식별자와_학생으로_본인_성적만_조회한다() {
+        GradeFixture fixture = saveFixture("owner@inha.edu", "CSE101");
+        Student otherStudent = studentRepository.saveAndFlush(student("other@inha.edu"));
+        StudentGrade saved = studentGradeRepository.saveAndFlush(grade(
+            fixture.student(),
+            fixture.course(),
+            AcademicTerm.SECOND
+        ));
+        entityManager.clear();
+
+        assertThat(studentGradeRepository.findByEntityIdAndStudent(
+            saved.getEntityId(),
+            fixture.student()
+        )).isPresent();
+        assertThat(studentGradeRepository.findByEntityIdAndStudent(
+            saved.getEntityId(),
+            otherStudent
+        )).isEmpty();
+    }
+
+    @Test
+    void 수정할_성적을_제외하고_같은_수강이력이_있는지_확인한다() {
+        GradeFixture fixture = saveFixture("update@inha.edu", "CSE101");
+        StudentGrade first = studentGradeRepository.saveAndFlush(grade(
+            fixture.student(),
+            fixture.course(),
+            AcademicTerm.FIRST
+        ));
+        studentGradeRepository.saveAndFlush(grade(
+            fixture.student(),
+            fixture.course(),
+            AcademicTerm.SECOND
+        ));
+
+        assertThat(studentGradeRepository
+            .existsByStudentAndCourseAndAcademicYearAndTermAndIdNot(
+                fixture.student(),
+                fixture.course(),
+                2025,
+                AcademicTerm.SECOND,
+                first.getId()
+            )).isTrue();
+        assertThat(studentGradeRepository
+            .existsByStudentAndCourseAndAcademicYearAndTermAndIdNot(
+                fixture.student(),
+                fixture.course(),
+                2025,
+                AcademicTerm.FIRST,
+                first.getId()
+            )).isFalse();
+    }
+
     @ParameterizedTest
     @MethodSource("invalidRawGradeCases")
     void 데이터베이스는_유효하지_않은_성적을_거부한다(

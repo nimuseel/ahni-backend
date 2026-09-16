@@ -104,6 +104,30 @@ public class StudentGrade {
         this.retake = retake;
     }
 
+    public void update(
+        int academicYear,
+        AcademicTerm term,
+        GradeCode gradeCode,
+        BigDecimal credit,
+        boolean rpl,
+        boolean retake
+    ) {
+        if (term == null) {
+            throw new IllegalArgumentException("학기는 필수입니다.");
+        }
+        validateAcademicYear(academicYear);
+        validateCredit(credit);
+        validateGrade(gradeCode, rpl);
+
+        this.academicYear = academicYear;
+        this.term = term;
+        this.gradeCode = gradeCode;
+        this.gradePoint = rpl ? null : gradeCode.gradePoint();
+        this.credit = credit;
+        this.rpl = rpl;
+        this.retake = retake;
+    }
+
     private static void validateRequiredFields(
         Student student,
         Course course,

@@ -205,6 +205,83 @@ class StudentGradeTest {
         assertThat(grade.isRetake()).isTrue();
     }
 
+    @Test
+    void 성적_정보를_수정한다() {
+        StudentGrade grade = createGrade(
+            GradeCode.B_PLUS,
+            new BigDecimal("3.0"),
+            false,
+            false
+        );
+
+        grade.update(
+            2024,
+            AcademicTerm.WINTER,
+            GradeCode.A_ZERO,
+            new BigDecimal("2.0"),
+            false,
+            true
+        );
+
+        assertThat(grade.getAcademicYear()).isEqualTo(2024);
+        assertThat(grade.getTerm()).isEqualTo(AcademicTerm.WINTER);
+        assertThat(grade.getGradeCode()).isEqualTo(GradeCode.A_ZERO);
+        assertThat(grade.getGradePoint()).isEqualByComparingTo("4.00");
+        assertThat(grade.getCredit()).isEqualByComparingTo("2.0");
+        assertThat(grade.isRpl()).isFalse();
+        assertThat(grade.isRetake()).isTrue();
+    }
+
+    @Test
+    void 수정한_RPL은_등급과_평점이_없다() {
+        StudentGrade grade = createGrade(
+            GradeCode.A_PLUS,
+            new BigDecimal("3.0"),
+            false,
+            false
+        );
+
+        grade.update(
+            2025,
+            AcademicTerm.SECOND,
+            null,
+            new BigDecimal("3.0"),
+            true,
+            false
+        );
+
+        assertThat(grade.getGradeCode()).isNull();
+        assertThat(grade.getGradePoint()).isNull();
+        assertThat(grade.isRpl()).isTrue();
+    }
+
+    @Test
+    void 유효하지_않은_수정은_기존_성적을_변경하지_않는다() {
+        StudentGrade grade = createGrade(
+            GradeCode.B_PLUS,
+            new BigDecimal("3.0"),
+            false,
+            false
+        );
+
+        assertThatThrownBy(() -> grade.update(
+            2024,
+            AcademicTerm.FIRST,
+            GradeCode.A_PLUS,
+            new BigDecimal("2.0"),
+            true,
+            true
+        )).isInstanceOf(IllegalArgumentException.class);
+
+        assertThat(grade.getAcademicYear()).isEqualTo(2025);
+        assertThat(grade.getTerm()).isEqualTo(AcademicTerm.SECOND);
+        assertThat(grade.getGradeCode()).isEqualTo(GradeCode.B_PLUS);
+        assertThat(grade.getGradePoint()).isEqualByComparingTo("3.50");
+        assertThat(grade.getCredit()).isEqualByComparingTo("3.0");
+        assertThat(grade.isRpl()).isFalse();
+        assertThat(grade.isRetake()).isFalse();
+    }
+
     private StudentGrade createGrade(
         GradeCode gradeCode,
         BigDecimal credit,

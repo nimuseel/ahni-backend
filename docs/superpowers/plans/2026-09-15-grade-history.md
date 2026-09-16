@@ -179,7 +179,7 @@ git commit -m "feat(grade): 성적 이력 스키마 추가"
 - Produces: `StudentGrade(Student, Course, int, AcademicTerm, GradeCode, BigDecimal, boolean, boolean)` and getters consumed by persistence and service mapping.
 - Produces: `AcademicTerm.sequence()` and nullable `GradeCode.gradePoint()`.
 
-- [ ] **Step 1: Write failing entity tests**
+- [x] **Step 1: Write failing entity tests**
 
 Use literal, independently calculated expectations. Include parameterized conversion coverage:
 
@@ -226,7 +226,7 @@ Add separate tests proving:
 - credit `0.1` and `30.0` are accepted; null, `0.0`, `30.1`, and `3.25` are rejected;
 - retake status is retained without modifying another record.
 
-- [ ] **Step 2: Verify RED**
+- [x] **Step 2: Verify RED**
 
 ```bash
 ./gradlew test --tests '*StudentGradeTest'
@@ -234,7 +234,7 @@ Add separate tests proving:
 
 Expected: compilation fails because `AcademicTerm`, `GradeCode`, and `StudentGrade` do not exist.
 
-- [ ] **Step 3: Implement enums and entity**
+- [x] **Step 3: Implement enums and entity**
 
 ```java
 public enum AcademicTerm {
@@ -295,13 +295,13 @@ if (!rpl && gradeCode == null) {
 this.gradePoint = rpl ? null : gradeCode.gradePoint();
 ```
 
-- [ ] **Step 4: Verify GREEN**
+- [x] **Step 4: Verify GREEN**
 
 ```bash
 ./gradlew test --tests '*StudentGradeTest'
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/main/java/com/ahni/backend/domain/AcademicTerm.java \

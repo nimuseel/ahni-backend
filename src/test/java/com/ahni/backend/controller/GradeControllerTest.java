@@ -8,8 +8,10 @@ import com.ahni.backend.dto.DepartmentResponse;
 import com.ahni.backend.dto.GradeCourseResponse;
 import com.ahni.backend.dto.GradeRegistrationRequest;
 import com.ahni.backend.dto.GradeResponse;
+import com.ahni.backend.dto.GradeUpdateRequest;
 import com.ahni.backend.exception.CourseNotFoundException;
 import com.ahni.backend.exception.GradeAlreadyRegisteredException;
+import com.ahni.backend.exception.GradeNotFoundException;
 import com.ahni.backend.exception.InvalidGradeException;
 import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.service.GradeService;
@@ -38,6 +40,8 @@ import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -251,6 +255,159 @@ class GradeControllerTest {
             .andExpect(jsonPath("$.code").value("GRADE_ALREADY_REGISTERED"));
     }
 
+    @Test
+    void 인증된_학생이_자신의_성적을_수정한다() throws Exception {
+        UUID gradeEntityId = UUID.fromString("00000000-0000-0000-0000-000000000201");
+        GradeUpdateRequest request = new GradeUpdateRequest(
+            2024,
+            AcademicTerm.WINTER,
+            GradeCode.B_PLUS,
+            new BigDecimal("2.0"),
+            false,
+            true
+        );
+        when(gradeService.update(AUTH_USER_ID, gradeEntityId, request))
+            .thenReturn(updatedResponse());
+
+        mockMvc.perform(put("/api/v1/grades/{gradeEntityId}", gradeEntityId)
+                .with(jwt().jwt(token -> token.subject(AUTH_USER_ID.toString())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateRequestJson()))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.academicYear").value(2024))
+            .andExpect(jsonPath("$.term").value("WINTER"))
+            .andExpect(jsonPath("$.gradeCode").value("B_PLUS"))
+            .andExpect(jsonPath("$.gradePoint").value(3.50))
+            .andExpect(jsonPath("$.credit").value(2.0))
+            .andExpect(jsonPath("$.retake").value(true));
+
+        verify(gradeService).update(AUTH_USER_ID, gradeEntityId, request);
+    }
+
+    @Test
+    void 인증된_학생이_자신의_성적을_삭제한다() throws Exception {
+        UUID gradeEntityId = UUID.fromString("00000000-0000-0000-0000-000000000201");
+
+        mockMvc.perform(delete("/api/v1/grades/{gradeEntityId}", gradeEntityId)
+                .with(jwt().jwt(token -> token.subject(AUTH_USER_ID.toString()))))
+            .andExpect(status().isNoContent())
+            .andExpect(content().string(""));
+
+        verify(gradeService).delete(AUTH_USER_ID, gradeEntityId);
+    }
+
+    @Test
+    void 인증되지_않은_사용자는_성적을_수정할_수_없다() throws Exception {
+        mockMvc.perform(put(
+                "/api/v1/grades/{gradeEntityId}",
+                "00000000-0000-0000-0000-000000000201"
+            )
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateRequestJson()))
+            .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(gradeService);
+    }
+
+    @Test
+    void 인증되지_않은_사용자는_성적을_삭제할_수_없다() throws Exception {
+        mockMvc.perform(delete(
+                "/api/v1/grades/{gradeEntityId}",
+                "00000000-0000-0000-0000-000000000201"
+            ))
+            .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(gradeService);
+    }
+
+    @ParameterizedTest
+    @MethodSource("invalidUpdateRequests")
+    void 잘못된_성적_수정_요청은_400을_반환한다(String requestJson) throws Exception {
+        mockMvc.perform(put(
+                "/api/v1/grades/{gradeEntityId}",
+                "00000000-0000-0000-0000-000000000201"
+            )
+                .with(jwt().jwt(token -> token.subject(AUTH_USER_ID.toString())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(requestJson))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+
+        verifyNoInteractions(gradeService);
+    }
+
+    static Stream<String> invalidUpdateRequests() {
+        return Stream.of(
+            """
+                {"academicYear":2025,"gradeCode":"A_PLUS","credit":3.0}
+                """,
+            """
+                {"academicYear":2025,"term":"SECOND","gradeCode":"A_PLUS","credit":3.25}
+                """
+        );
+    }
+
+    @Test
+    void 찾을_수_없는_성적을_수정하면_404를_반환한다() throws Exception {
+        UUID gradeEntityId = UUID.fromString("00000000-0000-0000-0000-000000000201");
+        when(gradeService.update(
+            AUTH_USER_ID,
+            gradeEntityId,
+            new GradeUpdateRequest(
+                2024,
+                AcademicTerm.WINTER,
+                GradeCode.B_PLUS,
+                new BigDecimal("2.0"),
+                false,
+                true
+            )
+        )).thenThrow(new GradeNotFoundException());
+
+        mockMvc.perform(put("/api/v1/grades/{gradeEntityId}", gradeEntityId)
+                .with(jwt().jwt(token -> token.subject(AUTH_USER_ID.toString())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateRequestJson()))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value("GRADE_NOT_FOUND"));
+    }
+
+    @Test
+    void 찾을_수_없는_성적을_삭제하면_404를_반환한다() throws Exception {
+        UUID gradeEntityId = UUID.fromString("00000000-0000-0000-0000-000000000201");
+        org.mockito.Mockito.doThrow(new GradeNotFoundException())
+            .when(gradeService)
+            .delete(AUTH_USER_ID, gradeEntityId);
+
+        mockMvc.perform(delete("/api/v1/grades/{gradeEntityId}", gradeEntityId)
+                .with(jwt().jwt(token -> token.subject(AUTH_USER_ID.toString()))))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.code").value("GRADE_NOT_FOUND"));
+    }
+
+    @Test
+    void 중복되는_성적으로_수정하면_409를_반환한다() throws Exception {
+        UUID gradeEntityId = UUID.fromString("00000000-0000-0000-0000-000000000201");
+        when(gradeService.update(
+            AUTH_USER_ID,
+            gradeEntityId,
+            new GradeUpdateRequest(
+                2024,
+                AcademicTerm.WINTER,
+                GradeCode.B_PLUS,
+                new BigDecimal("2.0"),
+                false,
+                true
+            )
+        )).thenThrow(new GradeAlreadyRegisteredException());
+
+        mockMvc.perform(put("/api/v1/grades/{gradeEntityId}", gradeEntityId)
+                .with(jwt().jwt(token -> token.subject(AUTH_USER_ID.toString())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updateRequestJson()))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.code").value("GRADE_ALREADY_REGISTERED"));
+    }
+
     private GradeRegistrationRequest standardRequest() {
         return new GradeRegistrationRequest(
             COURSE_ENTITY_ID,
@@ -277,6 +434,19 @@ class GradeControllerTest {
             """;
     }
 
+    private String updateRequestJson() {
+        return """
+            {
+              "academicYear": 2024,
+              "term": "WINTER",
+              "gradeCode": "B_PLUS",
+              "credit": 2.0,
+              "rpl": false,
+              "retake": true
+            }
+            """;
+    }
+
     private GradeResponse response(GradeCode gradeCode, BigDecimal gradePoint, boolean rpl) {
         return new GradeResponse(
             UUID.fromString("00000000-0000-0000-0000-000000000201"),
@@ -299,6 +469,31 @@ class GradeControllerTest {
             false,
             Instant.parse("2026-09-16T00:00:00Z"),
             Instant.parse("2026-09-16T00:00:00Z")
+        );
+    }
+
+    private GradeResponse updatedResponse() {
+        return new GradeResponse(
+            UUID.fromString("00000000-0000-0000-0000-000000000201"),
+            new GradeCourseResponse(
+                COURSE_ENTITY_ID,
+                "CSE101",
+                "프로그래밍 기초",
+                CourseCategory.MAJOR,
+                new DepartmentResponse(
+                    UUID.fromString("00000000-0000-0000-0000-000000000001"),
+                    "소프트웨어융합공학과"
+                )
+            ),
+            2024,
+            AcademicTerm.WINTER,
+            GradeCode.B_PLUS,
+            new BigDecimal("3.50"),
+            new BigDecimal("2.0"),
+            false,
+            true,
+            Instant.parse("2026-09-16T00:00:00Z"),
+            Instant.parse("2026-09-16T01:00:00Z")
         );
     }
 }

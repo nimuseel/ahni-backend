@@ -6,12 +6,14 @@ import com.ahni.backend.domain.EnrollmentStatus;
 import com.ahni.backend.domain.GradeCode;
 import com.ahni.backend.dto.GradeRegistrationRequest;
 import com.ahni.backend.dto.GradeResponse;
+import com.ahni.backend.dto.GradeUpdateRequest;
 import com.ahni.backend.entity.Course;
 import com.ahni.backend.entity.Department;
 import com.ahni.backend.entity.Student;
 import com.ahni.backend.entity.StudentGrade;
 import com.ahni.backend.exception.CourseNotFoundException;
 import com.ahni.backend.exception.GradeAlreadyRegisteredException;
+import com.ahni.backend.exception.GradeNotFoundException;
 import com.ahni.backend.exception.InvalidGradeException;
 import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.repository.CourseRepository;
@@ -259,6 +261,152 @@ class GradeServiceTest {
         assertThat(gradeService.getGrades(authUserId)).isEmpty();
     }
 
+    @Test
+    void 인증된_학생이_자신의_성적을_수정한다() {
+        UUID gradeEntityId = UUID.randomUUID();
+        StudentGrade grade = grade(student, course, 2025, AcademicTerm.SECOND);
+        GradeUpdateRequest request = updateRequest(
+            2024,
+            AcademicTerm.WINTER,
+            GradeCode.B_PLUS,
+            new BigDecimal("2.0"),
+            false,
+            true
+        );
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.of(student));
+        when(gradeRepository.findByEntityIdAndStudent(gradeEntityId, student))
+            .thenReturn(Optional.of(grade));
+        when(gradeRepository.saveAndFlush(grade)).thenReturn(grade);
+
+        GradeResponse result = gradeService.update(authUserId, gradeEntityId, request);
+
+        assertThat(result.academicYear()).isEqualTo(2024);
+        assertThat(result.term()).isEqualTo(AcademicTerm.WINTER);
+        assertThat(result.gradeCode()).isEqualTo(GradeCode.B_PLUS);
+        assertThat(result.gradePoint()).isEqualByComparingTo("3.50");
+        assertThat(result.credit()).isEqualByComparingTo("2.0");
+        assertThat(result.retake()).isTrue();
+    }
+
+    @Test
+    void 다른_성적과_수강정보가_중복되면_수정하지_않는다() {
+        UUID gradeEntityId = UUID.randomUUID();
+        StudentGrade grade = grade(student, course, 2025, AcademicTerm.FIRST);
+        GradeUpdateRequest request = updateRequest(
+            2025,
+            AcademicTerm.SECOND,
+            GradeCode.A_PLUS,
+            new BigDecimal("3.0"),
+            false,
+            false
+        );
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.of(student));
+        when(gradeRepository.findByEntityIdAndStudent(gradeEntityId, student))
+            .thenReturn(Optional.of(grade));
+        when(gradeRepository.existsByStudentAndCourseAndAcademicYearAndTermAndIdNot(
+            student,
+            course,
+            2025,
+            AcademicTerm.SECOND,
+            grade.getId()
+        )).thenReturn(true);
+
+        assertThatThrownBy(() -> gradeService.update(authUserId, gradeEntityId, request))
+            .isInstanceOf(GradeAlreadyRegisteredException.class);
+
+        verify(gradeRepository, never()).saveAndFlush(grade);
+    }
+
+    @Test
+    void 유효하지_않은_성적_수정은_입력_오류로_변환한다() {
+        UUID gradeEntityId = UUID.randomUUID();
+        StudentGrade grade = grade(student, course, 2025, AcademicTerm.SECOND);
+        GradeUpdateRequest request = updateRequest(
+            1999,
+            AcademicTerm.SECOND,
+            GradeCode.A_PLUS,
+            new BigDecimal("3.0"),
+            false,
+            false
+        );
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.of(student));
+        when(gradeRepository.findByEntityIdAndStudent(gradeEntityId, student))
+            .thenReturn(Optional.of(grade));
+
+        assertThatThrownBy(() -> gradeService.update(authUserId, gradeEntityId, request))
+            .isInstanceOf(InvalidGradeException.class)
+            .hasMessage("수강연도가 올바르지 않습니다.");
+    }
+
+    @Test
+    void 동시_수정의_무결성_오류를_중복_오류로_변환한다() {
+        UUID gradeEntityId = UUID.randomUUID();
+        StudentGrade grade = grade(student, course, 2025, AcademicTerm.FIRST);
+        GradeUpdateRequest request = updateRequest(
+            2025,
+            AcademicTerm.SECOND,
+            GradeCode.A_PLUS,
+            new BigDecimal("3.0"),
+            false,
+            false
+        );
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.of(student));
+        when(gradeRepository.findByEntityIdAndStudent(gradeEntityId, student))
+            .thenReturn(Optional.of(grade));
+        when(gradeRepository.saveAndFlush(grade))
+            .thenThrow(new DataIntegrityViolationException("duplicate"));
+
+        assertThatThrownBy(() -> gradeService.update(authUserId, gradeEntityId, request))
+            .isInstanceOf(GradeAlreadyRegisteredException.class);
+    }
+
+    @Test
+    void 없거나_다른_학생의_성적은_수정할_수_없다() {
+        UUID gradeEntityId = UUID.randomUUID();
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.of(student));
+        when(gradeRepository.findByEntityIdAndStudent(gradeEntityId, student))
+            .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> gradeService.update(
+            authUserId,
+            gradeEntityId,
+            updateRequest(
+                2025,
+                AcademicTerm.SECOND,
+                GradeCode.A_PLUS,
+                new BigDecimal("3.0"),
+                false,
+                false
+            )
+        )).isInstanceOf(GradeNotFoundException.class);
+    }
+
+    @Test
+    void 인증된_학생이_자신의_성적을_삭제한다() {
+        UUID gradeEntityId = UUID.randomUUID();
+        StudentGrade grade = grade(student, course, 2025, AcademicTerm.SECOND);
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.of(student));
+        when(gradeRepository.findByEntityIdAndStudent(gradeEntityId, student))
+            .thenReturn(Optional.of(grade));
+
+        gradeService.delete(authUserId, gradeEntityId);
+
+        verify(gradeRepository).delete(grade);
+    }
+
+    @Test
+    void 없거나_다른_학생의_성적은_삭제할_수_없다() {
+        UUID gradeEntityId = UUID.randomUUID();
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.of(student));
+        when(gradeRepository.findByEntityIdAndStudent(gradeEntityId, student))
+            .thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> gradeService.delete(authUserId, gradeEntityId))
+            .isInstanceOf(GradeNotFoundException.class);
+
+        verify(gradeRepository, never()).delete(any(StudentGrade.class));
+    }
+
     private void stubRegistrationTarget(Course targetCourse) {
         when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.of(student));
         when(courseRepository.findByEntityIdAndActiveTrue(targetCourse.getEntityId()))
@@ -288,6 +436,24 @@ class GradeServiceTest {
     ) {
         return new GradeRegistrationRequest(
             targetCourse.getEntityId(),
+            academicYear,
+            term,
+            gradeCode,
+            credit,
+            rpl,
+            retake
+        );
+    }
+
+    private GradeUpdateRequest updateRequest(
+        int academicYear,
+        AcademicTerm term,
+        GradeCode gradeCode,
+        BigDecimal credit,
+        boolean rpl,
+        boolean retake
+    ) {
+        return new GradeUpdateRequest(
             academicYear,
             term,
             gradeCode,

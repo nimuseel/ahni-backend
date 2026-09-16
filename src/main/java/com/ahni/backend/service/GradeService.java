@@ -4,12 +4,14 @@ import com.ahni.backend.dto.DepartmentResponse;
 import com.ahni.backend.dto.GradeCourseResponse;
 import com.ahni.backend.dto.GradeRegistrationRequest;
 import com.ahni.backend.dto.GradeResponse;
+import com.ahni.backend.dto.GradeUpdateRequest;
 import com.ahni.backend.entity.Course;
 import com.ahni.backend.entity.Department;
 import com.ahni.backend.entity.Student;
 import com.ahni.backend.entity.StudentGrade;
 import com.ahni.backend.exception.CourseNotFoundException;
 import com.ahni.backend.exception.GradeAlreadyRegisteredException;
+import com.ahni.backend.exception.GradeNotFoundException;
 import com.ahni.backend.exception.InvalidGradeException;
 import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.repository.CourseRepository;
@@ -99,9 +101,60 @@ public class GradeService {
             .toList();
     }
 
+    @Transactional
+    public GradeResponse update(
+        UUID authUserId,
+        UUID gradeEntityId,
+        GradeUpdateRequest request
+    ) {
+        Student student = findStudent(authUserId);
+        StudentGrade grade = findGrade(gradeEntityId, student);
+
+        if (gradeRepository.existsByStudentAndCourseAndAcademicYearAndTermAndIdNot(
+            student,
+            grade.getCourse(),
+            request.academicYear(),
+            request.term(),
+            grade.getId()
+        )) {
+            throw new GradeAlreadyRegisteredException();
+        }
+
+        try {
+            grade.update(
+                request.academicYear(),
+                request.term(),
+                request.gradeCode(),
+                request.credit(),
+                request.rpl(),
+                request.retake()
+            );
+        } catch (IllegalArgumentException exception) {
+            throw new InvalidGradeException(exception.getMessage());
+        }
+
+        try {
+            return toResponse(gradeRepository.saveAndFlush(grade));
+        } catch (DataIntegrityViolationException exception) {
+            throw new GradeAlreadyRegisteredException();
+        }
+    }
+
+    @Transactional
+    public void delete(UUID authUserId, UUID gradeEntityId) {
+        Student student = findStudent(authUserId);
+        StudentGrade grade = findGrade(gradeEntityId, student);
+        gradeRepository.delete(grade);
+    }
+
     private Student findStudent(UUID authUserId) {
         return studentRepository.findByAuthUserId(authUserId)
             .orElseThrow(StudentNotFoundException::new);
+    }
+
+    private StudentGrade findGrade(UUID gradeEntityId, Student student) {
+        return gradeRepository.findByEntityIdAndStudent(gradeEntityId, student)
+            .orElseThrow(GradeNotFoundException::new);
     }
 
     private static GradeResponse toResponse(StudentGrade grade) {

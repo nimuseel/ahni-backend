@@ -3,6 +3,7 @@ package com.ahni.backend.controller;
 import com.ahni.backend.dto.ApiErrorResponse;
 import com.ahni.backend.dto.GradeRegistrationRequest;
 import com.ahni.backend.dto.GradeResponse;
+import com.ahni.backend.dto.GradeUpdateRequest;
 import com.ahni.backend.service.GradeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -17,7 +18,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -201,5 +205,152 @@ public class GradeController {
     @GetMapping
     public List<GradeResponse> getGrades(@AuthenticationPrincipal Jwt jwt) {
         return gradeService.getGrades(UUID.fromString(jwt.getSubject()));
+    }
+
+    @Operation(
+        summary = "내 성적 수정",
+        description = "[인증 O] 본인이 등록한 성적의 학기, 등급, 학점, RPL 및 재수강 정보를 수정합니다. 과목은 변경하지 않습니다.",
+        security = @SecurityRequirement(name = "bearerAuth"),
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            required = true,
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = GradeUpdateRequest.class),
+                examples = @ExampleObject(value = """
+                    {
+                      "academicYear": 2024,
+                      "term": "WINTER",
+                      "gradeCode": "B_PLUS",
+                      "credit": 2.0,
+                      "rpl": false,
+                      "retake": true
+                    }
+                    """)
+            )
+        )
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "성적 수정 성공",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = GradeResponse.class),
+                examples = @ExampleObject(value = """
+                    {
+                      "entityId": "00000000-0000-0000-0000-000000000201",
+                      "course": {
+                        "entityId": "00000000-0000-0000-0000-000000000101",
+                        "code": "CSE101",
+                        "name": "프로그래밍 기초",
+                        "category": "MAJOR",
+                        "department": {
+                          "entityId": "00000000-0000-0000-0000-000000000001",
+                          "name": "소프트웨어융합공학과"
+                        }
+                      },
+                      "academicYear": 2024,
+                      "term": "WINTER",
+                      "gradeCode": "B_PLUS",
+                      "gradePoint": 3.50,
+                      "credit": 2.0,
+                      "rpl": false,
+                      "retake": true,
+                      "createdAt": "2026-09-16T00:00:00Z",
+                      "updatedAt": "2026-09-16T01:00:00Z"
+                    }
+                    """)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "요청값 또는 성적 규칙 오류",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = {
+                    @ExampleObject(name = "요청값 오류", value = """
+                        {"code":"INVALID_REQUEST","message":"요청값이 올바르지 않습니다."}
+                        """),
+                    @ExampleObject(name = "성적 규칙 오류", value = """
+                        {"code":"INVALID_GRADE","message":"RPL 성적에는 등급을 입력할 수 없습니다."}
+                        """)
+                }
+            )
+        ),
+        @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content),
+        @ApiResponse(
+            responseCode = "404",
+            description = "학생 프로필 또는 소유한 성적을 찾을 수 없음",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = {
+                    @ExampleObject(name = "학생 없음", value = """
+                        {"code":"STUDENT_NOT_FOUND","message":"학생 프로필을 찾을 수 없습니다."}
+                        """),
+                    @ExampleObject(name = "성적 없음", value = """
+                        {"code":"GRADE_NOT_FOUND","message":"성적을 찾을 수 없습니다."}
+                        """)
+                }
+            )
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "수정 결과 같은 학기의 과목 성적과 중복됨",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(value = """
+                    {"code":"GRADE_ALREADY_REGISTERED","message":"해당 학기의 과목 성적이 이미 등록되어 있습니다."}
+                    """)
+            )
+        )
+    })
+    @PutMapping("/{gradeEntityId}")
+    public GradeResponse update(
+        @AuthenticationPrincipal Jwt jwt,
+        @PathVariable UUID gradeEntityId,
+        @Valid @RequestBody GradeUpdateRequest request
+    ) {
+        return gradeService.update(
+            UUID.fromString(jwt.getSubject()),
+            gradeEntityId,
+            request
+        );
+    }
+
+    @Operation(
+        summary = "내 성적 삭제",
+        description = "[인증 O] 본인이 등록한 성적을 삭제합니다.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "성적 삭제 성공", content = @Content),
+        @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content),
+        @ApiResponse(
+            responseCode = "404",
+            description = "학생 프로필 또는 소유한 성적을 찾을 수 없음",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = {
+                    @ExampleObject(name = "학생 없음", value = """
+                        {"code":"STUDENT_NOT_FOUND","message":"학생 프로필을 찾을 수 없습니다."}
+                        """),
+                    @ExampleObject(name = "성적 없음", value = """
+                        {"code":"GRADE_NOT_FOUND","message":"성적을 찾을 수 없습니다."}
+                        """)
+                }
+            )
+        )
+    })
+    @DeleteMapping("/{gradeEntityId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(
+        @AuthenticationPrincipal Jwt jwt,
+        @PathVariable UUID gradeEntityId
+    ) {
+        gradeService.delete(UUID.fromString(jwt.getSubject()), gradeEntityId);
     }
 }

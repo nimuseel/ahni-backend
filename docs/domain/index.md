@@ -14,13 +14,15 @@ When a rule is implemented, document the invariant and add a unit test beside it
 - `student_major`: exactly one active primary major and at most one active double major and minor per student. "Multiple majors" is the product umbrella for double-major and minor assignments, not a stored major type.
 - `department`: academic department referenced by student and later course data.
 - `course`: active catalog entry with a globally unique uppercase code, normalized name, exact decimal credit, broad category, and optional department. `MAJOR` courses require a department; shared general-education and elective courses may omit it.
-- `student_grade`: one student course attempt identified by academic year and term. Credit and grade point are immutable attempt snapshots; RPL has no grade code or grade point and is excluded from future GPA calculations.
+- `student_grade`: one student course attempt identified by academic year and term. A student may correct or delete only their own manually managed attempt; the associated course does not change during an update. Credit and grade point remain attempt snapshots, and RPL has no grade code or grade point and is excluded from future GPA calculations.
 - `admin`: administrator profile linked to a Supabase user ID for management functions.
 - `allowed_signup_email_domain`: exact school domains accepted by the Supabase before-user-created hook.
 
 Course category describes the broad academic area (`MAJOR`, `GENERAL_EDUCATION`, or `ELECTIVE`). It does not say whether a course is required for graduation. A future graduation-requirement relation owns required-course classification because that rule varies by department and admission year. Student grades, graduation analysis, and course guidance must reference the shared course catalog instead of duplicating course code or name. The grade attempt preserves submitted credit and grade point as historical snapshots.
 
 Grade history currently records attempts and deterministic grade-point conversion only. GPA aggregation, OCR import, and retake replacement calculations remain planned consumers and must not be inferred from the `is_retake` marker alone.
+
+Manual grade deletion is a hard delete because no audit-retention requirement has been approved. Introducing OCR provenance or an audit history requires a separate persistence decision rather than overloading the current attempt row.
 
 Supabase email confirmation is the signup gate. `PENDING` describes a Supabase user before email confirmation and is not a persisted student account status. The backend creates a student profile only from an authenticated JWT and derives ownership from its subject and email claims.
 

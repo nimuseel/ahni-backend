@@ -49,6 +49,26 @@ public class GlobalExceptionHandler {
         return new ApiErrorResponse("INVALID_COURSE_CATEGORY", exception.getMessage());
     }
 
+    @ExceptionHandler(InvalidGradeException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse handleInvalidGrade(InvalidGradeException exception) {
+        return new ApiErrorResponse("INVALID_GRADE", exception.getMessage());
+    }
+
+    @ExceptionHandler(CourseNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiErrorResponse handleCourseNotFound(CourseNotFoundException exception) {
+        return new ApiErrorResponse("COURSE_NOT_FOUND", exception.getMessage());
+    }
+
+    @ExceptionHandler(GradeAlreadyRegisteredException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiErrorResponse handleGradeAlreadyRegistered(
+        GradeAlreadyRegisteredException exception
+    ) {
+        return new ApiErrorResponse("GRADE_ALREADY_REGISTERED", exception.getMessage());
+    }
+
     @ExceptionHandler(DuplicateMajorDepartmentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrorResponse handleDuplicateMajorDepartment(

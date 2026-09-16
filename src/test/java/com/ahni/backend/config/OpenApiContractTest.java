@@ -68,4 +68,27 @@ class OpenApiContractTest {
 		);
 	}
 
+	@Test
+	void gradeNullableFieldsAreDocumented() throws Exception {
+		String actual = mockMvc.perform(get("/v3/api-docs"))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		var schemas = objectMapper.readTree(actual).at("/components/schemas");
+
+		assertEquals(
+			"null",
+			schemas.at("/GradeCourseResponse/properties/department/type").asText()
+		);
+		assertEquals(
+			objectMapper.readTree("[\"string\", \"null\"]"),
+			schemas.at("/GradeResponse/properties/gradeCode/type")
+		);
+		assertEquals(
+			objectMapper.readTree("[\"number\", \"null\"]"),
+			schemas.at("/GradeResponse/properties/gradePoint/type")
+		);
+	}
+
 }

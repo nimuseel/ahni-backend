@@ -110,7 +110,7 @@ class StudentGradeTest {
             GradeCode.A_PLUS,
             new BigDecimal("3.0"),
             false,
-            false
+            (StudentGrade) null
         )).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -124,7 +124,7 @@ class StudentGradeTest {
             GradeCode.A_PLUS,
             new BigDecimal("3.0"),
             false,
-            false
+            (StudentGrade) null
         )).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -138,7 +138,7 @@ class StudentGradeTest {
             GradeCode.A_PLUS,
             new BigDecimal("3.0"),
             false,
-            false
+            (StudentGrade) null
         )).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -206,6 +206,164 @@ class StudentGradeTest {
     }
 
     @Test
+    void 재수강은_같은_과목의_이전_성적을_명시적으로_연결한다() {
+        StudentGrade previous = new StudentGrade(
+            student,
+            course,
+            2024,
+            AcademicTerm.SECOND,
+            GradeCode.C_PLUS,
+            new BigDecimal("3.0"),
+            false,
+            (StudentGrade) null
+        );
+
+        StudentGrade retake = new StudentGrade(
+            student,
+            course,
+            2025,
+            AcademicTerm.FIRST,
+            GradeCode.A_ZERO,
+            new BigDecimal("3.0"),
+            false,
+            previous
+        );
+
+        assertThat(retake.getReplacedGrade()).isSameAs(previous);
+        assertThat(retake.isRetake()).isTrue();
+    }
+
+    @Test
+    void 다른_학생의_성적은_재수강_대상으로_연결할_수_없다() {
+        Student otherStudent = new Student(
+            UUID.randomUUID(),
+            "other@inha.edu",
+            2024,
+            EnrollmentStatus.ENROLLED,
+            "다른 학생"
+        );
+        StudentGrade previous = grade(
+            otherStudent,
+            course,
+            2024,
+            AcademicTerm.SECOND,
+            false,
+            null
+        );
+
+        assertThatThrownBy(() -> grade(
+            student,
+            course,
+            2025,
+            AcademicTerm.FIRST,
+            false,
+            previous
+        )).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("같은 학생의 성적만 재수강 대상으로 선택할 수 있습니다.");
+    }
+
+    @Test
+    void 다른_과목의_성적은_재수강_대상으로_연결할_수_없다() {
+        Course otherCourse = new Course(
+            department,
+            "CSE201",
+            "자료구조",
+            new BigDecimal("3.0"),
+            CourseCategory.MAJOR
+        );
+        StudentGrade previous = grade(
+            student,
+            otherCourse,
+            2024,
+            AcademicTerm.SECOND,
+            false,
+            null
+        );
+
+        assertThatThrownBy(() -> grade(
+            student,
+            course,
+            2025,
+            AcademicTerm.FIRST,
+            false,
+            previous
+        )).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("같은 과목의 성적만 재수강 대상으로 선택할 수 있습니다.");
+    }
+
+    @ParameterizedTest
+    @MethodSource("notEarlierReplacementCases")
+    void 이전_학기의_성적만_재수강_대상으로_연결할_수_있다(
+        int previousYear,
+        AcademicTerm previousTerm
+    ) {
+        StudentGrade previous = grade(
+            student,
+            course,
+            previousYear,
+            previousTerm,
+            false,
+            null
+        );
+
+        assertThatThrownBy(() -> grade(
+            student,
+            course,
+            2025,
+            AcademicTerm.FIRST,
+            false,
+            previous
+        )).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이전 학기의 성적만 재수강 대상으로 선택할 수 있습니다.");
+    }
+
+    static Stream<Arguments> notEarlierReplacementCases() {
+        return Stream.of(
+            arguments(2025, AcademicTerm.FIRST),
+            arguments(2025, AcademicTerm.SECOND)
+        );
+    }
+
+    @Test
+    void RPL은_재수강_관계에_포함할_수_없다() {
+        StudentGrade regular = grade(
+            student,
+            course,
+            2024,
+            AcademicTerm.SECOND,
+            false,
+            null
+        );
+        StudentGrade rpl = grade(
+            student,
+            course,
+            2024,
+            AcademicTerm.FIRST,
+            true,
+            null
+        );
+
+        assertThatThrownBy(() -> grade(
+            student,
+            course,
+            2025,
+            AcademicTerm.FIRST,
+            true,
+            regular
+        )).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("RPL 성적은 재수강 관계에 포함할 수 없습니다.");
+        assertThatThrownBy(() -> grade(
+            student,
+            course,
+            2025,
+            AcademicTerm.FIRST,
+            false,
+            rpl
+        )).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("RPL 성적은 재수강 관계에 포함할 수 없습니다.");
+    }
+
+    @Test
     void 성적_정보를_수정한다() {
         StudentGrade grade = createGrade(
             GradeCode.B_PLUS,
@@ -220,7 +378,7 @@ class StudentGradeTest {
             GradeCode.A_ZERO,
             new BigDecimal("2.0"),
             false,
-            true
+            (StudentGrade) null
         );
 
         assertThat(grade.getAcademicYear()).isEqualTo(2024);
@@ -229,7 +387,61 @@ class StudentGradeTest {
         assertThat(grade.getGradePoint()).isEqualByComparingTo("4.00");
         assertThat(grade.getCredit()).isEqualByComparingTo("2.0");
         assertThat(grade.isRpl()).isFalse();
+        assertThat(grade.isRetake()).isFalse();
+    }
+
+    @Test
+    void 성적_수정으로_이전_성적과_재수강_관계를_설정한다() {
+        StudentGrade previous = grade(
+            student,
+            course,
+            2024,
+            AcademicTerm.SECOND,
+            false,
+            null
+        );
+        StudentGrade grade = grade(
+            student,
+            course,
+            2025,
+            AcademicTerm.SECOND,
+            false,
+            null
+        );
+
+        grade.update(
+            2025,
+            AcademicTerm.SECOND,
+            GradeCode.A_PLUS,
+            new BigDecimal("3.0"),
+            false,
+            previous
+        );
+
+        assertThat(grade.getReplacedGrade()).isSameAs(previous);
         assertThat(grade.isRetake()).isTrue();
+    }
+
+    @Test
+    void 자기_자신을_재수강_대상으로_설정할_수_없다() {
+        StudentGrade grade = grade(
+            student,
+            course,
+            2024,
+            AcademicTerm.SECOND,
+            false,
+            null
+        );
+
+        assertThatThrownBy(() -> grade.update(
+            2025,
+            AcademicTerm.FIRST,
+            GradeCode.A_PLUS,
+            new BigDecimal("3.0"),
+            false,
+            grade
+        )).isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("자기 자신의 성적은 재수강 대상으로 선택할 수 없습니다.");
     }
 
     @Test
@@ -247,7 +459,7 @@ class StudentGradeTest {
             null,
             new BigDecimal("3.0"),
             true,
-            false
+            (StudentGrade) null
         );
 
         assertThat(grade.getGradeCode()).isNull();
@@ -270,7 +482,7 @@ class StudentGradeTest {
             GradeCode.A_PLUS,
             new BigDecimal("2.0"),
             true,
-            true
+            (StudentGrade) null
         )).isInstanceOf(IllegalArgumentException.class);
 
         assertThat(grade.getAcademicYear()).isEqualTo(2025);
@@ -288,6 +500,16 @@ class StudentGradeTest {
         boolean rpl,
         boolean retake
     ) {
+        StudentGrade replacedGrade = retake
+            ? grade(
+                student,
+                course,
+                2024,
+                AcademicTerm.SECOND,
+                false,
+                null
+            )
+            : null;
         return new StudentGrade(
             student,
             course,
@@ -296,7 +518,7 @@ class StudentGradeTest {
             gradeCode,
             credit,
             rpl,
-            retake
+            replacedGrade
         );
     }
 
@@ -309,7 +531,27 @@ class StudentGradeTest {
             GradeCode.A_ZERO,
             new BigDecimal("3.0"),
             false,
-            false
+            (StudentGrade) null
+        );
+    }
+
+    private StudentGrade grade(
+        Student owner,
+        Course targetCourse,
+        int academicYear,
+        AcademicTerm term,
+        boolean rpl,
+        StudentGrade replacedGrade
+    ) {
+        return new StudentGrade(
+            owner,
+            targetCourse,
+            academicYear,
+            term,
+            rpl ? null : GradeCode.A_ZERO,
+            new BigDecimal("3.0"),
+            rpl,
+            replacedGrade
         );
     }
 }

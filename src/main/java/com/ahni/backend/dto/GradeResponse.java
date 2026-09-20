@@ -24,8 +24,12 @@ public record GradeResponse(
     BigDecimal credit,
     @Schema(description = "선행학습 인정 여부")
     boolean rpl,
-    @Schema(description = "재수강 여부")
-    boolean retake,
+    @Schema(
+        description = "재수강으로 대체한 이전 성적 식별자",
+        example = "00000000-0000-0000-0000-000000000200",
+        nullable = true
+    )
+    UUID replacedGradeEntityId,
     @Schema(description = "등록 시각")
     Instant createdAt,
     @Schema(description = "수정 시각")

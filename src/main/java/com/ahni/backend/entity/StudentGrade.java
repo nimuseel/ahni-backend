@@ -70,6 +70,10 @@ public class StudentGrade {
     @Column(name = "is_retake", nullable = false)
     private boolean retake;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "replaced_grade_id")
+    private StudentGrade replacedGrade;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -86,12 +90,20 @@ public class StudentGrade {
         GradeCode gradeCode,
         BigDecimal credit,
         boolean rpl,
-        boolean retake
+        StudentGrade replacedGrade
     ) {
         validateRequiredFields(student, course, term);
         validateAcademicYear(academicYear);
         validateCredit(credit);
         validateGrade(gradeCode, rpl);
+        validateReplacement(
+            student,
+            course,
+            academicYear,
+            term,
+            rpl,
+            replacedGrade
+        );
 
         this.student = student;
         this.course = course;
@@ -101,7 +113,8 @@ public class StudentGrade {
         this.gradePoint = rpl ? null : gradeCode.gradePoint();
         this.credit = credit;
         this.rpl = rpl;
-        this.retake = retake;
+        this.retake = replacedGrade != null;
+        this.replacedGrade = replacedGrade;
     }
 
     public void update(
@@ -110,7 +123,7 @@ public class StudentGrade {
         GradeCode gradeCode,
         BigDecimal credit,
         boolean rpl,
-        boolean retake
+        StudentGrade replacedGrade
     ) {
         if (term == null) {
             throw new IllegalArgumentException("학기는 필수입니다.");
@@ -118,6 +131,14 @@ public class StudentGrade {
         validateAcademicYear(academicYear);
         validateCredit(credit);
         validateGrade(gradeCode, rpl);
+        validateReplacement(
+            student,
+            course,
+            academicYear,
+            term,
+            rpl,
+            replacedGrade
+        );
 
         this.academicYear = academicYear;
         this.term = term;
@@ -125,7 +146,8 @@ public class StudentGrade {
         this.gradePoint = rpl ? null : gradeCode.gradePoint();
         this.credit = credit;
         this.rpl = rpl;
-        this.retake = retake;
+        this.retake = replacedGrade != null;
+        this.replacedGrade = replacedGrade;
     }
 
     private static void validateRequiredFields(
@@ -163,6 +185,60 @@ public class StudentGrade {
         if (!rpl && gradeCode == null) {
             throw new IllegalArgumentException("일반 성적에는 등급이 필수입니다.");
         }
+    }
+
+    private void validateReplacement(
+        Student student,
+        Course course,
+        int academicYear,
+        AcademicTerm term,
+        boolean rpl,
+        StudentGrade replacedGrade
+    ) {
+        if (replacedGrade == null) {
+            return;
+        }
+        if (replacedGrade.getEntityId().equals(entityId)) {
+            throw new IllegalArgumentException(
+                "자기 자신의 성적은 재수강 대상으로 선택할 수 없습니다."
+            );
+        }
+        if (rpl || replacedGrade.isRpl()) {
+            throw new IllegalArgumentException(
+                "RPL 성적은 재수강 관계에 포함할 수 없습니다."
+            );
+        }
+        if (replacedGrade.getStudent() != student) {
+            throw new IllegalArgumentException(
+                "같은 학생의 성적만 재수강 대상으로 선택할 수 있습니다."
+            );
+        }
+        if (replacedGrade.getCourse() != course) {
+            throw new IllegalArgumentException(
+                "같은 과목의 성적만 재수강 대상으로 선택할 수 있습니다."
+            );
+        }
+        if (!isEarlierPeriod(
+            replacedGrade.getAcademicYear(),
+            replacedGrade.getTerm(),
+            academicYear,
+            term
+        )) {
+            throw new IllegalArgumentException(
+                "이전 학기의 성적만 재수강 대상으로 선택할 수 있습니다."
+            );
+        }
+    }
+
+    private static boolean isEarlierPeriod(
+        int candidateYear,
+        AcademicTerm candidateTerm,
+        int academicYear,
+        AcademicTerm term
+    ) {
+        return candidateYear < academicYear
+            || candidateYear == academicYear
+            && candidateTerm.sequence() < term.sequence();
     }
 
     @PrePersist

@@ -89,6 +89,39 @@ class OpenApiContractTest {
 			objectMapper.readTree("[\"number\", \"null\"]"),
 			schemas.at("/GradeResponse/properties/gradePoint/type")
 		);
+		assertEquals(
+			objectMapper.readTree("[\"string\", \"null\"]"),
+			schemas.at("/GradeRegistrationRequest/properties/replacedGradeEntityId/type")
+		);
+		assertEquals(
+			objectMapper.readTree("[\"string\", \"null\"]"),
+			schemas.at("/GradeResponse/properties/replacedGradeEntityId/type")
+		);
+	}
+
+	@Test
+	void gradeSummaryEndpointIsDocumented() throws Exception {
+		String actual = mockMvc.perform(get("/v3/api-docs"))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		var summaryOperation = objectMapper.readTree(actual)
+			.at("/paths/~1api~1v1~1grades~1summary/get");
+
+		assertEquals(
+			"#/components/schemas/GradeSummaryResponse",
+			summaryOperation
+				.at("/responses/200/content/application~1json/schema/$ref")
+				.asText()
+		);
+		assertTrue(summaryOperation.at("/security/0/bearerAuth").isArray());
+		assertEquals(
+			"array",
+			objectMapper.readTree(actual)
+				.at("/components/schemas/GradeSummaryResponse/properties/categories/type")
+				.asText()
+		);
 	}
 
 }

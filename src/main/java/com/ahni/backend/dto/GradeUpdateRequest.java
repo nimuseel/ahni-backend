@@ -10,6 +10,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 public record GradeUpdateRequest(
     @NotNull
@@ -34,6 +35,10 @@ public record GradeUpdateRequest(
     @Schema(description = "선행학습 인정 여부", defaultValue = "false")
     boolean rpl,
 
-    @Schema(description = "재수강 여부", defaultValue = "false")
-    boolean retake
+    @Schema(
+        description = "재수강으로 대체하는 이전 성적 식별자",
+        example = "00000000-0000-0000-0000-000000000200",
+        nullable = true
+    )
+    UUID replacedGradeEntityId
 ) { }

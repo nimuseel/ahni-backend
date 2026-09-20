@@ -29,6 +29,19 @@ public interface StudentGradeRepository extends JpaRepository<StudentGrade, Long
 
     Optional<StudentGrade> findByEntityIdAndStudent(UUID entityId, Student student);
 
-    @EntityGraph(attributePaths = {"course", "course.department"})
+    boolean existsByReplacedGrade(StudentGrade replacedGrade);
+
+    Optional<StudentGrade> findByReplacedGrade(StudentGrade replacedGrade);
+
+    boolean existsByReplacedGradeAndEntityIdNot(
+        StudentGrade replacedGrade,
+        UUID entityId
+    );
+
+    @EntityGraph(attributePaths = {
+        "course",
+        "course.department",
+        "replacedGrade"
+    })
     List<StudentGrade> findAllByStudent(Student student);
 }

@@ -3,6 +3,7 @@ package com.ahni.backend.controller;
 import com.ahni.backend.dto.ApiErrorResponse;
 import com.ahni.backend.dto.GradeRegistrationRequest;
 import com.ahni.backend.dto.GradeResponse;
+import com.ahni.backend.dto.GradeSummaryResponse;
 import com.ahni.backend.dto.GradeUpdateRequest;
 import com.ahni.backend.service.GradeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -56,7 +57,7 @@ public class GradeController {
                       "gradeCode": "A_PLUS",
                       "credit": 3.0,
                       "rpl": false,
-                      "retake": false
+                      "replacedGradeEntityId": null
                     }
                     """)
             )
@@ -88,7 +89,7 @@ public class GradeController {
                       "gradePoint": 4.50,
                       "credit": 3.0,
                       "rpl": false,
-                      "retake": false,
+                      "replacedGradeEntityId": null,
                       "createdAt": "2026-09-16T00:00:00Z",
                       "updatedAt": "2026-09-16T00:00:00Z"
                     }
@@ -114,7 +115,7 @@ public class GradeController {
         @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content),
         @ApiResponse(
             responseCode = "404",
-            description = "학생 프로필 또는 과목을 찾을 수 없음",
+            description = "학생 프로필, 과목 또는 재수강 대상 성적을 찾을 수 없음",
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = ApiErrorResponse.class),
@@ -124,19 +125,27 @@ public class GradeController {
                         """),
                     @ExampleObject(name = "과목 없음", value = """
                         {"code":"COURSE_NOT_FOUND","message":"과목을 찾을 수 없습니다."}
+                        """),
+                    @ExampleObject(name = "재수강 대상 없음", value = """
+                        {"code":"GRADE_NOT_FOUND","message":"성적을 찾을 수 없습니다."}
                         """)
                 }
             )
         ),
         @ApiResponse(
             responseCode = "409",
-            description = "같은 학기의 과목 성적이 이미 등록됨",
+            description = "같은 학기 성적 중복 또는 재수강 대상 충돌",
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = ApiErrorResponse.class),
-                examples = @ExampleObject(value = """
-                    {"code":"GRADE_ALREADY_REGISTERED","message":"해당 학기의 과목 성적이 이미 등록되어 있습니다."}
-                    """)
+                examples = {
+                    @ExampleObject(name = "성적 중복", value = """
+                        {"code":"GRADE_ALREADY_REGISTERED","message":"해당 학기의 과목 성적이 이미 등록되어 있습니다."}
+                        """),
+                    @ExampleObject(name = "재수강 대상 충돌", value = """
+                        {"code":"GRADE_REPLACEMENT_CONFLICT","message":"이미 다른 재수강 성적에 연결된 성적입니다."}
+                        """)
+                }
             )
         )
     })
@@ -181,7 +190,7 @@ public class GradeController {
                         "gradePoint": 4.50,
                         "credit": 3.0,
                         "rpl": false,
-                        "retake": false,
+                        "replacedGradeEntityId": null,
                         "createdAt": "2026-09-16T00:00:00Z",
                         "updatedAt": "2026-09-16T00:00:00Z"
                       }
@@ -208,8 +217,67 @@ public class GradeController {
     }
 
     @Operation(
+        summary = "내 GPA 요약 조회",
+        description = "[인증 O] 재수강으로 대체된 이전 성적을 제외하고 전체 및 과목 분류별 GPA와 이수학점을 계산합니다.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(
+            responseCode = "200",
+            description = "GPA 요약 조회 성공",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = GradeSummaryResponse.class),
+                examples = @ExampleObject(value = """
+                    {
+                      "gpa": 3.83,
+                      "completedCredits": 42.0,
+                      "gpaCredits": 36.0,
+                      "categories": [
+                        {
+                          "category": "MAJOR",
+                          "gpa": 4.02,
+                          "completedCredits": 24.0,
+                          "gpaCredits": 21.0
+                        },
+                        {
+                          "category": "GENERAL_EDUCATION",
+                          "gpa": 3.50,
+                          "completedCredits": 12.0,
+                          "gpaCredits": 9.0
+                        },
+                        {
+                          "category": "ELECTIVE",
+                          "gpa": 3.00,
+                          "completedCredits": 6.0,
+                          "gpaCredits": 6.0
+                        }
+                      ]
+                    }
+                    """)
+            )
+        ),
+        @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content),
+        @ApiResponse(
+            responseCode = "404",
+            description = "학생 프로필을 찾을 수 없음",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(value = """
+                    {"code":"STUDENT_NOT_FOUND","message":"학생 프로필을 찾을 수 없습니다."}
+                    """)
+            )
+        )
+    })
+    @GetMapping("/summary")
+    public GradeSummaryResponse getSummary(@AuthenticationPrincipal Jwt jwt) {
+        return gradeService.getSummary(UUID.fromString(jwt.getSubject()));
+    }
+
+    @Operation(
         summary = "내 성적 수정",
-        description = "[인증 O] 본인이 등록한 성적의 학기, 등급, 학점, RPL 및 재수강 정보를 수정합니다. 과목은 변경하지 않습니다.",
+        description = "[인증 O] 본인이 등록한 성적의 학기, 등급, 학점, RPL 및 재수강 대상 성적을 수정합니다. 과목은 변경하지 않습니다.",
         security = @SecurityRequirement(name = "bearerAuth"),
         requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
             required = true,
@@ -223,7 +291,7 @@ public class GradeController {
                       "gradeCode": "B_PLUS",
                       "credit": 2.0,
                       "rpl": false,
-                      "retake": true
+                      "replacedGradeEntityId": "00000000-0000-0000-0000-000000000200"
                     }
                     """)
             )
@@ -255,7 +323,7 @@ public class GradeController {
                       "gradePoint": 3.50,
                       "credit": 2.0,
                       "rpl": false,
-                      "retake": true,
+                      "replacedGradeEntityId": "00000000-0000-0000-0000-000000000200",
                       "createdAt": "2026-09-16T00:00:00Z",
                       "updatedAt": "2026-09-16T01:00:00Z"
                     }
@@ -297,13 +365,18 @@ public class GradeController {
         ),
         @ApiResponse(
             responseCode = "409",
-            description = "수정 결과 같은 학기의 과목 성적과 중복됨",
+            description = "수정 결과 같은 학기 성적 중복 또는 재수강 대상 충돌",
             content = @Content(
                 mediaType = "application/json",
                 schema = @Schema(implementation = ApiErrorResponse.class),
-                examples = @ExampleObject(value = """
-                    {"code":"GRADE_ALREADY_REGISTERED","message":"해당 학기의 과목 성적이 이미 등록되어 있습니다."}
-                    """)
+                examples = {
+                    @ExampleObject(name = "성적 중복", value = """
+                        {"code":"GRADE_ALREADY_REGISTERED","message":"해당 학기의 과목 성적이 이미 등록되어 있습니다."}
+                        """),
+                    @ExampleObject(name = "재수강 대상 충돌", value = """
+                        {"code":"GRADE_REPLACEMENT_CONFLICT","message":"이미 다른 재수강 성적에 연결된 성적입니다."}
+                        """)
+                }
             )
         )
     })
@@ -342,6 +415,17 @@ public class GradeController {
                         {"code":"GRADE_NOT_FOUND","message":"성적을 찾을 수 없습니다."}
                         """)
                 }
+            )
+        ),
+        @ApiResponse(
+            responseCode = "409",
+            description = "재수강으로 대체된 이전 성적은 삭제할 수 없음",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(value = """
+                    {"code":"GRADE_REPLACEMENT_CONFLICT","message":"재수강으로 대체된 이전 성적은 삭제할 수 없습니다."}
+                    """)
             )
         )
     })

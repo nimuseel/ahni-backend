@@ -5,13 +5,16 @@ import com.ahni.backend.domain.AcademicTerm;
 import com.ahni.backend.domain.CourseCategory;
 import com.ahni.backend.domain.GradeCode;
 import com.ahni.backend.dto.DepartmentResponse;
+import com.ahni.backend.dto.GradeCategorySummaryResponse;
 import com.ahni.backend.dto.GradeCourseResponse;
 import com.ahni.backend.dto.GradeRegistrationRequest;
 import com.ahni.backend.dto.GradeResponse;
+import com.ahni.backend.dto.GradeSummaryResponse;
 import com.ahni.backend.dto.GradeUpdateRequest;
 import com.ahni.backend.exception.CourseNotFoundException;
 import com.ahni.backend.exception.GradeAlreadyRegisteredException;
 import com.ahni.backend.exception.GradeNotFoundException;
+import com.ahni.backend.exception.GradeReplacementConflictException;
 import com.ahni.backend.exception.InvalidGradeException;
 import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.service.GradeService;
@@ -56,6 +59,9 @@ class GradeControllerTest {
     private static final UUID COURSE_ENTITY_ID = UUID.fromString(
         "00000000-0000-0000-0000-000000000101"
     );
+    private static final UUID PREVIOUS_GRADE_ENTITY_ID = UUID.fromString(
+        "00000000-0000-0000-0000-000000000200"
+    );
 
     @Autowired
     private MockMvc mockMvc;
@@ -96,7 +102,7 @@ class GradeControllerTest {
             null,
             new BigDecimal("3.0"),
             true,
-            false
+            null
         );
         when(gradeService.register(AUTH_USER_ID, request))
             .thenReturn(response(null, null, true));
@@ -112,7 +118,7 @@ class GradeControllerTest {
                       "gradeCode": null,
                       "credit": 3.0,
                       "rpl": true,
-                      "retake": false
+                      "replacedGradeEntityId": null
                     }
                     """))
             .andExpect(status().isCreated())
@@ -148,6 +154,48 @@ class GradeControllerTest {
     }
 
     @Test
+    void 인증된_학생이_GPA_요약을_조회한다() throws Exception {
+        when(gradeService.getSummary(AUTH_USER_ID)).thenReturn(
+            new GradeSummaryResponse(
+                new BigDecimal("3.83"),
+                new BigDecimal("42.0"),
+                new BigDecimal("36.0"),
+                List.of(
+                    new GradeCategorySummaryResponse(
+                        CourseCategory.MAJOR,
+                        new BigDecimal("4.02"),
+                        new BigDecimal("24.0"),
+                        new BigDecimal("21.0")
+                    ),
+                    new GradeCategorySummaryResponse(
+                        CourseCategory.GENERAL_EDUCATION,
+                        new BigDecimal("3.50"),
+                        new BigDecimal("12.0"),
+                        new BigDecimal("9.0")
+                    ),
+                    new GradeCategorySummaryResponse(
+                        CourseCategory.ELECTIVE,
+                        new BigDecimal("3.00"),
+                        new BigDecimal("6.0"),
+                        new BigDecimal("6.0")
+                    )
+                )
+            )
+        );
+
+        mockMvc.perform(get("/api/v1/grades/summary")
+                .with(jwt().jwt(token -> token.subject(AUTH_USER_ID.toString()))))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.gpa").value(3.83))
+            .andExpect(jsonPath("$.completedCredits").value(42.0))
+            .andExpect(jsonPath("$.gpaCredits").value(36.0))
+            .andExpect(jsonPath("$.categories[0].category").value("MAJOR"))
+            .andExpect(jsonPath("$.categories[0].gpa").value(4.02));
+
+        verify(gradeService).getSummary(AUTH_USER_ID);
+    }
+
+    @Test
     void 인증되지_않은_사용자는_성적을_등록할_수_없다() throws Exception {
         mockMvc.perform(post("/api/v1/grades")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -160,6 +208,14 @@ class GradeControllerTest {
     @Test
     void 인증되지_않은_사용자는_성적을_조회할_수_없다() throws Exception {
         mockMvc.perform(get("/api/v1/grades"))
+            .andExpect(status().isUnauthorized());
+
+        verifyNoInteractions(gradeService);
+    }
+
+    @Test
+    void 인증되지_않은_사용자는_GPA_요약을_조회할_수_없다() throws Exception {
+        mockMvc.perform(get("/api/v1/grades/summary"))
             .andExpect(status().isUnauthorized());
 
         verifyNoInteractions(gradeService);
@@ -264,7 +320,7 @@ class GradeControllerTest {
             GradeCode.B_PLUS,
             new BigDecimal("2.0"),
             false,
-            true
+            PREVIOUS_GRADE_ENTITY_ID
         );
         when(gradeService.update(AUTH_USER_ID, gradeEntityId, request))
             .thenReturn(updatedResponse());
@@ -279,7 +335,9 @@ class GradeControllerTest {
             .andExpect(jsonPath("$.gradeCode").value("B_PLUS"))
             .andExpect(jsonPath("$.gradePoint").value(3.50))
             .andExpect(jsonPath("$.credit").value(2.0))
-            .andExpect(jsonPath("$.retake").value(true));
+            .andExpect(jsonPath("$.replacedGradeEntityId").value(
+                PREVIOUS_GRADE_ENTITY_ID.toString()
+            ));
 
         verify(gradeService).update(AUTH_USER_ID, gradeEntityId, request);
     }
@@ -359,7 +417,7 @@ class GradeControllerTest {
                 GradeCode.B_PLUS,
                 new BigDecimal("2.0"),
                 false,
-                true
+                PREVIOUS_GRADE_ENTITY_ID
             )
         )).thenThrow(new GradeNotFoundException());
 
@@ -396,7 +454,7 @@ class GradeControllerTest {
                 GradeCode.B_PLUS,
                 new BigDecimal("2.0"),
                 false,
-                true
+                PREVIOUS_GRADE_ENTITY_ID
             )
         )).thenThrow(new GradeAlreadyRegisteredException());
 
@@ -408,6 +466,22 @@ class GradeControllerTest {
             .andExpect(jsonPath("$.code").value("GRADE_ALREADY_REGISTERED"));
     }
 
+    @Test
+    void 재수강으로_대체된_성적을_삭제하면_409를_반환한다() throws Exception {
+        UUID gradeEntityId = UUID.fromString("00000000-0000-0000-0000-000000000201");
+        org.mockito.Mockito.doThrow(new GradeReplacementConflictException(
+            "재수강으로 대체된 이전 성적은 삭제할 수 없습니다."
+        )).when(gradeService).delete(AUTH_USER_ID, gradeEntityId);
+
+        mockMvc.perform(delete("/api/v1/grades/{gradeEntityId}", gradeEntityId)
+                .with(jwt().jwt(token -> token.subject(AUTH_USER_ID.toString()))))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.code").value("GRADE_REPLACEMENT_CONFLICT"))
+            .andExpect(jsonPath("$.message").value(
+                "재수강으로 대체된 이전 성적은 삭제할 수 없습니다."
+            ));
+    }
+
     private GradeRegistrationRequest standardRequest() {
         return new GradeRegistrationRequest(
             COURSE_ENTITY_ID,
@@ -416,7 +490,7 @@ class GradeControllerTest {
             GradeCode.A_PLUS,
             new BigDecimal("3.0"),
             false,
-            false
+            null
         );
     }
 
@@ -429,7 +503,7 @@ class GradeControllerTest {
               "gradeCode": "A_PLUS",
               "credit": 3.0,
               "rpl": false,
-              "retake": false
+              "replacedGradeEntityId": null
             }
             """;
     }
@@ -442,7 +516,7 @@ class GradeControllerTest {
               "gradeCode": "B_PLUS",
               "credit": 2.0,
               "rpl": false,
-              "retake": true
+              "replacedGradeEntityId": "00000000-0000-0000-0000-000000000200"
             }
             """;
     }
@@ -466,7 +540,7 @@ class GradeControllerTest {
             gradePoint,
             new BigDecimal("3.0"),
             rpl,
-            false,
+            null,
             Instant.parse("2026-09-16T00:00:00Z"),
             Instant.parse("2026-09-16T00:00:00Z")
         );
@@ -491,7 +565,7 @@ class GradeControllerTest {
             new BigDecimal("3.50"),
             new BigDecimal("2.0"),
             false,
-            true,
+            PREVIOUS_GRADE_ENTITY_ID,
             Instant.parse("2026-09-16T00:00:00Z"),
             Instant.parse("2026-09-16T01:00:00Z")
         );

@@ -245,6 +245,83 @@ class StudentGradeRepositoryIntegrationTest {
             )).isFalse();
     }
 
+    @Test
+    void 재수강_성적은_대체하는_이전_성적을_저장한다() {
+        GradeFixture fixture = saveFixture("retake@inha.edu", "CSE101");
+        StudentGrade previous = studentGradeRepository.saveAndFlush(new StudentGrade(
+            fixture.student(),
+            fixture.course(),
+            2024,
+            AcademicTerm.SECOND,
+            GradeCode.C_PLUS,
+            new BigDecimal("3.0"),
+            false,
+            (StudentGrade) null
+        ));
+        StudentGrade retake = studentGradeRepository.saveAndFlush(new StudentGrade(
+            fixture.student(),
+            fixture.course(),
+            2025,
+            AcademicTerm.FIRST,
+            GradeCode.A_ZERO,
+            new BigDecimal("3.0"),
+            false,
+            previous
+        ));
+        UUID retakeEntityId = retake.getEntityId();
+        entityManager.clear();
+
+        StudentGrade found = studentGradeRepository.findAllByStudent(
+            fixture.student()
+        ).stream()
+            .filter(grade -> grade.getEntityId().equals(retakeEntityId))
+            .findFirst()
+            .orElseThrow();
+
+        assertThat(entityManagerFactory.getPersistenceUnitUtil().isLoaded(
+            found,
+            "replacedGrade"
+        )).isTrue();
+        assertThat(found.getReplacedGrade().getEntityId())
+            .isEqualTo(previous.getEntityId());
+    }
+
+    @Test
+    void 하나의_성적은_한_번만_재수강_대상으로_연결할_수_있다() {
+        GradeFixture fixture = saveFixture("single-retake@inha.edu", "CSE101");
+        StudentGrade previous = studentGradeRepository.saveAndFlush(new StudentGrade(
+            fixture.student(),
+            fixture.course(),
+            2024,
+            AcademicTerm.SECOND,
+            GradeCode.C_PLUS,
+            new BigDecimal("3.0"),
+            false,
+            (StudentGrade) null
+        ));
+        studentGradeRepository.saveAndFlush(new StudentGrade(
+            fixture.student(),
+            fixture.course(),
+            2025,
+            AcademicTerm.FIRST,
+            GradeCode.A_ZERO,
+            new BigDecimal("3.0"),
+            false,
+            previous
+        ));
+
+        assertThatThrownBy(() -> studentGradeRepository.saveAndFlush(new StudentGrade(
+            fixture.student(),
+            fixture.course(),
+            2025,
+            AcademicTerm.SECOND,
+            GradeCode.A_PLUS,
+            new BigDecimal("3.0"),
+            false,
+            previous
+        ))).isInstanceOf(DataIntegrityViolationException.class);
+    }
+
     @ParameterizedTest
     @MethodSource("invalidRawGradeCases")
     void 데이터베이스는_유효하지_않은_성적을_거부한다(
@@ -321,7 +398,7 @@ class StudentGradeRepositoryIntegrationTest {
             GradeCode.A_PLUS,
             new BigDecimal("3.0"),
             false,
-            false
+            (StudentGrade) null
         );
     }
 

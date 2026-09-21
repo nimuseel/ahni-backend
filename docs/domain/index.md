@@ -15,6 +15,7 @@ When a rule is implemented, document the invariant and add a unit test beside it
 - `department`: academic department referenced by student and later course data.
 - `course`: active catalog entry with a globally unique uppercase code, normalized name, exact decimal credit, broad category, and optional department. `MAJOR` courses require a department; shared general-education and elective courses may omit it.
 - `student_grade`: one student course attempt identified by academic year and term. A student may correct or delete only their own manually managed attempt; the associated course does not change during an update. Credit and grade point remain attempt snapshots, and RPL has no grade code or grade point and is excluded from GPA calculations.
+- `graduation_requirement`: a department, admission-year, and major-type policy row containing minimum total, major, and double-major credit thresholds. It is policy data for later graduation analysis, not a calculated result.
 - `admin`: administrator profile linked to a Supabase user ID for management functions.
 - `allowed_signup_email_domain`: exact school domains accepted by the Supabase before-user-created hook.
 

@@ -17,6 +17,7 @@ When a rule is implemented, document the invariant and add a unit test beside it
 - `student_grade`: one student course attempt identified by academic year and term. A student may correct or delete only their own manually managed attempt; the associated course does not change during an update. Credit and grade point remain attempt snapshots, and RPL has no grade code or grade point and is excluded from GPA calculations.
 - `graduation_requirement`: a department, admission-year, and major-type policy row containing minimum total, major, and double-major credit thresholds. It is policy data for later graduation analysis, not a calculated result.
 - `required_course`: a graduation-requirement-specific relation to the shared course catalog, classified as major foundation, major required, or general required. Active assignments are unique; reclassification uses soft deletion.
+- Graduation-requirement lookup evaluates every active student major independently using an exact department, admission-year, and major-type policy. Results are ordered primary, double major, then minor; missing policy data is an explicit error rather than an implicit fallback.
 - `admin`: administrator profile linked to a Supabase user ID for management functions.
 - `allowed_signup_email_domain`: exact school domains accepted by the Supabase before-user-created hook.
 

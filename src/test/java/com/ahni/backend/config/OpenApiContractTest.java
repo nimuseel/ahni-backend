@@ -124,4 +124,28 @@ class OpenApiContractTest {
 		);
 	}
 
+	@Test
+	void graduationRequirementEndpointIsDocumented() throws Exception {
+		String actual = mockMvc.perform(get("/v3/api-docs"))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		var operation = objectMapper.readTree(actual)
+			.at("/paths/~1api~1v1~1graduation-requirements/get");
+
+		assertEquals(
+			"array",
+			operation.at("/responses/200/content/application~1json/schema/type").asText()
+		);
+		assertEquals(
+			"#/components/schemas/GraduationRequirementResponse",
+			operation
+				.at("/responses/200/content/application~1json/schema/items/$ref")
+				.asText()
+		);
+		assertTrue(operation.at("/security/0/bearerAuth").isArray());
+		assertTrue(operation.at("/responses/404").isObject());
+	}
+
 }

@@ -6,10 +6,9 @@
 
 ## Scope
 
-This slice assembles the graduation policies and active required courses for
-the authenticated student's active majors. It does not calculate completion,
-missing credits, or graduation eligibility, and it does not expose an HTTP
-endpoint yet.
+This slice assembles and exposes the graduation policies and active required
+courses for the authenticated student's active majors. It does not calculate
+completion, missing credits, or graduation eligibility.
 
 ## Selection rules
 
@@ -40,10 +39,22 @@ Each result contains:
 The response does not expose database identifiers. Required-course category
 remains separate from the broad course catalog category.
 
+## HTTP contract
+
+```http
+GET /api/v1/graduation-requirements
+Authorization: Bearer <student-jwt>
+```
+
+The endpoint returns `200` with one response per active major. Missing or
+invalid authentication returns `401`. A missing student profile or an active
+major without an exact graduation policy returns `404` with the shared
+`ApiErrorResponse` shape. The generated OpenAPI document is the checked-in
+client contract.
+
 ## Deferred work
 
 - completed-course comparison and missing-course calculation;
 - credit and graduation-status analysis;
-- authenticated HTTP endpoint and OpenAPI contract;
 - mobile presentation;
 - administrator policy management and production policy seeding.

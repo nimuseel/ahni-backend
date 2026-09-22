@@ -104,6 +104,35 @@ class GraduationRequirementRepositoryIntegrationTest {
             .containsExactly(2024, 2023);
     }
 
+    @Test
+    void 관리자_조회는_선택한_필터를_적용하고_입학연도_내림차순으로_정렬한다() {
+        Department department = departmentRepository.saveAndFlush(
+            new Department("소프트웨어융합공학과")
+        );
+        Department otherDepartment = departmentRepository.saveAndFlush(
+            new Department("산업경영학과")
+        );
+        graduationRequirementRepository.saveAllAndFlush(List.of(
+            requirement(department, 2023, MajorType.PRIMARY),
+            requirement(department, 2024, MajorType.PRIMARY),
+            requirement(department, 2024, MajorType.MINOR),
+            requirement(otherDepartment, 2024, MajorType.PRIMARY)
+        ));
+
+        List<GraduationRequirement> requirements = graduationRequirementRepository
+            .findAllForAdmin(department.getEntityId(), null, MajorType.PRIMARY);
+
+        assertThat(requirements)
+            .extracting(GraduationRequirement::getAdmissionYear)
+            .containsExactly(2024, 2023);
+        assertThat(requirements)
+            .extracting(item -> item.getDepartment().getEntityId())
+            .containsOnly(department.getEntityId());
+        assertThat(requirements)
+            .extracting(GraduationRequirement::getMajorType)
+            .containsOnly(MajorType.PRIMARY);
+    }
+
     private GraduationRequirement requirement(
         Department department,
         int admissionYear,

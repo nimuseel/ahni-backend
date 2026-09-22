@@ -167,6 +167,9 @@ class OpenApiContractTest {
 		var collection = document.at(
 			"/paths/~1api~1v1~1admin~1graduation-requirements/post"
 		);
+		var list = document.at(
+			"/paths/~1api~1v1~1admin~1graduation-requirements/get"
+		);
 		var item = document.at(
 			"/paths/~1api~1v1~1admin~1graduation-requirements~1{requirementEntityId}/put"
 		);
@@ -174,6 +177,11 @@ class OpenApiContractTest {
 		assertTrue(collection.at("/security/0/bearerAuth").isArray());
 		assertTrue(collection.at("/responses/201").isObject());
 		assertTrue(collection.at("/responses/403").isObject());
+		assertTrue(list.at("/security/0/bearerAuth").isArray());
+		assertEquals(
+			"array",
+			list.at("/responses/200/content/application~1json/schema/type").asText()
+		);
 		assertTrue(item.at("/security/0/bearerAuth").isArray());
 		assertTrue(item.at("/responses/200").isObject());
 		assertTrue(item.at("/responses/403").isObject());

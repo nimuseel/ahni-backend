@@ -4,6 +4,7 @@ import com.ahni.backend.entity.GraduationRequirement;
 import com.ahni.backend.entity.RequiredCourse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -18,5 +19,18 @@ public interface RequiredCourseRepository extends JpaRepository<RequiredCourse, 
         """)
     List<RequiredCourse> findAllActiveByGraduationRequirement(
         GraduationRequirement requirement
+    );
+
+    @Query("""
+        select requiredCourse
+        from RequiredCourse requiredCourse
+        join fetch requiredCourse.course
+        where requiredCourse.graduationRequirement in :requirements
+          and requiredCourse.deletedAt is null
+        order by requiredCourse.graduationRequirement.id asc,
+                 requiredCourse.course.code asc
+        """)
+    List<RequiredCourse> findAllActiveByGraduationRequirementIn(
+        @Param("requirements") List<GraduationRequirement> requirements
     );
 }

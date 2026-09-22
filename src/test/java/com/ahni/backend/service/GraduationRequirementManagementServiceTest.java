@@ -118,6 +118,55 @@ class GraduationRequirementManagementServiceTest {
     }
 
     @Test
+    void 관리자용_졸업요건_목록은_필수과목을_포함한다() {
+        allowAdmin();
+        Department department = new Department("소프트웨어융합공학과");
+        GraduationRequirement requirement = requirement(department);
+        Course course = course(department, "CSE101", CourseCategory.MAJOR);
+        RequiredCourse requiredCourse = new RequiredCourse(
+            requirement,
+            course,
+            RequiredCourseCategory.MAJOR_FOUNDATION
+        );
+        when(graduationRequirementRepository.findAllForAdmin(
+            department.getEntityId(),
+            2024,
+            MajorType.PRIMARY
+        )).thenReturn(List.of(requirement));
+        when(requiredCourseRepository.findAllActiveByGraduationRequirementIn(
+            List.of(requirement)
+        )).thenReturn(List.of(requiredCourse));
+
+        List<GraduationRequirementResponse> responses = service.findAll(
+            ADMIN_AUTH_USER_ID,
+            department.getEntityId(),
+            2024,
+            "PRIMARY"
+        );
+
+        assertThat(responses).singleElement().satisfies(response -> {
+            assertThat(response.entityId()).isEqualTo(requirement.getEntityId());
+            assertThat(response.requiredCourses())
+                .extracting(item -> item.course().code())
+                .containsExactly("CSE101");
+        });
+    }
+
+    @Test
+    void 활성_관리자가_아니면_졸업요건_목록을_조회할_수_없다() {
+        when(adminRepository.existsByAuthUserIdAndDeletedAtIsNull(
+            ADMIN_AUTH_USER_ID
+        )).thenReturn(false);
+
+        assertThatThrownBy(() -> service.findAll(
+            ADMIN_AUTH_USER_ID,
+            null,
+            null,
+            null
+        )).isInstanceOf(AdminAccessDeniedException.class);
+    }
+
+    @Test
     void 같은_학과_입학연도_전공유형의_졸업요건은_중복_등록할_수_없다() {
         allowAdmin();
         Department department = new Department("소프트웨어융합공학과");

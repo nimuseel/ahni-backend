@@ -18,14 +18,17 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.UUID;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/admin/graduation-requirements")
@@ -36,6 +39,36 @@ public class GraduationRequirementManagementController {
         GraduationRequirementManagementService service
     ) {
         this.service = service;
+    }
+
+    @Operation(
+        summary = "관리자용 졸업요건 목록 조회",
+        description = "[관리자 인증 O] 학과, 입학연도, 전공 유형으로 졸업요건을 필터링합니다.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "졸업요건 목록 조회 성공"),
+        @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content),
+        @ApiResponse(responseCode = "403", description = "관리자 권한 없음", content = @Content(
+            schema = @Schema(implementation = ApiErrorResponse.class),
+            examples = @ExampleObject(value = """
+                {"code":"ADMIN_ACCESS_DENIED","message":"관리자 권한이 필요합니다."}
+                """)
+        ))
+    })
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<GraduationRequirementResponse> findAll(
+        @AuthenticationPrincipal Jwt jwt,
+        @RequestParam(required = false) UUID departmentEntityId,
+        @RequestParam(required = false) Integer admissionYear,
+        @RequestParam(required = false) String majorType
+    ) {
+        return service.findAll(
+            UUID.fromString(jwt.getSubject()),
+            departmentEntityId,
+            admissionYear,
+            majorType
+        );
     }
 
     @Operation(

@@ -26,6 +26,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -66,6 +67,32 @@ class GraduationRequirementManagementControllerTest {
             .andExpect(jsonPath("$.sourceTitle")
                 .value("2024학년도 졸업요건"))
             .andExpect(jsonPath("$.requiredCourses[0].course.code")
+                .value("CSE101"));
+    }
+
+    @Test
+    void 필터에_맞는_졸업요건_목록을_조회한다() throws Exception {
+        UUID departmentEntityId = UUID.fromString(
+            "00000000-0000-0000-0000-000000000001"
+        );
+        when(service.findAll(
+            ADMIN_AUTH_USER_ID,
+            departmentEntityId,
+            2024,
+            "PRIMARY"
+        )).thenReturn(List.of(response()));
+
+        mockMvc.perform(get("/api/v1/admin/graduation-requirements")
+                .with(jwt().jwt(token -> token.subject(ADMIN_AUTH_USER_ID.toString())))
+                .queryParam("departmentEntityId", departmentEntityId.toString())
+                .queryParam("admissionYear", "2024")
+                .queryParam("majorType", "PRIMARY"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].entityId")
+                .value(REQUIREMENT_ENTITY_ID.toString()))
+            .andExpect(jsonPath("$[0].department.name")
+                .value("소프트웨어융합공학과"))
+            .andExpect(jsonPath("$[0].requiredCourses[0].course.code")
                 .value("CSE101"));
     }
 

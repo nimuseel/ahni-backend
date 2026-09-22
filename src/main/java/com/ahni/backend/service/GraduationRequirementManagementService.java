@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -59,6 +60,37 @@ public class GraduationRequirementManagementService {
         this.courseRepository = courseRepository;
         this.graduationRequirementRepository = graduationRequirementRepository;
         this.requiredCourseRepository = requiredCourseRepository;
+    }
+
+    public List<GraduationRequirementResponse> findAll(
+        UUID authUserId,
+        UUID departmentEntityId,
+        Integer admissionYear,
+        String majorType
+    ) {
+        ensureAdmin(authUserId);
+        MajorType parsedMajorType = majorType == null
+            ? null
+            : MajorType.valueOf(majorType);
+        List<GraduationRequirement> requirements = graduationRequirementRepository
+            .findAllForAdmin(departmentEntityId, admissionYear, parsedMajorType);
+        if (requirements.isEmpty()) {
+            return List.of();
+        }
+        Map<GraduationRequirement, List<RequiredCourse>> requiredCoursesByRequirement =
+            requiredCourseRepository
+                .findAllActiveByGraduationRequirementIn(requirements)
+                .stream()
+                .collect(Collectors.groupingBy(
+                    RequiredCourse::getGraduationRequirement
+                ));
+
+        return requirements.stream()
+            .map(requirement -> toResponse(
+                requirement,
+                requiredCoursesByRequirement.getOrDefault(requirement, List.of())
+            ))
+            .toList();
     }
 
     @Transactional
@@ -207,6 +239,7 @@ public class GraduationRequirementManagementService {
             requirement.getSourceTitle(),
             requirement.getSourceUrl(),
             requiredCourses.stream()
+                .sorted(COURSE_CODE_ORDER)
                 .map(GraduationRequirementManagementService::toRequiredCourseResponse)
                 .toList()
         );

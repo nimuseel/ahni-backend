@@ -154,4 +154,35 @@ class OpenApiContractTest {
 		assertTrue(!properties.has("minDoubleMajorCredit"));
 	}
 
+	@Test
+	void graduationProgressEndpointIsDocumented() throws Exception {
+		String actual = mockMvc.perform(get("/v3/api-docs"))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		var document = objectMapper.readTree(actual);
+		var operation = document.at("/paths/~1api~1v1~1graduation-progress/get");
+
+		assertEquals(
+			"array",
+			operation.at("/responses/200/content/application~1json/schema/type").asText()
+		);
+		assertEquals(
+			"#/components/schemas/GraduationProgressResponse",
+			operation
+				.at("/responses/200/content/application~1json/schema/items/$ref")
+				.asText()
+		);
+		assertTrue(operation.at("/security/0/bearerAuth").isArray());
+		assertTrue(operation.at("/responses/401").isObject());
+		assertTrue(operation.at("/responses/404").isObject());
+		assertTrue(document
+			.at("/components/schemas/CreditProgressResponse/properties/remaining")
+			.isObject());
+		assertTrue(document
+			.at("/components/schemas/CreditProgressResponse/properties/met")
+			.isObject());
+	}
+
 }

@@ -18,6 +18,7 @@ When a rule is implemented, document the invariant and add a unit test beside it
 - `graduation_requirement`: a department, admission-year, and major-type policy row containing minimum total, department, and general-education credit thresholds. The department threshold applies to the row's major type, so primary, double-major, and minor requirements remain independent. It is policy data for later graduation analysis, not a calculated result.
 - `required_course`: a graduation-requirement-specific relation to the shared course catalog, classified as major foundation, major required, or general required. Active assignments are unique; reclassification uses soft deletion.
 - Graduation-requirement lookup evaluates every active student major independently using an exact department, admission-year, and major-type policy. Results are ordered primary, double major, then minor; missing policy data is an explicit error rather than an implicit fallback.
+- Graduation credit progress applies the same effective-attempt and completion rules as GPA summaries. Total credit includes all completed courses, department credit includes completed `MAJOR` courses owned by the policy department, and general credit includes completed `GENERAL_EDUCATION` courses. Remaining credit is clamped to zero; this result alone is not a final graduation-eligibility decision.
 - `admin`: administrator profile linked to a Supabase user ID for management functions.
 - `allowed_signup_email_domain`: exact school domains accepted by the Supabase before-user-created hook.
 

@@ -59,6 +59,8 @@ class GraduationRequirementControllerTest {
             .andExpect(jsonPath("$[0].department.name")
                 .value("소프트웨어융합공학과"))
             .andExpect(jsonPath("$[0].minTotalCredit").value(130.0))
+            .andExpect(jsonPath("$[0].minDepartmentCredit").value(60.0))
+            .andExpect(jsonPath("$[0].minGeneralCredit").value(30.0))
             .andExpect(jsonPath("$[0].requiredCourses[0].category")
                 .value("MAJOR_FOUNDATION"))
             .andExpect(jsonPath("$[0].requiredCourses[0].course.code")
@@ -107,7 +109,7 @@ class GraduationRequirementControllerTest {
             department,
             new BigDecimal("130.0"),
             new BigDecimal("60.0"),
-            BigDecimal.ZERO,
+            new BigDecimal("30.0"),
             List.of(requiredCourse)
         );
     }

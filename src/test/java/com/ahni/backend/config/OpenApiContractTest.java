@@ -146,6 +146,12 @@ class OpenApiContractTest {
 		);
 		assertTrue(operation.at("/security/0/bearerAuth").isArray());
 		assertTrue(operation.at("/responses/404").isObject());
+		var properties = objectMapper.readTree(actual)
+			.at("/components/schemas/GraduationRequirementResponse/properties");
+		assertTrue(properties.has("minDepartmentCredit"));
+		assertTrue(properties.has("minGeneralCredit"));
+		assertTrue(!properties.has("minMajorCredit"));
+		assertTrue(!properties.has("minDoubleMajorCredit"));
 	}
 
 }

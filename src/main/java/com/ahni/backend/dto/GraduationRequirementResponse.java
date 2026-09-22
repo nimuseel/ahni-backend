@@ -24,10 +24,10 @@ public record GraduationRequirementResponse(
     DepartmentResponse department,
     @Schema(description = "최소 총 이수학점", example = "130.0")
     BigDecimal minTotalCredit,
-    @Schema(description = "최소 전공 이수학점", example = "60.0")
-    BigDecimal minMajorCredit,
-    @Schema(description = "최소 복수전공 이수학점", example = "0.0")
-    BigDecimal minDoubleMajorCredit,
+    @Schema(description = "해당 전공 유형의 최소 이수학점", example = "60.0")
+    BigDecimal minDepartmentCredit,
+    @Schema(description = "최소 교양 이수학점", example = "30.0")
+    BigDecimal minGeneralCredit,
     @Schema(description = "활성 필수과목 목록")
     List<RequiredCourseResponse> requiredCourses
 ) { }

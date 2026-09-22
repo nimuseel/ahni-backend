@@ -56,8 +56,8 @@ public class GraduationRequirementController {
                           "name": "소프트웨어융합공학과"
                         },
                         "minTotalCredit": 130.0,
-                        "minMajorCredit": 60.0,
-                        "minDoubleMajorCredit": 0.0,
+                        "minDepartmentCredit": 60.0,
+                        "minGeneralCredit": 30.0,
                         "requiredCourses": [
                           {
                             "entityId": "00000000-0000-0000-0000-000000000301",

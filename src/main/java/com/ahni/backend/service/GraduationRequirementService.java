@@ -78,8 +78,8 @@ public class GraduationRequirementService {
             requirement.getMajorType().name(),
             toDepartmentResponse(requirement.getDepartment()),
             requirement.getMinTotalCredit(),
-            requirement.getMinMajorCredit(),
-            requirement.getMinDoubleMajorCredit(),
+            requirement.getMinDepartmentCredit(),
+            requirement.getMinGeneralCredit(),
             requiredCourses
         );
     }

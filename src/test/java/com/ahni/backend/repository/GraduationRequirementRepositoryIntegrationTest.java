@@ -82,6 +82,8 @@ class GraduationRequirementRepositoryIntegrationTest {
 
         assertThat(found.getEntityId()).isEqualTo(requirement.getEntityId());
         assertThat(found.getMinTotalCredit()).isEqualByComparingTo("130.0");
+        assertThat(found.getMinDepartmentCredit()).isEqualByComparingTo("60.0");
+        assertThat(found.getMinGeneralCredit()).isEqualByComparingTo("30.0");
     }
 
     @Test
@@ -113,7 +115,7 @@ class GraduationRequirementRepositoryIntegrationTest {
             majorType,
             new BigDecimal("130.0"),
             new BigDecimal("60.0"),
-            BigDecimal.ZERO
+            new BigDecimal("30.0")
         );
     }
 }

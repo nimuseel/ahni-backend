@@ -66,7 +66,7 @@ class GraduationRequirementServiceTest {
             MajorType.PRIMARY,
             new BigDecimal("130.0"),
             new BigDecimal("60.0"),
-            BigDecimal.ZERO
+            new BigDecimal("30.0")
         );
         Course course = new Course(
             department,
@@ -102,6 +102,8 @@ class GraduationRequirementServiceTest {
         assertThat(response.majorType()).isEqualTo("PRIMARY");
         assertThat(response.department().entityId()).isEqualTo(department.getEntityId());
         assertThat(response.minTotalCredit()).isEqualByComparingTo("130.0");
+        assertThat(response.minDepartmentCredit()).isEqualByComparingTo("60.0");
+        assertThat(response.minGeneralCredit()).isEqualByComparingTo("30.0");
         assertThat(response.requiredCourses()).hasSize(1);
         assertThat(response.requiredCourses().getFirst().category())
             .isEqualTo(RequiredCourseCategory.MAJOR_FOUNDATION);
@@ -202,7 +204,7 @@ class GraduationRequirementServiceTest {
             majorType,
             new BigDecimal("130.0"),
             new BigDecimal("60.0"),
-            BigDecimal.ZERO
+            new BigDecimal("30.0")
         );
     }
 }

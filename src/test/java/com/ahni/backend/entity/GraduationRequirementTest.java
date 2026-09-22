@@ -19,15 +19,15 @@ class GraduationRequirementTest {
             MajorType.PRIMARY,
             new BigDecimal("130.0"),
             new BigDecimal("60.0"),
-            BigDecimal.ZERO
+            new BigDecimal("30.0")
         );
 
         assertThat(requirement.getDepartment()).isSameAs(department);
         assertThat(requirement.getAdmissionYear()).isEqualTo(2024);
         assertThat(requirement.getMajorType()).isEqualTo(MajorType.PRIMARY);
         assertThat(requirement.getMinTotalCredit()).isEqualByComparingTo("130.0");
-        assertThat(requirement.getMinMajorCredit()).isEqualByComparingTo("60.0");
-        assertThat(requirement.getMinDoubleMajorCredit()).isEqualByComparingTo("0.0");
+        assertThat(requirement.getMinDepartmentCredit()).isEqualByComparingTo("60.0");
+        assertThat(requirement.getMinGeneralCredit()).isEqualByComparingTo("30.0");
     }
 
     @Test

@@ -31,7 +31,8 @@ not approved.
 
 Each result contains:
 
-- the graduation requirement's external identifier and thresholds;
+- the graduation requirement's external identifier and total, department, and
+  general-education credit thresholds;
 - its department, admission year, and major type;
 - active required-course relations in course-code order;
 - each course's stable catalog data and requirement-specific category.

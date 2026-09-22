@@ -35,6 +35,7 @@ Each result contains:
 - the graduation requirement's external identifier and total, department, and
   general-education credit thresholds;
 - its department, admission year, and major type;
+- the official source title and optional source URL;
 - active required-course relations in course-code order;
 - each course's stable catalog data and requirement-specific category.
 
@@ -73,4 +74,4 @@ department. Remaining credit never falls below zero.
 - completed-course comparison and missing-course calculation;
 - required-course completion and final graduation-status analysis;
 - mobile presentation;
-- administrator policy management and production policy seeding.
+- administrator policy deletion and production policy seeding.

@@ -13,6 +13,14 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 @Hidden
 public class GlobalExceptionHandler {
+    @ExceptionHandler(AdminAccessDeniedException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ApiErrorResponse handleAdminAccessDenied(
+        AdminAccessDeniedException exception
+    ) {
+        return new ApiErrorResponse("ADMIN_ACCESS_DENIED", exception.getMessage());
+    }
+
     @ExceptionHandler(StudentAlreadyRegisteredException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiErrorResponse handleStudentAlreadyRegistered(StudentAlreadyRegisteredException exception) {
@@ -90,6 +98,28 @@ public class GlobalExceptionHandler {
     ) {
         return new ApiErrorResponse(
             "GRADUATION_REQUIREMENT_NOT_FOUND",
+            exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(GraduationRequirementAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiErrorResponse handleGraduationRequirementAlreadyExists(
+        GraduationRequirementAlreadyExistsException exception
+    ) {
+        return new ApiErrorResponse(
+            "GRADUATION_REQUIREMENT_ALREADY_EXISTS",
+            exception.getMessage()
+        );
+    }
+
+    @ExceptionHandler(InvalidRequiredCourseAssignmentException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse handleInvalidRequiredCourseAssignment(
+        InvalidRequiredCourseAssignmentException exception
+    ) {
+        return new ApiErrorResponse(
+            "INVALID_REQUIRED_COURSE_ASSIGNMENT",
             exception.getMessage()
         );
     }

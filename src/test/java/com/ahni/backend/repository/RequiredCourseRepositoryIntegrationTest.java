@@ -173,6 +173,41 @@ class RequiredCourseRepositoryIntegrationTest {
         )).isInstanceOf(DataIntegrityViolationException.class);
     }
 
+    @Test
+    void 소프트_삭제한_필수과목은_같은_과목으로_다시_지정할_수_있다() {
+        Department department = departmentRepository.saveAndFlush(
+            new Department("소프트웨어융합공학과")
+        );
+        GraduationRequirement requirement = graduationRequirementRepository.saveAndFlush(
+            graduationRequirement(department)
+        );
+        Course course = courseRepository.saveAndFlush(
+            course(department, "CSE101", "프로그래밍 기초")
+        );
+        RequiredCourse previous = requiredCourseRepository.saveAndFlush(
+            new RequiredCourse(
+                requirement,
+                course,
+                RequiredCourseCategory.MAJOR_FOUNDATION
+            )
+        );
+        previous.softDelete();
+        requiredCourseRepository.saveAndFlush(previous);
+
+        RequiredCourse replacement = requiredCourseRepository.saveAndFlush(
+            new RequiredCourse(
+                requirement,
+                course,
+                RequiredCourseCategory.MAJOR_REQUIRED
+            )
+        );
+        entityManager.clear();
+
+        assertThat(requiredCourseRepository.findAllActiveByGraduationRequirement(requirement))
+            .extracting(RequiredCourse::getEntityId)
+            .containsExactly(replacement.getEntityId());
+    }
+
     private GraduationRequirement graduationRequirement(Department department) {
         return new GraduationRequirement(
             department,
@@ -180,7 +215,9 @@ class RequiredCourseRepositoryIntegrationTest {
             MajorType.PRIMARY,
             new BigDecimal("130.0"),
             new BigDecimal("60.0"),
-            new BigDecimal("30.0")
+            new BigDecimal("30.0"),
+            "2024학년도 졸업요건",
+            null
         );
     }
 

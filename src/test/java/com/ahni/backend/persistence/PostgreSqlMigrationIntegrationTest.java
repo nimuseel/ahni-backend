@@ -5,7 +5,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
+import java.util.UUID;
 
+import com.ahni.backend.repository.AdminRepository;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationState;
 import org.junit.jupiter.api.AfterAll;
@@ -53,6 +55,9 @@ class PostgreSqlMigrationIntegrationTest {
 		@Autowired
 		private ObjectMapper objectMapper;
 
+		@Autowired
+		private AdminRepository adminRepository;
+
 		@Test
 		void appliesAllMigrationsSuccessfully() {
 				var appliedMigrations = Arrays.stream(flyway.info().applied())
@@ -76,12 +81,36 @@ class PostgreSqlMigrationIntegrationTest {
 					() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("13")),
 					() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("14")),
 					() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("15")),
-					() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("16"))
+					() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("16")),
+					() -> assertEquals(MigrationState.SUCCESS, summary.versionedStates().get("17"))
 				);
 				assertTrue(
 					summary.allAppliedSuccessfully(),
 					"Every applied versioned and repeatable migration must be successful"
 				);
+		}
+
+		@Test
+		void authorizesOnlyActiveAdminProfile() {
+				UUID authUserId = UUID.randomUUID();
+				jdbcTemplate.update(
+					"""
+						INSERT INTO admin (auth_user_id, name, email)
+						VALUES (?, ?, ?)
+					""",
+					authUserId,
+					"테스트 관리자",
+					authUserId + "@inha.edu"
+				);
+
+				assertTrue(adminRepository.existsByAuthUserIdAndDeletedAtIsNull(authUserId));
+
+				jdbcTemplate.update(
+					"UPDATE admin SET deleted_at = now() WHERE auth_user_id = ?",
+					authUserId
+				);
+
+				assertTrue(!adminRepository.existsByAuthUserIdAndDeletedAtIsNull(authUserId));
 		}
 
 		@Test

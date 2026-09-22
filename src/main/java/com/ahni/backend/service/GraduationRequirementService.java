@@ -80,6 +80,8 @@ public class GraduationRequirementService {
             requirement.getMinTotalCredit(),
             requirement.getMinDepartmentCredit(),
             requirement.getMinGeneralCredit(),
+            requirement.getSourceTitle(),
+            requirement.getSourceUrl(),
             requiredCourses
         );
     }

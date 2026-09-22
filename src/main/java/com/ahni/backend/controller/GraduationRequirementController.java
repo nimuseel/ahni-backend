@@ -58,6 +58,8 @@ public class GraduationRequirementController {
                         "minTotalCredit": 130.0,
                         "minDepartmentCredit": 60.0,
                         "minGeneralCredit": 30.0,
+                        "sourceTitle": "2024학년도 졸업요건",
+                        "sourceUrl": "https://example.edu/requirements/2024",
                         "requiredCourses": [
                           {
                             "entityId": "00000000-0000-0000-0000-000000000301",

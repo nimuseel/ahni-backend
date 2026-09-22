@@ -21,6 +21,8 @@ import java.util.UUID;
 @Entity
 @Getter
 public class GraduationRequirement {
+    private static final int MAX_SOURCE_TITLE_LENGTH = 200;
+    private static final int MAX_SOURCE_URL_LENGTH = 2048;
     private static final int MIN_ADMISSION_YEAR = 2000;
     private static final int MAX_ADMISSION_YEAR = 9999;
     private static final BigDecimal MIN_CREDIT = BigDecimal.ZERO;
@@ -53,6 +55,12 @@ public class GraduationRequirement {
     @Column(precision = 5, scale = 1, nullable = false)
     private BigDecimal minGeneralCredit;
 
+    @Column(length = MAX_SOURCE_TITLE_LENGTH, nullable = false)
+    private String sourceTitle;
+
+    @Column(length = MAX_SOURCE_URL_LENGTH)
+    private String sourceUrl;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -67,7 +75,9 @@ public class GraduationRequirement {
         MajorType majorType,
         BigDecimal minTotalCredit,
         BigDecimal minDepartmentCredit,
-        BigDecimal minGeneralCredit
+        BigDecimal minGeneralCredit,
+        String sourceTitle,
+        String sourceUrl
     ) {
         if (department == null) {
             throw new IllegalArgumentException("졸업요건의 학과는 필수입니다.");
@@ -85,6 +95,22 @@ public class GraduationRequirement {
         this.minTotalCredit = validateCredit(minTotalCredit);
         this.minDepartmentCredit = validateCredit(minDepartmentCredit);
         this.minGeneralCredit = validateCredit(minGeneralCredit);
+        this.sourceTitle = normalizeSourceTitle(sourceTitle);
+        this.sourceUrl = normalizeSourceUrl(sourceUrl);
+    }
+
+    public void update(
+        BigDecimal minTotalCredit,
+        BigDecimal minDepartmentCredit,
+        BigDecimal minGeneralCredit,
+        String sourceTitle,
+        String sourceUrl
+    ) {
+        this.minTotalCredit = validateCredit(minTotalCredit);
+        this.minDepartmentCredit = validateCredit(minDepartmentCredit);
+        this.minGeneralCredit = validateCredit(minGeneralCredit);
+        this.sourceTitle = normalizeSourceTitle(sourceTitle);
+        this.sourceUrl = normalizeSourceUrl(sourceUrl);
     }
 
     private static BigDecimal validateCredit(BigDecimal credit) {
@@ -98,6 +124,28 @@ public class GraduationRequirement {
             throw new IllegalArgumentException("졸업요건 학점은 소수점 한 자리까지만 입력할 수 있습니다.");
         }
         return credit;
+    }
+
+    private static String normalizeSourceTitle(String sourceTitle) {
+        if (sourceTitle == null || sourceTitle.isBlank()) {
+            throw new IllegalArgumentException("졸업요건 출처명은 필수입니다.");
+        }
+        String normalized = sourceTitle.trim();
+        if (normalized.length() > MAX_SOURCE_TITLE_LENGTH) {
+            throw new IllegalArgumentException("졸업요건 출처명은 200자를 초과할 수 없습니다.");
+        }
+        return normalized;
+    }
+
+    private static String normalizeSourceUrl(String sourceUrl) {
+        if (sourceUrl == null || sourceUrl.isBlank()) {
+            return null;
+        }
+        String normalized = sourceUrl.trim();
+        if (normalized.length() > MAX_SOURCE_URL_LENGTH) {
+            throw new IllegalArgumentException("졸업요건 출처 URL은 2048자를 초과할 수 없습니다.");
+        }
+        return normalized;
     }
 
     @PrePersist

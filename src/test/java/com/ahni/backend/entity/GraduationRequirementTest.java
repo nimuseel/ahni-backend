@@ -19,7 +19,9 @@ class GraduationRequirementTest {
             MajorType.PRIMARY,
             new BigDecimal("130.0"),
             new BigDecimal("60.0"),
-            new BigDecimal("30.0")
+            new BigDecimal("30.0"),
+            " 2024학년도 졸업요건 ",
+            " https://example.edu/requirements/2024 "
         );
 
         assertThat(requirement.getDepartment()).isSameAs(department);
@@ -28,6 +30,28 @@ class GraduationRequirementTest {
         assertThat(requirement.getMinTotalCredit()).isEqualByComparingTo("130.0");
         assertThat(requirement.getMinDepartmentCredit()).isEqualByComparingTo("60.0");
         assertThat(requirement.getMinGeneralCredit()).isEqualByComparingTo("30.0");
+        assertThat(requirement.getSourceTitle()).isEqualTo("2024학년도 졸업요건");
+        assertThat(requirement.getSourceUrl())
+            .isEqualTo("https://example.edu/requirements/2024");
+    }
+
+    @Test
+    void 졸업요건의_학점과_출처를_수정한다() {
+        GraduationRequirement requirement = requirement();
+
+        requirement.update(
+            new BigDecimal("135.0"),
+            new BigDecimal("65.0"),
+            new BigDecimal("32.0"),
+            "2024학년도 개정 졸업요건",
+            null
+        );
+
+        assertThat(requirement.getMinTotalCredit()).isEqualByComparingTo("135.0");
+        assertThat(requirement.getMinDepartmentCredit()).isEqualByComparingTo("65.0");
+        assertThat(requirement.getMinGeneralCredit()).isEqualByComparingTo("32.0");
+        assertThat(requirement.getSourceTitle()).isEqualTo("2024학년도 개정 졸업요건");
+        assertThat(requirement.getSourceUrl()).isNull();
     }
 
     @Test
@@ -38,7 +62,9 @@ class GraduationRequirementTest {
             MajorType.PRIMARY,
             new BigDecimal("-0.1"),
             BigDecimal.ZERO,
-            BigDecimal.ZERO
+            BigDecimal.ZERO,
+            "졸업요건",
+            null
         )).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -50,7 +76,9 @@ class GraduationRequirementTest {
             MajorType.PRIMARY,
             new BigDecimal("130.01"),
             BigDecimal.ZERO,
-            BigDecimal.ZERO
+            BigDecimal.ZERO,
+            "졸업요건",
+            null
         )).isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -62,7 +90,9 @@ class GraduationRequirementTest {
             MajorType.PRIMARY,
             BigDecimal.ZERO,
             BigDecimal.ZERO,
-            BigDecimal.ZERO
+            BigDecimal.ZERO,
+            "졸업요건",
+            null
         )).isInstanceOf(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> new GraduationRequirement(
@@ -71,7 +101,9 @@ class GraduationRequirementTest {
             MajorType.PRIMARY,
             BigDecimal.ZERO,
             BigDecimal.ZERO,
-            BigDecimal.ZERO
+            BigDecimal.ZERO,
+            "졸업요건",
+            null
         )).isInstanceOf(IllegalArgumentException.class);
 
         assertThatThrownBy(() -> new GraduationRequirement(
@@ -80,7 +112,36 @@ class GraduationRequirementTest {
             null,
             BigDecimal.ZERO,
             BigDecimal.ZERO,
-            BigDecimal.ZERO
+            BigDecimal.ZERO,
+            "졸업요건",
+            null
         )).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void 졸업요건의_출처명은_필수다() {
+        assertThatThrownBy(() -> new GraduationRequirement(
+            department,
+            2024,
+            MajorType.PRIMARY,
+            BigDecimal.ZERO,
+            BigDecimal.ZERO,
+            BigDecimal.ZERO,
+            " ",
+            null
+        )).isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private GraduationRequirement requirement() {
+        return new GraduationRequirement(
+            department,
+            2024,
+            MajorType.PRIMARY,
+            new BigDecimal("130.0"),
+            new BigDecimal("60.0"),
+            new BigDecimal("30.0"),
+            "2024학년도 졸업요건",
+            "https://example.edu/requirements/2024"
+        );
     }
 }

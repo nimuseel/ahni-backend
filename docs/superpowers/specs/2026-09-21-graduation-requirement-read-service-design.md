@@ -7,8 +7,9 @@
 ## Scope
 
 This slice assembles and exposes the graduation policies and active required
-courses for the authenticated student's active majors. It does not calculate
-completion, missing credits, or graduation eligibility.
+courses for the authenticated student's active majors. A companion endpoint
+calculates total, department, and general-education credit progress. Required
+course completion and final graduation eligibility remain separate work.
 
 ## Selection rules
 
@@ -53,9 +54,23 @@ major without an exact graduation policy returns `404` with the shared
 `ApiErrorResponse` shape. The generated OpenAPI document is the checked-in
 client contract.
 
+## Credit progress contract
+
+```http
+GET /api/v1/graduation-progress
+Authorization: Bearer <student-jwt>
+```
+
+Each active major returns required, completed, and remaining credits plus a
+threshold-met flag for total, department, and general-education credits.
+Completed credits use the same rules as the GPA summary: explicitly replaced
+attempts are excluded; RPL, `P`, and passing letter grades count; `F` and `NP`
+do not. Department credit includes only `MAJOR` courses owned by the policy's
+department. Remaining credit never falls below zero.
+
 ## Deferred work
 
 - completed-course comparison and missing-course calculation;
-- credit and graduation-status analysis;
+- required-course completion and final graduation-status analysis;
 - mobile presentation;
 - administrator policy management and production policy seeding.

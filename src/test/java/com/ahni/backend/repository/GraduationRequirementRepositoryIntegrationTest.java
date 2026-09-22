@@ -115,7 +115,9 @@ class GraduationRequirementRepositoryIntegrationTest {
             majorType,
             new BigDecimal("130.0"),
             new BigDecimal("60.0"),
-            new BigDecimal("30.0")
+            new BigDecimal("30.0"),
+            "2024학년도 졸업요건",
+            null
         );
     }
 }

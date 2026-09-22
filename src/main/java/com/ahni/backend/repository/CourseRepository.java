@@ -12,6 +12,8 @@ import java.util.UUID;
 public interface CourseRepository extends JpaRepository<Course, Long> {
     Optional<Course> findByEntityIdAndActiveTrue(UUID entityId);
 
+    List<Course> findAllByEntityIdInAndActiveTrue(List<UUID> entityIds);
+
     List<Course> findAllByActiveTrueOrderByCodeAsc();
 
     List<Course> findAllByActiveTrueAndDepartmentOrderByCodeAsc(Department department);

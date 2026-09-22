@@ -110,7 +110,9 @@ class GraduationProgressCalculatorTest {
             MajorType.PRIMARY,
             new BigDecimal(total),
             new BigDecimal(departmentCredit),
-            new BigDecimal(general)
+            new BigDecimal(general),
+            "2024학년도 졸업요건",
+            null
         );
     }
 

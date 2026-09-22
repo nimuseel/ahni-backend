@@ -152,6 +152,31 @@ class OpenApiContractTest {
 		assertTrue(properties.has("minGeneralCredit"));
 		assertTrue(!properties.has("minMajorCredit"));
 		assertTrue(!properties.has("minDoubleMajorCredit"));
+		assertTrue(properties.has("sourceTitle"));
+		assertTrue(properties.has("sourceUrl"));
+	}
+
+	@Test
+	void graduationRequirementManagementEndpointsAreDocumented() throws Exception {
+		String actual = mockMvc.perform(get("/v3/api-docs"))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		var document = objectMapper.readTree(actual);
+		var collection = document.at(
+			"/paths/~1api~1v1~1admin~1graduation-requirements/post"
+		);
+		var item = document.at(
+			"/paths/~1api~1v1~1admin~1graduation-requirements~1{requirementEntityId}/put"
+		);
+
+		assertTrue(collection.at("/security/0/bearerAuth").isArray());
+		assertTrue(collection.at("/responses/201").isObject());
+		assertTrue(collection.at("/responses/403").isObject());
+		assertTrue(item.at("/security/0/bearerAuth").isArray());
+		assertTrue(item.at("/responses/200").isObject());
+		assertTrue(item.at("/responses/403").isObject());
 	}
 
 	@Test

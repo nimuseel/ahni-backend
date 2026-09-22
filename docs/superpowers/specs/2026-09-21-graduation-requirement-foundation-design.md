@@ -24,6 +24,7 @@ requires a general-education threshold and independent evaluation of
 - the admission year to which the policy applies;
 - the major type being evaluated;
 - minimum total, department, and general-education credits;
+- the title of the official source and an optional source URL;
 - immutable external identity and audit timestamps.
 
 The database allows one policy for each `(department_id, admission_year,
@@ -53,5 +54,19 @@ the student's grade history.
 - `required_course` persistence and requirement-category rules;
 - student graduation-status calculation;
 - authenticated graduation API and mobile screen;
-- administrator CRUD and initial production policy seeding;
+- administrator policy deletion and initial production policy seeding;
 - scholarship, recommendation, and course-simulation behavior.
+
+## Administrator management
+
+An administrator manually reads the university's official graduation-policy
+material and registers one policy with its required-course assignments in a
+single transaction. Registration and replacement are exposed at
+`/api/v1/admin/graduation-requirements`. The Supabase JWT subject must match an
+active `admin.auth_user_id`; authenticated non-administrators receive the
+stable `ADMIN_ACCESS_DENIED` response.
+
+Policy identity (`department`, `admission_year`, `major_type`) is immutable
+after registration. An update replaces credit thresholds, source provenance,
+and the complete active required-course assignment set. The source title is
+required even when the source has no public URL.

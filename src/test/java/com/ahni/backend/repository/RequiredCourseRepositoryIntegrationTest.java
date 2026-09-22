@@ -180,7 +180,7 @@ class RequiredCourseRepositoryIntegrationTest {
             MajorType.PRIMARY,
             new BigDecimal("130.0"),
             new BigDecimal("60.0"),
-            BigDecimal.ZERO
+            new BigDecimal("30.0")
         );
     }
 

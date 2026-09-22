@@ -48,10 +48,10 @@ public class GraduationRequirement {
     private BigDecimal minTotalCredit;
 
     @Column(precision = 5, scale = 1, nullable = false)
-    private BigDecimal minMajorCredit;
+    private BigDecimal minDepartmentCredit;
 
     @Column(precision = 5, scale = 1, nullable = false)
-    private BigDecimal minDoubleMajorCredit;
+    private BigDecimal minGeneralCredit;
 
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
@@ -66,8 +66,8 @@ public class GraduationRequirement {
         int admissionYear,
         MajorType majorType,
         BigDecimal minTotalCredit,
-        BigDecimal minMajorCredit,
-        BigDecimal minDoubleMajorCredit
+        BigDecimal minDepartmentCredit,
+        BigDecimal minGeneralCredit
     ) {
         if (department == null) {
             throw new IllegalArgumentException("졸업요건의 학과는 필수입니다.");
@@ -83,8 +83,8 @@ public class GraduationRequirement {
         this.admissionYear = admissionYear;
         this.majorType = majorType;
         this.minTotalCredit = validateCredit(minTotalCredit);
-        this.minMajorCredit = validateCredit(minMajorCredit);
-        this.minDoubleMajorCredit = validateCredit(minDoubleMajorCredit);
+        this.minDepartmentCredit = validateCredit(minDepartmentCredit);
+        this.minGeneralCredit = validateCredit(minGeneralCredit);
     }
 
     private static BigDecimal validateCredit(BigDecimal credit) {

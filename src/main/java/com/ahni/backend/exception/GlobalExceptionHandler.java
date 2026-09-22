@@ -83,6 +83,17 @@ public class GlobalExceptionHandler {
         return new ApiErrorResponse("GRADE_REPLACEMENT_CONFLICT", exception.getMessage());
     }
 
+    @ExceptionHandler(GraduationRequirementNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiErrorResponse handleGraduationRequirementNotFound(
+        GraduationRequirementNotFoundException exception
+    ) {
+        return new ApiErrorResponse(
+            "GRADUATION_REQUIREMENT_NOT_FOUND",
+            exception.getMessage()
+        );
+    }
+
     @ExceptionHandler(DuplicateMajorDepartmentException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiErrorResponse handleDuplicateMajorDepartment(

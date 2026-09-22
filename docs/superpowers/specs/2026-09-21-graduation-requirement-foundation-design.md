@@ -11,9 +11,10 @@ and major type. It deliberately does not calculate graduation status, expose a
 student API, or classify required courses yet.
 
 The source ERD contains a graduation-requirement row with total, major, and
-double-major credit thresholds. The current student-major policy additionally
-requires `PRIMARY`, `DOUBLE_MAJOR`, and `MINOR` to be evaluated independently,
-so `major_type` is included in the normalized key.
+double-major credit thresholds. The detailed mini specification additionally
+requires a general-education threshold and independent evaluation of
+`PRIMARY`, `DOUBLE_MAJOR`, and `MINOR`. The normalized model therefore uses
+`major_type` in the policy key and one department-credit threshold per policy.
 
 ## Data Model
 
@@ -22,12 +23,17 @@ so `major_type` is included in the normalized key.
 - the owning department;
 - the admission year to which the policy applies;
 - the major type being evaluated;
-- minimum total, major, and double-major credits;
+- minimum total, department, and general-education credits;
 - immutable external identity and audit timestamps.
 
 The database allows one policy for each `(department_id, admission_year,
 major_type)` tuple. Credit values are non-negative decimal values with one
 fractional digit. The entity applies the same boundary rules before persistence.
+`min_department_credit` means the credit threshold for the row's `major_type`;
+it does not carry a second, unrelated major threshold.
+
+The corrected threshold semantics and V16 migration are recorded in
+[Graduation Credit Threshold Alignment](2026-09-22-graduation-credit-threshold-alignment-design.md).
 
 ## Dependency Boundary
 

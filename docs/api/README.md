@@ -4,6 +4,8 @@ The backend OpenAPI document is the single API contract for the mobile and admin
 
 ## API completion checklist
 
+`GET /api/v1/admin/me` returns the authenticated user's active administrator profile. A valid Supabase session without an active `admin` mapping receives `403 ADMIN_ACCESS_DENIED`.
+
 An API change is incomplete unless the same change includes all of the following:
 
 1. Endpoint implementation.

@@ -52,6 +52,30 @@ class OpenApiContractTest {
 	}
 
 	@Test
+	void adminIdentityEndpointIsDocumentedForAuthenticatedAdministrators() throws Exception {
+		String actual = mockMvc.perform(get("/v3/api-docs"))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		var operation = objectMapper.readTree(actual)
+			.at("/paths/~1api~1v1~1admin~1me/get");
+
+		assertTrue(operation.isObject(), "GET /api/v1/admin/me must be documented");
+		assertTrue(operation.at("/security/0/bearerAuth").isArray());
+		assertTrue(operation.at("/responses/200").isObject());
+		assertTrue(operation.at("/responses/403").isObject());
+		assertEquals(
+			"#/components/schemas/AdminIdentityResponse",
+			operation.at("/responses/200/content/application~1json/schema/$ref").asText()
+		);
+		assertEquals(
+			"#/components/schemas/ApiErrorResponse",
+			operation.at("/responses/403/content/application~1json/schema/$ref").asText()
+		);
+	}
+
+	@Test
 	void courseDepartmentIsDocumentedAsNullable() throws Exception {
 		String actual = mockMvc.perform(get("/v3/api-docs"))
 			.andExpect(status().isOk())

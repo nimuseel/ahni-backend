@@ -35,6 +35,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GraduationProgressServiceTest {
     @Mock
+    private com.ahni.backend.repository.RequiredCourseRepository requiredCourseRepository;
+    @Mock
     private StudentRepository studentRepository;
 
     @Mock
@@ -78,6 +80,7 @@ class GraduationProgressServiceTest {
         when(studentMajorRepository.findAllByStudentAndDeletedAtIsNull(student))
             .thenReturn(List.of(major));
         when(gradeRepository.findAllByStudent(student)).thenReturn(List.of(grade));
+        when(requiredCourseRepository.findAllActiveByGraduationRequirement(requirement)).thenReturn(List.of(new com.ahni.backend.entity.RequiredCourse(requirement, course, com.ahni.backend.domain.RequiredCourseCategory.MAJOR_REQUIRED)));
         when(graduationRequirementRepository.findByDepartmentAndAdmissionYearAndMajorType(
             department,
             2024,
@@ -91,6 +94,9 @@ class GraduationProgressServiceTest {
         GraduationProgressResponse response = responses.getFirst();
         assertThat(response.requirementEntityId()).isEqualTo(requirement.getEntityId());
         assertThat(response.majorType()).isEqualTo("PRIMARY");
+        assertThat(response.requiredCourses()).hasSize(1);
+        assertThat(response.requiredCourses().getFirst().completed()).isTrue();
+        assertThat(response.requirementsMet()).isFalse();
         assertThat(response.department().entityId()).isEqualTo(department.getEntityId());
         assertThat(response.credits().total().completed()).isEqualByComparingTo("3.0");
         assertThat(response.credits().department().completed())

@@ -91,6 +91,27 @@ class CourseRepositoryIntegrationTest {
     }
 
     @Test
+    void administrator_listing_includes_inactive_courses_and_edits_preserve_attempt_credit() {
+        Department department = saveDepartment("소프트웨어융합공학과");
+        Course course = courseRepository.saveAndFlush(majorCourse(department, "CSE101", "프로그래밍 기초"));
+        var student = new com.ahni.backend.entity.Student(java.util.UUID.randomUUID(), "student@inha.edu", 2024, com.ahni.backend.domain.EnrollmentStatus.ENROLLED, null);
+        entityManager.persist(student);
+        var grade = new com.ahni.backend.entity.StudentGrade(student, course, 2024, com.ahni.backend.domain.AcademicTerm.FIRST, com.ahni.backend.domain.GradeCode.A_PLUS, new java.math.BigDecimal("3.0"), false, null);
+        entityManager.persist(grade);
+        course.update(department, "CSE101", "프로그래밍 기초 개편", new java.math.BigDecimal("6.0"), CourseCategory.MAJOR);
+        course.deactivate();
+        entityManager.flush();
+        Long gradeId = grade.getId();
+        entityManager.clear();
+        assertThat(courseRepository.findAllForAdmin(null, null, null)).hasSize(1);
+        assertThat(courseRepository.findAllForAdmin(department.getEntityId(), CourseCategory.MAJOR, false)).hasSize(1);
+        assertThat(courseRepository.findAllForAdmin(null, null, true)).isEmpty();
+        assertThat(courseRepository.findAllByActiveTrueOrderByCodeAsc()).isEmpty();
+        assertThat(entityManager.find(com.ahni.backend.entity.StudentGrade.class, gradeId).getCredit()).isEqualByComparingTo("3.0");
+        assertThat(courseRepository.findByEntityId(course.getEntityId()).orElseThrow().getCredit()).isEqualByComparingTo("6.0");
+    }
+
+    @Test
     void 학과와_분류로_활성_과목을_조회한다() {
         Department software = saveDepartment("소프트웨어융합공학과");
         Department finance = saveDepartment("금융투자학과");

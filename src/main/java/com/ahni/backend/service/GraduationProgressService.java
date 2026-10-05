@@ -13,6 +13,7 @@ import com.ahni.backend.repository.GraduationRequirementRepository;
 import com.ahni.backend.repository.StudentGradeRepository;
 import com.ahni.backend.repository.StudentMajorRepository;
 import com.ahni.backend.repository.StudentRepository;
+import com.ahni.backend.repository.RequiredCourseRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,17 +31,20 @@ public class GraduationProgressService {
     private final StudentMajorRepository studentMajorRepository;
     private final GraduationRequirementRepository graduationRequirementRepository;
     private final StudentGradeRepository gradeRepository;
+    private final RequiredCourseRepository requiredCourseRepository;
 
     public GraduationProgressService(
         StudentRepository studentRepository,
         StudentMajorRepository studentMajorRepository,
         GraduationRequirementRepository graduationRequirementRepository,
-        StudentGradeRepository gradeRepository
+        StudentGradeRepository gradeRepository,
+        RequiredCourseRepository requiredCourseRepository
     ) {
         this.studentRepository = studentRepository;
         this.studentMajorRepository = studentMajorRepository;
         this.graduationRequirementRepository = graduationRequirementRepository;
         this.gradeRepository = gradeRepository;
+        this.requiredCourseRepository = requiredCourseRepository;
     }
 
     public List<GraduationProgressResponse> getProgress(UUID authUserId) {
@@ -67,13 +71,16 @@ public class GraduationProgressService {
             )
             .orElseThrow(GraduationRequirementNotFoundException::new);
         Department department = requirement.getDepartment();
+        var credits = GraduationProgressCalculator.calculate(requirement, grades);
+        var requiredCourses = RequiredCourseProgressCalculator.calculate(requiredCourseRepository.findAllActiveByGraduationRequirement(requirement), grades);
 
         return new GraduationProgressResponse(
             requirement.getEntityId(),
             requirement.getAdmissionYear(),
             requirement.getMajorType().name(),
             new DepartmentResponse(department.getEntityId(), department.getName()),
-            GraduationProgressCalculator.calculate(requirement, grades)
+            credits, requiredCourses,
+            credits.total().met() && credits.department().met() && credits.general().met() && requiredCourses.stream().allMatch(com.ahni.backend.dto.RequiredCourseProgressResponse::completed)
         );
     }
 }

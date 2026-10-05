@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface RequiredCourseRepository extends JpaRepository<RequiredCourse, Long> {
+    List<RequiredCourse> findAllByCourseAndDeletedAtIsNull(com.ahni.backend.entity.Course course);
     @Query("""
         select requiredCourse
         from RequiredCourse requiredCourse

@@ -63,6 +63,10 @@ class GraduationProgressControllerTest {
             .andExpect(jsonPath("$[0].credits.general.completed").value(12.0));
 
         verify(graduationProgressService).getProgress(AUTH_USER_ID);
+        mockMvc.perform(get("/api/v1/graduation-progress")
+                .with(jwt().jwt(token -> token.subject(AUTH_USER_ID.toString()))))
+            .andExpect(jsonPath("$[0].requiredCourses").isArray())
+            .andExpect(jsonPath("$[0].requirementsMet").value(false));
     }
 
     @Test
@@ -98,7 +102,7 @@ class GraduationProgressControllerTest {
             2024,
             "PRIMARY",
             department,
-            credits
+            credits, List.of(), false
         );
     }
 

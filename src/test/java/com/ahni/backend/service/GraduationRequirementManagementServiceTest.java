@@ -13,6 +13,7 @@ import com.ahni.backend.entity.MajorType;
 import com.ahni.backend.entity.RequiredCourse;
 import com.ahni.backend.exception.GraduationRequirementAlreadyExistsException;
 import com.ahni.backend.exception.AdminAccessDeniedException;
+import com.ahni.backend.exception.CourseNotFoundException;
 import com.ahni.backend.exception.InvalidRequiredCourseAssignmentException;
 import com.ahni.backend.repository.AdminRepository;
 import com.ahni.backend.repository.CourseRepository;
@@ -324,6 +325,40 @@ class GraduationRequirementManagementServiceTest {
         when(adminRepository.existsByAuthUserIdAndDeletedAtIsNull(
             ADMIN_AUTH_USER_ID
         )).thenReturn(true);
+    }
+
+    @Test
+    void policy_edits_can_retain_previously_assigned_inactive_courses() {
+        allowAdmin();
+        var department = new Department("소프트웨어융합공학과");
+        var requirement = requirement(department);
+        var course = course(department, "CSE101", CourseCategory.MAJOR);
+        course.deactivate();
+        var previous = new RequiredCourse(requirement, course, RequiredCourseCategory.MAJOR_REQUIRED);
+        when(graduationRequirementRepository.findByEntityId(requirement.getEntityId())).thenReturn(Optional.of(requirement));
+        when(requiredCourseRepository.findAllActiveByGraduationRequirement(requirement)).thenReturn(List.of(previous));
+        var input = new GraduationRequirementUpdateRequest(new BigDecimal("130.0"), new BigDecimal("60.0"), new BigDecimal("30.0"), "개정 자료", null, List.of(assignment(course.getEntityId(), RequiredCourseCategory.MAJOR_REQUIRED)));
+        var result = service.update(ADMIN_AUTH_USER_ID, requirement.getEntityId(), input);
+        assertThat(result.requiredCourses()).hasSize(1);
+        assertThat(result.requiredCourses().getFirst().course().entityId()).isEqualTo(course.getEntityId());
+    }
+
+    @Test
+    void policy_edits_cannot_add_unassigned_inactive_courses() {
+        allowAdmin();
+        var department = new Department("소프트웨어융합공학과");
+        var requirement = requirement(department);
+        var course = course(department, "CSE101", CourseCategory.MAJOR);
+        course.deactivate();
+        when(graduationRequirementRepository.findByEntityId(requirement.getEntityId()))
+            .thenReturn(Optional.of(requirement));
+        var input = new GraduationRequirementUpdateRequest(
+            new BigDecimal("130.0"), new BigDecimal("60.0"), new BigDecimal("30.0"),
+            "개정 자료", null,
+            List.of(assignment(course.getEntityId(), RequiredCourseCategory.MAJOR_REQUIRED))
+        );
+        assertThatThrownBy(() -> service.update(ADMIN_AUTH_USER_ID, requirement.getEntityId(), input))
+            .isInstanceOf(CourseNotFoundException.class);
     }
 
     private GraduationRequirementCreateRequest createRequest(

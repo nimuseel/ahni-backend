@@ -143,7 +143,12 @@ public class GraduationRequirementManagementService {
         GraduationRequirement requirement = graduationRequirementRepository
             .findByEntityId(requirementEntityId)
             .orElseThrow(GraduationRequirementNotFoundException::new);
-        List<Course> courses = findCourses(request.requiredCourses());
+        List<RequiredCourse> previousAssignments = requiredCourseRepository
+            .findAllActiveByGraduationRequirement(requirement);
+        List<Course> courses = findCourses(
+            request.requiredCourses(),
+            previousAssignments.stream().map(RequiredCourse::getCourse).toList()
+        );
         requirement.update(
             request.minTotalCredit(),
             request.minDepartmentCredit(),
@@ -151,8 +156,6 @@ public class GraduationRequirementManagementService {
             request.sourceTitle(),
             request.sourceUrl()
         );
-        List<RequiredCourse> previousAssignments = requiredCourseRepository
-            .findAllActiveByGraduationRequirement(requirement);
         previousAssignments.forEach(RequiredCourse::softDelete);
         requiredCourseRepository.saveAllAndFlush(previousAssignments);
 
@@ -173,6 +176,13 @@ public class GraduationRequirementManagementService {
     private List<Course> findCourses(
         List<RequiredCourseAssignmentRequest> assignments
     ) {
+        return findCourses(assignments, List.of());
+    }
+
+    private List<Course> findCourses(
+        List<RequiredCourseAssignmentRequest> assignments,
+        List<Course> previousCourses
+    ) {
         List<UUID> courseEntityIds = assignments.stream()
             .map(RequiredCourseAssignmentRequest::courseEntityId)
             .toList();
@@ -183,10 +193,15 @@ public class GraduationRequirementManagementService {
         }
         List<Course> courses = courseRepository
             .findAllByEntityIdInAndActiveTrue(courseEntityIds);
-        if (courses.size() != courseEntityIds.size()) {
+        Map<UUID, Course> availableCourses = new LinkedHashMap<>();
+        courses.forEach(course -> availableCourses.put(course.getEntityId(), course));
+        previousCourses.stream()
+            .filter(course -> courseEntityIds.contains(course.getEntityId()))
+            .forEach(course -> availableCourses.putIfAbsent(course.getEntityId(), course));
+        if (availableCourses.size() != courseEntityIds.size()) {
             throw new CourseNotFoundException();
         }
-        return courses;
+        return List.copyOf(availableCourses.values());
     }
 
     private List<RequiredCourse> saveAssignments(

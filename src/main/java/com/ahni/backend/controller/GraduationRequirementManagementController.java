@@ -115,7 +115,7 @@ public class GraduationRequirementManagementController {
 
     @Operation(
         summary = "졸업요건 수정",
-        description = "[관리자 인증 O] 졸업요건의 학점, 출처, 필수과목 구성을 교체합니다.",
+        description = "[관리자 인증 O] 졸업요건의 학점, 출처, 필수과목 구성을 교체합니다. 기존 배정된 비활성 과목은 유지할 수 있지만 새로 배정할 수는 없습니다.",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({

@@ -100,6 +100,23 @@ class StudentRepositoryIntegrationTest {
     }
 
     @Test
+    void impact_count_matches_department_year_type_and_excludes_deleted_profiles_and_majors() {
+        var department = departmentRepository.saveAndFlush(new Department("소프트웨어융합공학과"));
+        var other = departmentRepository.saveAndFlush(new Department("금융투자학과"));
+        for (int i = 0; i < 7; i++) {
+            var student = studentRepository.saveAndFlush(new Student(UUID.randomUUID(), "impact" + i + "@inha.edu", i == 1 ? 2023 : 2024, EnrollmentStatus.LEAVE, null));
+            var major = studentMajorRepository.saveAndFlush(new StudentMajor(student, i == 2 ? other : department, i == 3 ? MajorType.MINOR : MajorType.PRIMARY));
+            if (i == 4) major.softDelete();
+            if (i == 5) entityManager.createNativeQuery("update student set deleted_at = now() where id = :id").setParameter("id", student.getId()).executeUpdate();
+        }
+        entityManager.flush();
+        entityManager.clear();
+        assertThat(studentMajorRepository.countAffectedStudents(department, 2024, MajorType.PRIMARY)).isEqualTo(2);
+        assertThat(studentMajorRepository.countAffectedStudents(department, 2024, MajorType.MINOR)).isEqualTo(1);
+        assertThat(studentMajorRepository.countAffectedStudents(department, 2025, MajorType.PRIMARY)).isZero();
+    }
+
+    @Test
     void 학생과_주전공_관계를_저장할_수_있다() {
         UUID test = UUID.randomUUID();
 

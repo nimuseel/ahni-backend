@@ -242,4 +242,25 @@ class OpenApiContractTest {
 			.isObject());
 	}
 
+	@Test
+	void graduationPolicyImpactEndpointIsDocumented() throws Exception {
+		String actual = mockMvc.perform(get("/v3/api-docs"))
+			.andExpect(status().isOk())
+			.andReturn().getResponse().getContentAsString();
+		var document = objectMapper.readTree(actual);
+		var operation = document.at(
+			"/paths/~1api~1v1~1admin~1graduation-requirements~1{requirementEntityId}~1impact/get"
+		);
+		assertTrue(operation.at("/security/0/bearerAuth").isArray());
+		assertTrue(operation.at("/responses/403").isObject());
+		assertTrue(operation.at("/responses/404").isObject());
+		assertEquals(
+			"#/components/schemas/GraduationRequirementImpactResponse",
+			operation.at("/responses/200/content/application~1json/schema/$ref").asText()
+		);
+		assertTrue(document.at(
+			"/components/schemas/GraduationRequirementImpactResponse/properties/affectedStudentCount"
+		).isObject());
+	}
+
 }

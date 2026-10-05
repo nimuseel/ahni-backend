@@ -29,3 +29,11 @@ Every HTTP error uses this documented shape:
 - Error logs must not contain passwords, tokens, raw documents, or unnecessary student data.
 
 Add structured logging and a request correlation strategy when the first HTTP boundary is implemented. Every API change documents stable error codes and failure examples in its OpenAPI contract.
+
+## Academic management errors
+
+- `COURSE_ALREADY_EXISTS` (409): another active or inactive catalog entry owns the normalized code.
+- `COURSE_ASSIGNMENT_CONFLICT` (409): an edit would invalidate an active required-course assignment's department or category.
+- `COURSE_NOT_FOUND` (404): a referenced course is unavailable for new assignment. Policy updates may retain an already-assigned inactive course.
+- `ADMIN_ACCESS_DENIED` (403): the authenticated subject has no active administrator profile, including for read-only policy impact.
+- `GRADUATION_REQUIREMENT_NOT_FOUND` (404): the requested policy does not exist; impact lookup performs no mutation.

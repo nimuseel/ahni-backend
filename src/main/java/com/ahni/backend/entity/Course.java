@@ -130,6 +130,19 @@ public class Course {
         }
     }
 
+    public void update(Department department, String code, String name, BigDecimal credit, CourseCategory category) {
+        Course validated = new Course(department, code, name, credit, category);
+        this.department = validated.department;
+        this.code = validated.code;
+        this.name = validated.name;
+        this.credit = validated.credit;
+        this.category = validated.category;
+    }
+
+    public void deactivate() {
+        this.active = false;
+    }
+
     @PrePersist
     void onCreate() {
         Instant now = Instant.now();

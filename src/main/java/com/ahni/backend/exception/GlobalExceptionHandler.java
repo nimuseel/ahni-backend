@@ -13,6 +13,17 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 @Hidden
 public class GlobalExceptionHandler {
+    @ExceptionHandler(CourseAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiErrorResponse handleCourseAlreadyExists(CourseAlreadyExistsException exception) {
+        return new ApiErrorResponse("COURSE_ALREADY_EXISTS", exception.getMessage());
+    }
+
+    @ExceptionHandler(CourseAssignmentConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiErrorResponse handleCourseAssignmentConflict(CourseAssignmentConflictException exception) {
+        return new ApiErrorResponse("COURSE_ASSIGNMENT_CONFLICT", exception.getMessage());
+    }
     @ExceptionHandler(AdminAccessDeniedException.class)
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ApiErrorResponse handleAdminAccessDenied(

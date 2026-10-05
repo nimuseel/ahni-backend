@@ -31,3 +31,15 @@ The project uses the Gradle Wrapper. Do not require a globally installed Gradle 
 ```
 
 The Supabase profile runs Flyway against the configured PostgreSQL database. Never commit `.env` or print its values in logs.
+
+## Local Docker database
+
+The `dev` profile uses the local PostgreSQL connection defined by `AHNI_DEV_DB_URL`, `AHNI_DEV_DB_USERNAME`, and `AHNI_DEV_DB_PASSWORD`. Hibernate uses `ddl-auto=update` to create missing tables and update the schema without recreating existing tables at startup. Flyway remains disabled for this profile; the Supabase profile continues to use migrations.
+
+Restarting the backend preserves local academic records and administrator profiles. The Docker database also uses the named `postgres_data` volume, which survives ordinary container stops and starts. Do not use `docker compose down -v` or remove that volume when you need to keep its data.
+
+Automatic schema updates are for local development only and do not replace reviewed migrations or backups. Previously erased data cannot be recovered by changing this setting. The restart-preservation regression test runs with isolated PostgreSQL, not the developer's database:
+
+```bash
+./gradlew integrationTest --tests '*DevelopmentDatabasePersistenceIntegrationTest'
+```

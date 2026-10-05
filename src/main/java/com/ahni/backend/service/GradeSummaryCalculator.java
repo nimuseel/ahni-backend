@@ -17,36 +17,25 @@ final class GradeSummaryCalculator {
     private GradeSummaryCalculator() { }
 
     static GradeSummaryResponse calculate(List<StudentGrade> grades) {
+        List<StudentGrade> activeGrades = effectiveAttempts(grades);
+        SummaryValues total = summarize(activeGrades);
+        List<GradeCategorySummaryResponse> categories = Arrays.stream(CourseCategory.values()).map(category -> {
+            SummaryValues values = summarize(activeGrades.stream().filter(grade -> grade.getCourse().getCategory() == category).toList());
+            return new GradeCategorySummaryResponse(category, values.gpa(), values.completedCredits(), values.gpaCredits());
+        }).toList();
+        return new GradeSummaryResponse(total.gpa(), total.completedCredits(), total.gpaCredits(), categories);
+    }
+
+    static List<StudentGrade> effectiveAttempts(List<StudentGrade> grades) {
         Set<UUID> replacedGradeIds = grades.stream()
             .map(StudentGrade::getReplacedGrade)
             .filter(replacedGrade -> replacedGrade != null)
             .map(StudentGrade::getEntityId)
             .collect(Collectors.toSet());
-        List<StudentGrade> activeGrades = grades.stream()
+        return grades.stream()
             .filter(grade -> !replacedGradeIds.contains(grade.getEntityId()))
             .toList();
 
-        SummaryValues total = summarize(activeGrades);
-        List<GradeCategorySummaryResponse> categories = Arrays.stream(
-            CourseCategory.values()
-        ).map(category -> {
-            SummaryValues values = summarize(activeGrades.stream()
-                .filter(grade -> grade.getCourse().getCategory() == category)
-                .toList());
-            return new GradeCategorySummaryResponse(
-                category,
-                values.gpa(),
-                values.completedCredits(),
-                values.gpaCredits()
-            );
-        }).toList();
-
-        return new GradeSummaryResponse(
-            total.gpa(),
-            total.completedCredits(),
-            total.gpaCredits(),
-            categories
-        );
     }
 
     private static SummaryValues summarize(List<StudentGrade> grades) {

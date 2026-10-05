@@ -33,7 +33,7 @@ public class GraduationProgressController {
 
     @Operation(
         summary = "내 졸업요건 학점 충족도 조회",
-        description = "[인증 O] 입학연도와 활성 전공별 전체·전공·교양 학점 충족도를 조회합니다.",
+        description = "[인증 O] 활성 전공별 학점과 필수과목 이수 여부를 조회합니다. 대체된 성적과 F/NP는 이수로 인정하지 않으며 P/RPL은 인정합니다. 학교의 최종 졸업 판정은 아닙니다.",
         security = @SecurityRequirement(name = "bearerAuth")
     )
     @ApiResponses({
@@ -74,7 +74,9 @@ public class GraduationProgressController {
                             "remaining": 18.0,
                             "met": false
                           }
-                        }
+                        },
+                        "requiredCourses": [],
+                        "requirementsMet": false
                       }
                     ]
                     """)

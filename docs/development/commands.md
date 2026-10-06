@@ -22,15 +22,37 @@ The default Gradle `test` task and `unitTest` exclude the JUnit `integration` ta
 
 The project uses the Gradle Wrapper. Do not require a globally installed Gradle version for development or CI. Docker is a hard prerequisite for the PostgreSQL Testcontainers test; when Docker is unavailable, `integrationTest` and `scripts/verify` fail with a clear prerequisite message.
 
-## Supabase local run
+## Local development run
 
-`scripts/dev` loads the untracked `.env` file and runs the Supabase profile:
+`scripts/dev` loads the untracked `.env.dev` file from the backend repository root and runs the `dev` profile. It does not load `.env` or fall back to the Supabase database. Use `.env.dev.example` as the template; an existing `.env.dev` is retained.
 
 ```bash
 ./scripts/dev
 ```
 
-The Supabase profile runs Flyway against the configured PostgreSQL database. Never commit `.env` or print its values in logs.
+Set `AHNI_DEV_DB_URL`, `AHNI_DEV_DB_USERNAME`, and `AHNI_DEV_DB_PASSWORD` for the local Docker database. Keep `AHNI_SUPABASE_URL` pointing to the existing Auth project: JWT validation still uses Supabase Auth, while application data is stored locally.
+
+Start the database before the API:
+
+```bash
+docker compose --env-file .env.dev -f compose.dev.yml up -d postgres
+./scripts/dev
+```
+
+The Compose configuration uses database/user `ahni_dev` and host port `5433`. The password must match the existing database volume; changing the environment file alone does not change an initialized database password.
+
+## Supabase database run
+
+The separate `.env` file remains available for intentional Supabase database access:
+
+```bash
+set -a
+source .env
+set +a
+./gradlew bootRun --args='--spring.profiles.active=supabase'
+```
+
+The Supabase profile runs Flyway against the configured PostgreSQL database. Never commit `.env` or `.env.dev`, or print their values in logs. Switching profiles does not copy data between databases.
 
 ## Local Docker database
 

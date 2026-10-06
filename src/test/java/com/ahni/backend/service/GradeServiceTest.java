@@ -8,6 +8,8 @@ import com.ahni.backend.dto.GradeRegistrationRequest;
 import com.ahni.backend.dto.GradeResponse;
 import com.ahni.backend.dto.GradeSummaryResponse;
 import com.ahni.backend.dto.GradeUpdateRequest;
+import com.ahni.backend.dto.ExpectedGradeRequest;
+import com.ahni.backend.dto.GradeSimulationRequest;
 import com.ahni.backend.entity.Course;
 import com.ahni.backend.entity.Department;
 import com.ahni.backend.entity.Student;
@@ -579,6 +581,31 @@ class GradeServiceTest {
             .isInstanceOf(GradeNotFoundException.class);
 
         verify(gradeRepository, never()).delete(any(StudentGrade.class));
+    }
+
+    @Test
+    void 시뮬레이션은_인증된_학생의_현재와_예상_요약을_반환한다() {
+        StudentGrade actual = grade(student, course, 2025, AcademicTerm.FIRST);
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.of(student));
+        when(gradeRepository.findAllByStudent(student)).thenReturn(List.of(actual));
+        var result = gradeService.simulate(authUserId, new GradeSimulationRequest(List.of(
+            new ExpectedGradeRequest(CourseCategory.MAJOR, new BigDecimal("3.0"), GradeCode.B_PLUS)
+        )));
+        assertThat(result.current().gpa()).isEqualByComparingTo("4.50");
+        assertThat(result.projected().gpa()).isEqualByComparingTo("4.00");
+        assertThat(actual.getGradeCode()).isEqualTo(GradeCode.A_PLUS);
+        assertThat(actual.getCredit()).isEqualByComparingTo("3.0");
+        verify(gradeRepository, never()).saveAndFlush(any(StudentGrade.class));
+        verifyNoInteractions(courseRepository);
+    }
+
+    @Test
+    void 시뮬레이션도_학생_프로필이_필수다() {
+        when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.empty());
+        assertThatThrownBy(() -> gradeService.simulate(authUserId, new GradeSimulationRequest(List.of(
+            new ExpectedGradeRequest(CourseCategory.MAJOR, new BigDecimal("3.0"), GradeCode.A_PLUS)
+        )))).isInstanceOf(StudentNotFoundException.class);
+        verifyNoInteractions(courseRepository, gradeRepository);
     }
 
     private void stubRegistrationTarget(Course targetCourse) {

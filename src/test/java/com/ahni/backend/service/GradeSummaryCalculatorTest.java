@@ -6,6 +6,7 @@ import com.ahni.backend.domain.EnrollmentStatus;
 import com.ahni.backend.domain.GradeCode;
 import com.ahni.backend.dto.GradeCategorySummaryResponse;
 import com.ahni.backend.dto.GradeSummaryResponse;
+import com.ahni.backend.dto.ExpectedGradeRequest;
 import com.ahni.backend.entity.Course;
 import com.ahni.backend.entity.Department;
 import com.ahni.backend.entity.Student;
@@ -145,6 +146,54 @@ class GradeSummaryCalculatorTest {
         assertThat(result.gpa()).isEqualByComparingTo("4.50");
         assertThat(result.completedCredits()).isEqualByComparingTo("3.0");
         assertThat(result.gpaCredits()).isEqualByComparingTo("3.0");
+    }
+
+    @Test
+    void 예상_성적은_반올림된_GPA가_아닌_원래_가중합에_추가한다() {
+        List<StudentGrade> actual = List.of(
+            grade(course("CSE501", CourseCategory.MAJOR), GradeCode.D_PLUS, "1.1"),
+            grade(course("CSE502", CourseCategory.MAJOR), GradeCode.F, "2.0"),
+            grade(course("GED501", CourseCategory.GENERAL_EDUCATION), GradeCode.P, "2.0"),
+            rpl(course("ELE501", CourseCategory.ELECTIVE), "3.0")
+        );
+        GradeSummaryResponse result = GradeSummaryCalculator.project(actual, List.of(
+            new ExpectedGradeRequest(CourseCategory.MAJOR, new BigDecimal("0.1"), GradeCode.A_PLUS),
+            new ExpectedGradeRequest(CourseCategory.GENERAL_EDUCATION, new BigDecimal("1.0"), GradeCode.P),
+            new ExpectedGradeRequest(CourseCategory.ELECTIVE, new BigDecimal("1.0"), GradeCode.NP)
+        ));
+        // (1.65 + 0.45) / 3.2 = 0.65625; reusing rounded current GPA gives 0.65 instead of 0.66.
+        assertThat(result.gpa()).isEqualByComparingTo("0.66");
+        assertThat(result.completedCredits()).isEqualByComparingTo("7.2");
+        assertThat(result.gpaCredits()).isEqualByComparingTo("3.2");
+        assertThat(result.categories().get(0).gpa()).isEqualByComparingTo("0.66");
+        assertThat(result.categories().get(1).completedCredits()).isEqualByComparingTo("3.0");
+        assertThat(GradeSummaryCalculator.calculate(actual).completedCredits()).isEqualByComparingTo("6.1");
+    }
+
+    @Test
+    void 예상_성적에도_재수강_대체와_F_규칙을_적용한다() {
+        Course course = course("CSE601", CourseCategory.MAJOR);
+        StudentGrade previous = grade(course, 2024, AcademicTerm.FIRST, GradeCode.A_PLUS, null);
+        StudentGrade retake = grade(course, 2025, AcademicTerm.FIRST, GradeCode.B_ZERO, previous);
+        GradeSummaryResponse result = GradeSummaryCalculator.project(List.of(previous, retake), List.of(
+            new ExpectedGradeRequest(CourseCategory.MAJOR, new BigDecimal("3.0"), GradeCode.F)
+        ));
+        assertThat(result.gpa()).isEqualByComparingTo("1.50");
+        assertThat(result.completedCredits()).isEqualByComparingTo("3.0");
+        assertThat(result.gpaCredits()).isEqualByComparingTo("6.0");
+        assertThat(previous.getGradeCode()).isEqualTo(GradeCode.A_PLUS);
+        assertThat(retake.getReplacedGrade()).isSameAs(previous);
+    }
+
+    @Test
+    void 빈_이력에_예상_성적을_추가하고_없는_분류는_0을_반환한다() {
+        GradeSummaryResponse result = GradeSummaryCalculator.project(List.of(), List.of(
+            new ExpectedGradeRequest(CourseCategory.ELECTIVE, new BigDecimal("0.5"), GradeCode.A_ZERO)
+        ));
+        assertThat(result.gpa()).isEqualByComparingTo("4.00");
+        assertThat(result.categories()).hasSize(3);
+        assertThat(result.categories().get(0).gpa()).isEqualByComparingTo("0.00");
+        assertThat(result.categories().get(2).completedCredits()).isEqualByComparingTo("0.5");
     }
 
     private Course course(String code, CourseCategory category) {

@@ -2,6 +2,8 @@
 
 The backend OpenAPI document is the single API contract for the mobile and administrator clients. Clients consume a pinned contract version and must not access Supabase PostgreSQL directly.
 
+The read-only [grade simulation API](grade-simulation.md) compares current and projected GPA without persisting expected grades.
+
 ## API completion checklist
 
 `GET /api/v1/admin/me` returns the authenticated user's active administrator profile. A valid Supabase session without an active `admin` mapping receives `403 ADMIN_ACCESS_DENIED`.

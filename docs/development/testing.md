@@ -13,6 +13,8 @@ Write a failing test before a new business behavior. Use real entities and DTOs 
 
 Current baseline: context startup, OpenAPI drift, PostgreSQL migrations, migration-summary unit tests, and ArchUnit rules. `LayerDependencyTest` tests forbidden edges and permitted service/repository/JPA dependencies with non-component fixtures, then checks production classes only. Empty feature packages are allowed because they are created on demand, not filled with markers.
 
+`DevelopmentScriptTest` runs the real `scripts/dev` in a temporary repository with fixture environment files and a test-only Gradle launcher. It verifies `.env.dev` selection, exported values, the `dev` profile, and failure without fallback when `.env.dev` is missing. It never starts the backend or connects to a shared database.
+
 Run `./gradlew test --tests '*LayerDependencyTest'` for architecture changes and `./gradlew integrationTest --tests '*OpenApiContractTest'` for the API contract. New controller/service/repository behavior gets its own tests with the corresponding feature; architecture fixtures are not business implementations.
 
 ## API completion rule

@@ -52,6 +52,21 @@ class OpenApiContractTest {
 	}
 
 	@Test
+	void simulationDocumentsJsonAuthenticationAndStableFailures() throws Exception {
+		String actual = mockMvc.perform(get("/v3/api-docs"))
+			.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+		var operation = objectMapper.readTree(actual).at("/paths/~1api~1v1~1grades~1simulation/post");
+		assertTrue(operation.at("/security/0/bearerAuth").isArray());
+		assertEquals("#/components/schemas/GradeSimulationRequest",
+			operation.at("/requestBody/content/application~1json/schema/$ref").asText());
+		assertEquals("#/components/schemas/GradeSimulationResponse",
+			operation.at("/responses/200/content/application~1json/schema/$ref").asText());
+		assertTrue(operation.at("/responses/400").isObject());
+		assertTrue(operation.at("/responses/401").isObject());
+		assertTrue(operation.at("/responses/404").isObject());
+	}
+
+	@Test
 	void adminIdentityEndpointIsDocumentedForAuthenticatedAdministrators() throws Exception {
 		String actual = mockMvc.perform(get("/v3/api-docs"))
 			.andExpect(status().isOk())

@@ -7,6 +7,8 @@ import com.ahni.backend.dto.GradeRegistrationRequest;
 import com.ahni.backend.dto.GradeResponse;
 import com.ahni.backend.dto.GradeSummaryResponse;
 import com.ahni.backend.dto.GradeUpdateRequest;
+import com.ahni.backend.dto.GradeSimulationRequest;
+import com.ahni.backend.dto.GradeSimulationResponse;
 import com.ahni.backend.entity.Course;
 import com.ahni.backend.entity.Department;
 import com.ahni.backend.entity.Student;
@@ -114,6 +116,15 @@ public class GradeService {
         Student student = findStudent(authUserId);
         return GradeSummaryCalculator.calculate(
             gradeRepository.findAllByStudent(student)
+        );
+    }
+
+    public GradeSimulationResponse simulate(UUID authUserId, GradeSimulationRequest request) {
+        Student student = findStudent(authUserId);
+        List<StudentGrade> grades = gradeRepository.findAllByStudent(student);
+        return new GradeSimulationResponse(
+            GradeSummaryCalculator.calculate(grades),
+            GradeSummaryCalculator.project(grades, request.expectedGrades())
         );
     }
 

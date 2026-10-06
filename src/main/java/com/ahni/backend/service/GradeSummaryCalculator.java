@@ -1,8 +1,10 @@
 package com.ahni.backend.service;
 
 import com.ahni.backend.domain.CourseCategory;
+import com.ahni.backend.domain.GradeCode;
 import com.ahni.backend.dto.GradeCategorySummaryResponse;
 import com.ahni.backend.dto.GradeSummaryResponse;
+import com.ahni.backend.dto.ExpectedGradeRequest;
 import com.ahni.backend.entity.StudentGrade;
 
 import java.math.BigDecimal;
@@ -12,15 +14,31 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 final class GradeSummaryCalculator {
     private GradeSummaryCalculator() { }
 
     static GradeSummaryResponse calculate(List<StudentGrade> grades) {
-        List<StudentGrade> activeGrades = effectiveAttempts(grades);
+        return summarizeAll(actualValues(grades));
+    }
+
+    static GradeSummaryResponse project(List<StudentGrade> grades, List<ExpectedGradeRequest> expectedGrades) {
+        return summarizeAll(Stream.concat(actualValues(grades).stream(), expectedGrades.stream()
+            .map(grade -> new CalculationGrade(grade.category(), grade.credit(),
+                grade.gradeCode(), grade.gradeCode().gradePoint(), false))).toList());
+    }
+
+    private static List<CalculationGrade> actualValues(List<StudentGrade> grades) {
+        return effectiveAttempts(grades).stream()
+            .map(grade -> new CalculationGrade(grade.getCourse().getCategory(), grade.getCredit(),
+                grade.getGradeCode(), grade.getGradePoint(), grade.isRpl())).toList();
+    }
+
+    private static GradeSummaryResponse summarizeAll(List<CalculationGrade> activeGrades) {
         SummaryValues total = summarize(activeGrades);
         List<GradeCategorySummaryResponse> categories = Arrays.stream(CourseCategory.values()).map(category -> {
-            SummaryValues values = summarize(activeGrades.stream().filter(grade -> grade.getCourse().getCategory() == category).toList());
+            SummaryValues values = summarize(activeGrades.stream().filter(grade -> grade.category() == category).toList());
             return new GradeCategorySummaryResponse(category, values.gpa(), values.completedCredits(), values.gpaCredits());
         }).toList();
         return new GradeSummaryResponse(total.gpa(), total.completedCredits(), total.gpaCredits(), categories);
@@ -38,19 +56,19 @@ final class GradeSummaryCalculator {
 
     }
 
-    private static SummaryValues summarize(List<StudentGrade> grades) {
+    private static SummaryValues summarize(List<CalculationGrade> grades) {
         BigDecimal numerator = BigDecimal.ZERO;
         BigDecimal completedCredits = BigDecimal.ZERO;
         BigDecimal gpaCredits = BigDecimal.ZERO;
 
-        for (StudentGrade grade : grades) {
-            BigDecimal credit = grade.getCredit();
-            if (grade.isRpl()) {
+        for (CalculationGrade grade : grades) {
+            BigDecimal credit = grade.credit();
+            if (grade.rpl()) {
                 completedCredits = completedCredits.add(credit);
                 continue;
             }
 
-            switch (grade.getGradeCode()) {
+            switch (grade.gradeCode()) {
                 case P -> completedCredits = completedCredits.add(credit);
                 case NP -> { }
                 case F -> gpaCredits = gpaCredits.add(credit);
@@ -58,7 +76,7 @@ final class GradeSummaryCalculator {
                     completedCredits = completedCredits.add(credit);
                     gpaCredits = gpaCredits.add(credit);
                     numerator = numerator.add(
-                        credit.multiply(grade.getGradePoint())
+                        credit.multiply(grade.gradePoint())
                     );
                 }
             }
@@ -80,6 +98,9 @@ final class GradeSummaryCalculator {
         }
         return numerator.divide(gpaCredits, 2, RoundingMode.HALF_UP);
     }
+
+    private record CalculationGrade(CourseCategory category, BigDecimal credit,
+        GradeCode gradeCode, BigDecimal gradePoint, boolean rpl) { }
 
     private record SummaryValues(
         BigDecimal gpa,

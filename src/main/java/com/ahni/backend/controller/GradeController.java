@@ -5,6 +5,8 @@ import com.ahni.backend.dto.GradeRegistrationRequest;
 import com.ahni.backend.dto.GradeResponse;
 import com.ahni.backend.dto.GradeSummaryResponse;
 import com.ahni.backend.dto.GradeUpdateRequest;
+import com.ahni.backend.dto.GradeSimulationRequest;
+import com.ahni.backend.dto.GradeSimulationResponse;
 import com.ahni.backend.service.GradeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -38,6 +40,50 @@ public class GradeController {
 
     public GradeController(GradeService gradeService) {
         this.gradeService = gradeService;
+    }
+
+    @Operation(
+        summary = "내 평점 시뮬레이션",
+        description = "[인증 O] 본인 실제 성적에 예상 성적을 더해 현재·예상 GPA를 비교합니다. "
+            + "실제 성적과 재수강 관계를 변경하거나 예상 성적을 저장하지 않습니다. "
+            + "4.5점 만점, 학점 가중 평균, 소수점 두 자리 반올림. 기존 재수강/RPL 규칙을 유지하며 "
+            + "예상 P/NP는 GPA에서 제외하고 F는 0점으로 포함합니다. 예상 재수강/RPL은 지원하지 않습니다.",
+        security = @SecurityRequirement(name = "bearerAuth"),
+        requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(required = true,
+            content = @Content(schema = @Schema(implementation = GradeSimulationRequest.class),
+                examples = @ExampleObject(value = """
+                    {"expectedGrades":[{"category":"MAJOR","credit":3.0,"gradeCode":"A_PLUS"}]}
+                    """)))
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "계산 성공, 실제 성적 변경 없음",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = GradeSimulationResponse.class),
+                examples = @ExampleObject(value = """
+                    {
+                      "current":{"gpa":3.00,"completedCredits":3.0,"gpaCredits":3.0,
+                        "categories":[
+                          {"category":"MAJOR","gpa":0.00,"completedCredits":0.0,"gpaCredits":0.0},
+                          {"category":"GENERAL_EDUCATION","gpa":0.00,"completedCredits":0.0,"gpaCredits":0.0},
+                          {"category":"ELECTIVE","gpa":3.00,"completedCredits":3.0,"gpaCredits":3.0}]},
+                      "projected":{"gpa":3.75,"completedCredits":6.0,"gpaCredits":6.0,
+                        "categories":[
+                          {"category":"MAJOR","gpa":4.50,"completedCredits":3.0,"gpaCredits":3.0},
+                          {"category":"GENERAL_EDUCATION","gpa":0.00,"completedCredits":0.0,"gpaCredits":0.0},
+                          {"category":"ELECTIVE","gpa":3.00,"completedCredits":3.0,"gpaCredits":3.0}]}
+                    }
+                    """))),
+        @ApiResponse(responseCode = "400", description = "예상 성적 1~50건, 분류/등급 필수, 학점 0 초과 30 이하·소수 한 자리",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(value = "{\"code\":\"INVALID_REQUEST\",\"message\":\"요청값이 올바르지 않습니다.\"}"))),
+        @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content),
+        @ApiResponse(responseCode = "404", description = "학생 프로필을 찾을 수 없음",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(value = "{\"code\":\"STUDENT_NOT_FOUND\",\"message\":\"학생 프로필을 찾을 수 없습니다.\"}")))
+    })
+    @PostMapping("/simulation")
+    public GradeSimulationResponse simulate(@AuthenticationPrincipal Jwt jwt,
+        @Valid @RequestBody GradeSimulationRequest request) {
+        return gradeService.simulate(UUID.fromString(jwt.getSubject()), request);
     }
 
     @Operation(

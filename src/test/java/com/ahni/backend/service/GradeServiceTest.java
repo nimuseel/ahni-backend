@@ -20,7 +20,6 @@ import com.ahni.backend.exception.GradeReplacementConflictException;
 import com.ahni.backend.exception.GradeNotFoundException;
 import com.ahni.backend.exception.InvalidGradeException;
 import com.ahni.backend.exception.StudentNotFoundException;
-import com.ahni.backend.repository.CourseRepository;
 import com.ahni.backend.repository.StudentGradeRepository;
 import com.ahni.backend.repository.StudentRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +37,8 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -49,7 +50,7 @@ class GradeServiceTest {
     private StudentRepository studentRepository;
 
     @Mock
-    private CourseRepository courseRepository;
+    private CurriculumService courseRepository;
 
     @Mock
     private StudentGradeRepository gradeRepository;
@@ -202,10 +203,10 @@ class GradeServiceTest {
     }
 
     @Test
-    void 존재하지_않거나_비활성인_과목에는_성적을_등록할_수_없다() {
+    void 존재하지_않는_과목에는_성적을_등록할_수_없다() {
         when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.of(student));
-        when(courseRepository.findByEntityIdAndActiveTrue(course.getEntityId()))
-            .thenReturn(Optional.empty());
+        when(courseRepository.requirePublishedCourse(anyInt(), eq(course.getEntityId())))
+            .thenThrow(new CourseNotFoundException());
 
         assertThatThrownBy(() -> gradeService.register(
             authUserId,
@@ -610,8 +611,8 @@ class GradeServiceTest {
 
     private void stubRegistrationTarget(Course targetCourse) {
         when(studentRepository.findByAuthUserId(authUserId)).thenReturn(Optional.of(student));
-        when(courseRepository.findByEntityIdAndActiveTrue(targetCourse.getEntityId()))
-            .thenReturn(Optional.of(targetCourse));
+        when(courseRepository.requirePublishedCourse(anyInt(), eq(targetCourse.getEntityId())))
+            .thenReturn(targetCourse);
     }
 
     private GradeRegistrationRequest standardRequest(Course targetCourse) {

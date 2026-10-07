@@ -20,6 +20,7 @@ class CourseManagementServiceTest {
     @Mock CourseRepository courses;
     @Mock DepartmentRepository departments;
     @Mock RequiredCourseRepository assignments;
+    @Mock CurriculumCourseRepository curriculumLinks;
     @InjectMocks CourseManagementService service;
     final UUID admin = UUID.randomUUID();
     final Department department = new Department("소프트웨어융합공학과");
@@ -71,7 +72,7 @@ class CourseManagementServiceTest {
         when(admins.existsByAuthUserIdAndDeletedAtIsNull(admin)).thenReturn(true);
         var course = new Course(department, "CSE101", "프로그래밍", new BigDecimal("3.0"), CourseCategory.MAJOR);
         var policy = new GraduationRequirement(department, 2024, MajorType.PRIMARY, new BigDecimal("130.0"), new BigDecimal("60.0"), new BigDecimal("30.0"), "학과 기준", null);
-        when(courses.findByEntityId(course.getEntityId())).thenReturn(Optional.of(course));
+        when(courses.findForUpdate(course.getEntityId())).thenReturn(Optional.of(course));
         when(assignments.findAllByCourseAndDeletedAtIsNull(course)).thenReturn(List.of(new RequiredCourse(policy, course, RequiredCourseCategory.MAJOR_REQUIRED)));
         var input = new CourseManagementRequest(null, "CSE101", "프로그래밍", new BigDecimal("3.0"), CourseCategory.ELECTIVE);
         assertThatThrownBy(() -> service.update(admin, course.getEntityId(), input)).isInstanceOf(CourseAssignmentConflictException.class);
@@ -80,5 +81,16 @@ class CourseManagementServiceTest {
 
     private CourseManagementRequest request(String code) {
         return new CourseManagementRequest(department.getEntityId(), code, "프로그래밍", new BigDecimal("3.0"), CourseCategory.MAJOR);
+    }
+
+    @Test
+    void curriculum_linked_course_cannot_change_department_or_category() {
+        when(admins.existsByAuthUserIdAndDeletedAtIsNull(admin)).thenReturn(true);
+        var course = new Course(department, "YEAR101", "기초", new BigDecimal("3.0"), CourseCategory.MAJOR);
+        when(courses.findForUpdate(course.getEntityId())).thenReturn(Optional.of(course));
+        when(curriculumLinks.existsByCourse(course)).thenReturn(true);
+        var input = new CourseManagementRequest(null, "YEAR101", "기초", new BigDecimal("3.0"), CourseCategory.ELECTIVE);
+        assertThatThrownBy(() -> service.update(admin, course.getEntityId(), input)).isInstanceOf(CourseAssignmentConflictException.class);
+        assertThat(course.getCategory()).isEqualTo(CourseCategory.MAJOR);
     }
 }

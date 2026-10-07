@@ -13,6 +13,26 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 @RestControllerAdvice
 @Hidden
 public class GlobalExceptionHandler {
+    @ExceptionHandler(CourseNotInCurriculumException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiErrorResponse handleCourseNotInCurriculum(CourseNotInCurriculumException exception) {
+        return new ApiErrorResponse("COURSE_NOT_IN_CURRICULUM", exception.getMessage());
+    }
+    @ExceptionHandler(CurriculumNotAvailableException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ApiErrorResponse handleCurriculumNotAvailable(CurriculumNotAvailableException exception) {
+        return new ApiErrorResponse("CURRICULUM_NOT_AVAILABLE", exception.getMessage());
+    }
+    @ExceptionHandler(CurriculumAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiErrorResponse handleCurriculumAlreadyExists(CurriculumAlreadyExistsException exception) {
+        return new ApiErrorResponse("CURRICULUM_ALREADY_EXISTS", exception.getMessage());
+    }
+    @ExceptionHandler(CurriculumEditConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiErrorResponse handleCurriculumEditConflict(CurriculumEditConflictException exception) {
+        return new ApiErrorResponse("CURRICULUM_EDIT_CONFLICT", exception.getMessage());
+    }
     @ExceptionHandler(CourseAlreadyExistsException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiErrorResponse handleCourseAlreadyExists(CourseAlreadyExistsException exception) {
@@ -147,6 +167,8 @@ public class GlobalExceptionHandler {
         MethodArgumentNotValidException.class,
         HttpMessageNotReadableException.class,
         MethodArgumentTypeMismatchException.class,
+        org.springframework.web.bind.MissingServletRequestParameterException.class,
+        org.springframework.web.method.annotation.HandlerMethodValidationException.class,
         IllegalArgumentException.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)

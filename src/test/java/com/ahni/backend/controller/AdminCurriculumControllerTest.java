@@ -1,0 +1,201 @@
+package com.ahni.backend.controller;
+
+import com.ahni.backend.domain.CourseCategory;
+import com.ahni.backend.entity.Course;
+import com.ahni.backend.entity.Department;
+import com.ahni.backend.repository.CourseRepository;
+import com.ahni.backend.repository.DepartmentRepository;
+import org.junit.jupiter.api.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+import org.testcontainers.containers.PostgreSQLContainer;
+import tools.jackson.databind.ObjectMapper;
+
+import java.math.BigDecimal;
+import java.util.UUID;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
+@Tag("integration")
+class AdminCurriculumControllerTest {
+    private static final PostgreSQLContainer<?> POSTGRES = new PostgreSQLContainer<>("postgres:18");
+    static { POSTGRES.start(); }
+    @DynamicPropertySource static void database(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", POSTGRES::getJdbcUrl);
+        registry.add("spring.datasource.username", POSTGRES::getUsername);
+        registry.add("spring.datasource.password", POSTGRES::getPassword);
+        registry.add("spring.datasource.driver-class-name", POSTGRES::getDriverClassName);
+        registry.add("spring.flyway.enabled", () -> true);
+        registry.add("spring.jpa.hibernate.ddl-auto", () -> "validate");
+    }
+    @AfterAll static void stopPostgres() { POSTGRES.stop(); }
+    @Autowired MockMvc mvc;
+    @Autowired JdbcTemplate jdbc;
+    @Autowired ObjectMapper json;
+    @Autowired DepartmentRepository departments;
+    @Autowired CourseRepository courses;
+    UUID admin;
+    UUID department;
+    UUID course;
+
+    @BeforeEach void seed() {
+        admin = UUID.randomUUID();
+        jdbc.update("INSERT INTO admin(auth_user_id, name, email) VALUES (?, '관리자', ?)", admin, admin + "@inha.edu");
+        var savedDepartment = departments.saveAndFlush(new Department("API교과과정학과"));
+        department = savedDepartment.getEntityId();
+        course = courses.saveAndFlush(new Course(savedDepartment, "PLAN101", "기초", new BigDecimal("3.0"), CourseCategory.MAJOR)).getEntityId();
+    }
+
+    @Test void unauthenticatedAndNonAdminCannotAccess() throws Exception {
+        mvc.perform(get("/api/v1/admin/curricula")).andExpect(status().isUnauthorized());
+        mvc.perform(get("/api/v1/admin/curricula").with(jwt().jwt(t -> t.subject(UUID.randomUUID().toString()))))
+            .andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("ADMIN_ACCESS_DENIED"));
+    }
+
+    @Test void createsDraftPublishesAndRejectsStaleEdit() throws Exception {
+        var created = create(input(null, course));
+        String id = created.path("entityId").asText();
+        mvc.perform(put("/api/v1/admin/curricula/" + id + "/publication").with(jwt().jwt(t -> t.subject(admin.toString())))
+                .contentType("application/json").content("{\"published\":true,\"version\":0}"))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.published").value(true)).andExpect(jsonPath("$.version").value(1));
+        mvc.perform(put("/api/v1/admin/curricula/" + id).with(jwt().jwt(t -> t.subject(admin.toString())))
+                .contentType("application/json").content(input(0L, course)))
+            .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("CURRICULUM_EDIT_CONFLICT"));
+        mvc.perform(put("/api/v1/admin/curricula/" + id).with(jwt().jwt(t -> t.subject(admin.toString())))
+                .contentType("application/json").content(input(1L, course)))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.published").value(false)).andExpect(jsonPath("$.version").value(2));
+    }
+
+    @Test void duplicateYearAndEmptyPublicationHaveStableErrors() throws Exception {
+        create(input(null, course));
+        mvc.perform(post("/api/v1/admin/curricula").with(jwt().jwt(t -> t.subject(admin.toString())))
+                .contentType("application/json").content(input(null, course)))
+            .andExpect(status().isConflict()).andExpect(jsonPath("$.code").value("CURRICULUM_ALREADY_EXISTS"));
+        var empty = create("{\"departmentEntityId\":\"" + department + "\",\"curriculumYear\":2025,\"sourceTitle\":\"자료\",\"courses\":[]}");
+        mvc.perform(put("/api/v1/admin/curricula/" + empty.path("entityId").asText() + "/publication")
+                .with(jwt().jwt(t -> t.subject(admin.toString()))).contentType("application/json").content("{\"published\":true,\"version\":0}"))
+            .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+    }
+
+    @Test void invalidReplacementPreservesPublishedAssignments() throws Exception {
+        var created = create(input(null, course));
+        String id = created.path("entityId").asText();
+        mvc.perform(put("/api/v1/admin/curricula/" + id + "/publication").with(jwt().jwt(t -> t.subject(admin.toString())))
+            .contentType("application/json").content("{\"published\":true,\"version\":0}")).andExpect(status().isOk());
+        mvc.perform(put("/api/v1/admin/curricula/" + id).with(jwt().jwt(t -> t.subject(admin.toString())))
+            .contentType("application/json").content(input(1L, course).replace("}]}", "},{\"courseEntityId\":\"" + UUID.randomUUID() + "\",\"division\":\"MAJOR_REQUIRED\"}]}")))
+            .andExpect(status().isNotFound()).andExpect(jsonPath("$.code").value("COURSE_NOT_FOUND"));
+        mvc.perform(get("/api/v1/admin/curricula/" + id).with(jwt().jwt(t -> t.subject(admin.toString()))))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.published").value(true))
+            .andExpect(jsonPath("$.courses[0].course.entityId").value(course.toString()));
+    }
+
+    @Test void yearQueryExcludesOtherYearsAndKeepsInactiveHistoricalCourses() throws Exception {
+        var created = create(input(null, course));
+        mvc.perform(get("/api/v1/curriculum-courses").param("academicYear", "2024").with(jwt()))
+            .andExpect(status().isNotFound()).andExpect(jsonPath("$.code").value("CURRICULUM_NOT_AVAILABLE"));
+        mvc.perform(put("/api/v1/admin/curricula/" + created.path("entityId").asText() + "/publication")
+            .with(jwt().jwt(t -> t.subject(admin.toString()))).contentType("application/json")
+            .content("{\"published\":true,\"version\":0}")).andExpect(status().isOk());
+        courses.findByEntityId(course).orElseThrow().deactivate();
+        courses.flush();
+        mvc.perform(get("/api/v1/curriculum-courses").param("academicYear", "2024").with(jwt()))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].entityId").value(course.toString()));
+        mvc.perform(get("/api/v1/curriculum-courses").param("academicYear", "2025").with(jwt()))
+            .andExpect(status().isNotFound()).andExpect(jsonPath("$.code").value("CURRICULUM_NOT_AVAILABLE"));
+        mvc.perform(get("/api/v1/curriculum-courses").with(jwt())).andExpect(status().isBadRequest());
+    }
+
+    @Test void rejectsWrongYearForRegistrationButPreservesSameYearLegacyEdits() throws Exception {
+        jdbc.update("INSERT INTO student(auth_user_id, email, admission_year, enrollment_status) VALUES (?, ?, 2024, 'ENROLLED')", admin, admin + "@inha.edu");
+        var created = create(input(null, course));
+        mvc.perform(put("/api/v1/admin/curricula/" + created.path("entityId").asText() + "/publication")
+            .with(jwt().jwt(t -> t.subject(admin.toString()))).contentType("application/json")
+            .content("{\"published\":true,\"version\":0}")).andExpect(status().isOk());
+        mvc.perform(post("/api/v1/grades").with(jwt().jwt(t -> t.subject(admin.toString())))
+            .contentType("application/json").content(gradeInput(2025)))
+            .andExpect(status().isNotFound()).andExpect(jsonPath("$.code").value("CURRICULUM_NOT_AVAILABLE"));
+        courses.findByEntityId(course).orElseThrow().deactivate();
+        courses.flush();
+        var saved = mvc.perform(post("/api/v1/grades").with(jwt().jwt(t -> t.subject(admin.toString())))
+            .contentType("application/json").content(gradeInput(2024)))
+            .andExpect(status().isCreated()).andReturn();
+        String gradeId = json.readTree(saved.getResponse().getContentAsString()).path("entityId").asText();
+        mvc.perform(put("/api/v1/admin/curricula/" + created.path("entityId").asText() + "/publication")
+            .with(jwt().jwt(t -> t.subject(admin.toString()))).contentType("application/json")
+            .content("{\"published\":false,\"version\":1}")).andExpect(status().isOk());
+        mvc.perform(put("/api/v1/grades/" + gradeId).with(jwt().jwt(t -> t.subject(admin.toString())))
+            .contentType("application/json").content(gradeInput(2024))).andExpect(status().isOk());
+        mvc.perform(put("/api/v1/grades/" + gradeId).with(jwt().jwt(t -> t.subject(admin.toString())))
+            .contentType("application/json").content(gradeInput(2025)))
+            .andExpect(status().isNotFound()).andExpect(jsonPath("$.code").value("CURRICULUM_NOT_AVAILABLE"));
+    }
+
+    private String gradeInput(int year) {
+        return "{\"courseEntityId\":\"" + course + "\",\"academicYear\":" + year
+            + ",\"term\":\"FIRST\",\"gradeCode\":\"A_PLUS\",\"credit\":3.0,\"rpl\":false}";
+    }
+
+    @Test void sharedGeneralCourseIsDeduplicatedAndDepartmentFilterUsesCurriculumOwner() throws Exception {
+        var other = departments.saveAndFlush(new Department("다른학과"));
+        var general = courses.saveAndFlush(new Course(null, "GEB1107", "영어", new BigDecimal("3.0"), CourseCategory.GENERAL_EDUCATION)).getEntityId();
+        var original = create(input(null, general).replace("MAJOR_REQUIRED", "GENERAL_REQUIRED"));
+        var another = create(input(null, general).replace(department.toString(), other.getEntityId().toString()).replace("MAJOR_REQUIRED", "GENERAL_REQUIRED"));
+        for (var row : new tools.jackson.databind.JsonNode[]{original, another}) {
+            mvc.perform(put("/api/v1/admin/curricula/" + row.path("entityId").asText() + "/publication")
+                .with(jwt().jwt(t -> t.subject(admin.toString()))).contentType("application/json")
+                .content("{\"published\":true,\"version\":0}")).andExpect(status().isOk());
+        }
+        mvc.perform(get("/api/v1/curriculum-courses").param("academicYear", "2024").with(jwt()))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1));
+        mvc.perform(get("/api/v1/curriculum-courses").param("academicYear", "2024").param("departmentEntityId", other.getEntityId().toString()).with(jwt()))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].entityId").value(general.toString()));
+    }
+
+    @Test void sameNamesWithDifferentCodesAreFilteredByYearAndRplCannotBypassIt() throws Exception {
+        var second = courses.saveAndFlush(new Course(departments.findByEntityIdAndDeletedAtIsNull(department).orElseThrow(), "PLAN102", "기초", new BigDecimal("3.0"), CourseCategory.MAJOR)).getEntityId();
+        var old = create(input(null, course));
+        var newer = create(input(null, second).replace("2024", "2025"));
+        for (var row : new tools.jackson.databind.JsonNode[]{old, newer}) {
+            mvc.perform(put("/api/v1/admin/curricula/" + row.path("entityId").asText() + "/publication")
+                .with(jwt().jwt(t -> t.subject(admin.toString()))).contentType("application/json")
+                .content("{\"published\":true,\"version\":0}")).andExpect(status().isOk());
+        }
+        mvc.perform(get("/api/v1/curriculum-courses").param("academicYear", "2024").with(jwt()))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1)).andExpect(jsonPath("$[0].code").value("PLAN101"));
+        mvc.perform(get("/api/v1/curriculum-courses").param("academicYear", "2025").with(jwt()))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1)).andExpect(jsonPath("$[0].code").value("PLAN102"));
+        jdbc.update("INSERT INTO student(auth_user_id, email, admission_year, enrollment_status) VALUES (?, ?, 2024, 'ENROLLED')", admin, admin + "@inha.edu");
+        mvc.perform(post("/api/v1/grades").with(jwt().jwt(t -> t.subject(admin.toString())))
+            .contentType("application/json").content(gradeInput(2025).replace("\"A_PLUS\"", "null").replace("\"rpl\":false", "\"rpl\":true")))
+            .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("COURSE_NOT_IN_CURRICULUM"));
+        mvc.perform(get("/api/v1/curriculum-courses").param("academicYear", "1999").with(jwt()))
+            .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
+    }
+
+    private tools.jackson.databind.JsonNode create(String input) throws Exception {
+        var result = mvc.perform(post("/api/v1/admin/curricula").with(jwt().jwt(t -> t.subject(admin.toString())))
+            .contentType("application/json").content(input)).andExpect(status().isCreated()).andReturn();
+        return json.readTree(result.getResponse().getContentAsString());
+    }
+
+    private String input(Long version, UUID courseId) {
+        return """
+            {"departmentEntityId":"%s","curriculumYear":2024,"sourceTitle":"공식 자료","version":%s,
+             "courses":[{"courseEntityId":"%s","division":"MAJOR_REQUIRED"}]}
+            """.formatted(department, version, courseId);
+    }
+}

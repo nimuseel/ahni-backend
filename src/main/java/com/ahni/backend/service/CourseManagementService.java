@@ -23,12 +23,14 @@ public class CourseManagementService {
     private final CourseRepository courses;
     private final DepartmentRepository departments;
     private final RequiredCourseRepository assignments;
+    private final CurriculumCourseRepository curriculumLinks;
 
-    public CourseManagementService(AdminRepository admins, CourseRepository courses, DepartmentRepository departments, RequiredCourseRepository assignments) {
+    public CourseManagementService(AdminRepository admins, CourseRepository courses, DepartmentRepository departments, RequiredCourseRepository assignments, CurriculumCourseRepository curriculumLinks) {
         this.admins = admins;
         this.courses = courses;
         this.departments = departments;
         this.assignments = assignments;
+        this.curriculumLinks = curriculumLinks;
     }
 
     public List<AdminCourseResponse> findAll(UUID authUserId, UUID departmentEntityId, CourseCategory category, Boolean active) {
@@ -47,12 +49,16 @@ public class CourseManagementService {
     @Transactional
     public AdminCourseResponse update(UUID authUserId, UUID courseEntityId, CourseManagementRequest input) {
         ensureAdmin(authUserId);
-        Course course = find(courseEntityId);
+        Course course = courses.findForUpdate(courseEntityId).orElseThrow(CourseNotFoundException::new);
         Department department = department(input.departmentEntityId());
         Course validated = new Course(department, input.code(), input.name(), input.credit(), input.category());
+        UUID previousDepartment = course.getDepartment() == null ? null : course.getDepartment().getEntityId();
+        if (curriculumLinks.existsByCourse(course)
+            && (validated.getCategory() != course.getCategory() || !Objects.equals(previousDepartment, input.departmentEntityId()))) {
+            throw new CourseAssignmentConflictException();
+        }
         for (var assignment : assignments.findAllByCourseAndDeletedAtIsNull(course)) {
             CourseCategory expected = assignment.getCategory() == RequiredCourseCategory.GENERAL_REQUIRED ? CourseCategory.GENERAL_EDUCATION : CourseCategory.MAJOR;
-            UUID previousDepartment = course.getDepartment() == null ? null : course.getDepartment().getEntityId();
             if (validated.getCategory() != expected || !Objects.equals(previousDepartment, input.departmentEntityId())) {
                 throw new CourseAssignmentConflictException();
             }

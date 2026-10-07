@@ -10,6 +10,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
+    @org.springframework.data.jpa.repository.Query("select c from Course c where c.entityId = :entityId")
+    Optional<Course> findForUpdate(@org.springframework.data.repository.query.Param("entityId") UUID entityId);
+
+    @org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_READ)
+    @org.springframework.data.jpa.repository.Query("select c from Course c where c.entityId in :ids order by c.id")
+    List<Course> findCurriculumCandidates(@org.springframework.data.repository.query.Param("ids") List<UUID> ids);
     Optional<Course> findByEntityId(UUID entityId);
     boolean existsByCodeAndEntityIdNot(String code, UUID entityId);
 

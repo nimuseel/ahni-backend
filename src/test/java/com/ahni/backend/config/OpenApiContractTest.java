@@ -23,6 +23,41 @@ import tools.jackson.databind.ObjectMapper;
 @Tag("integration")
 class OpenApiContractTest {
 
+    @Test
+    void yearlyCurriculumContractHasAuthenticatedYearQueryAndVersionedAdminWrites() throws Exception {
+        String actual = mockMvc.perform(get("/v3/api-docs")).andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        var document = objectMapper.readTree(actual);
+        var catalog = document.at("/paths/~1api~1v1~1curriculum-courses/get");
+        assertTrue(catalog.at("/security/0/bearerAuth").isArray());
+        assertEquals("array", catalog.at("/responses/200/content/application~1json/schema/type").asText());
+        boolean yearRequired = false;
+        for (var parameter : catalog.path("parameters")) if (parameter.path("name").asText().equals("academicYear")) yearRequired = parameter.path("required").asBoolean();
+        assertTrue(yearRequired);
+        var create = document.at("/paths/~1api~1v1~1admin~1curricula/post");
+        for (var code : new String[]{"201", "400", "401", "403", "404", "409"}) assertTrue(create.path("responses").has(code));
+        assertEquals("#/components/schemas/CurriculumResponse", create.at("/responses/201/content/application~1json/schema/$ref").asText());
+        assertTrue(document.at("/components/schemas/CurriculumPublicationRequest/required").toString().contains("version"));
+        assertTrue(document.at("/components/schemas/CurriculumCourseRequest/properties/division/enum").toString().contains("GENERAL_REQUIRED"));
+    }
+
+    @Test
+    void curriculumWriteExamplesReflectSavedConnectionsAndPublicationVersion() throws Exception {
+        String actual = mockMvc.perform(get("/v3/api-docs")).andExpect(status().isOk())
+            .andReturn().getResponse().getContentAsString();
+        var document = objectMapper.readTree(actual);
+        var created = document.at("/paths/~1api~1v1~1admin~1curricula/post/responses/201/content/application~1json/example");
+        assertEquals(0, created.path("version").asLong());
+        assertEquals(1, created.path("courses").size());
+        assertEquals(false, created.path("published").asBoolean());
+        var updated = document.at("/paths/~1api~1v1~1admin~1curricula~1{entityId}/put/responses/200/content/application~1json/example");
+        assertEquals(2, updated.path("version").asLong());
+        assertEquals("2024 교과과정표 정정", updated.path("sourceTitle").asText());
+        var published = document.at("/paths/~1api~1v1~1admin~1curricula~1{entityId}~1publication/put/responses/200/content/application~1json/example");
+        assertEquals(1, published.path("version").asLong());
+        assertEquals(1, published.path("courses").size());
+        assertTrue(published.path("published").asBoolean());
+    }
+
 	@Autowired
 	private MockMvc mockMvc;
 

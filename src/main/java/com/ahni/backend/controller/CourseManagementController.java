@@ -23,9 +23,9 @@ import java.util.UUID;
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content),
     @ApiResponse(responseCode = "403", description = "관리자 권한 없음", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject(value = "{\"code\":\"ADMIN_ACCESS_DENIED\",\"message\":\"관리자 권한이 필요합니다.\"}"))),
     @ApiResponse(responseCode = "404", description = "과목 또는 학과 없음", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = @ExampleObject(value = "{\"code\":\"COURSE_NOT_FOUND\",\"message\":\"과목을 찾을 수 없습니다.\"}"))),
-    @ApiResponse(responseCode = "409", description = "과목 코드 중복 또는 필수과목 배정 충돌", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = {
+    @ApiResponse(responseCode = "409", description = "과목 코드 중복 또는 졸업요건·교과과정 연결 충돌", content = @Content(schema = @Schema(implementation = ApiErrorResponse.class), examples = {
         @ExampleObject(name = "duplicateCode", value = "{\"code\":\"COURSE_ALREADY_EXISTS\",\"message\":\"같은 과목 코드가 이미 있습니다. 비활성 과목도 확인해 주세요.\"}"),
-        @ExampleObject(name = "assignmentConflict", value = "{\"code\":\"COURSE_ASSIGNMENT_CONFLICT\",\"message\":\"필수과목 배정을 먼저 확인해 주세요.\"}")
+        @ExampleObject(name = "assignmentConflict", value = "{\"code\":\"COURSE_ASSIGNMENT_CONFLICT\",\"message\":\"졸업요건 또는 교과과정의 과목 연결을 먼저 확인해 주세요.\"}")
     }))
 })
 public class CourseManagementController {
@@ -47,13 +47,13 @@ public class CourseManagementController {
     }
 
     @PutMapping("/{courseEntityId}")
-    @Operation(summary = "과목 수정", description = "[관리자 인증 O] 외부 식별자 및 기존 성적의 학점 스냅샷은 유지합니다. 활성 필수과목 배정을 무효화하는 학과·분류 수정은 거부합니다.")
+    @Operation(summary = "과목 수정", description = "[관리자 인증 O] 외부 식별자 및 기존 성적의 학점 스냅샷은 유지합니다. 활성 필수과목 배정을 무효화하거나 교과과정에 연결된 과목의 학과·분류를 변경하는 수정은 거부합니다.")
     public AdminCourseResponse update(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID courseEntityId, @Valid @RequestBody CourseManagementRequest input) {
         return service.update(UUID.fromString(jwt.getSubject()), courseEntityId, input);
     }
 
     @PostMapping("/{courseEntityId}/deactivate")
-    @Operation(summary = "과목 비활성화", description = "[관리자 인증 O] 학생 목록에서는 숨기되 기존 성적과 졸업요건 배정은 보존합니다. 반복 요청은 동일한 비활성 상태를 반환합니다.")
+    @Operation(summary = "과목 비활성화", description = "[관리자 인증 O] 일반 활성 목록에서는 숨기되 기존 성적과 졸업요건 배정은 보존합니다. 공개된 연도별 교과과정에 연결된 과목은 해당 연도 성적 입력에 계속 사용할 수 있습니다. 반복 요청은 동일한 비활성 상태를 반환합니다.")
     public AdminCourseResponse deactivate(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID courseEntityId) {
         return service.deactivate(UUID.fromString(jwt.getSubject()), courseEntityId);
     }

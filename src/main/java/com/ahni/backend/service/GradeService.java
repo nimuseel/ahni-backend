@@ -19,7 +19,6 @@ import com.ahni.backend.exception.GradeNotFoundException;
 import com.ahni.backend.exception.GradeReplacementConflictException;
 import com.ahni.backend.exception.InvalidGradeException;
 import com.ahni.backend.exception.StudentNotFoundException;
-import com.ahni.backend.repository.CourseRepository;
 import com.ahni.backend.repository.StudentGradeRepository;
 import com.ahni.backend.repository.StudentRepository;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -42,16 +41,16 @@ public class GradeService {
             .thenComparing(grade -> grade.getCourse().getCode());
 
     private final StudentRepository studentRepository;
-    private final CourseRepository courseRepository;
+    private final CurriculumService curriculumService;
     private final StudentGradeRepository gradeRepository;
 
     public GradeService(
         StudentRepository studentRepository,
-        CourseRepository courseRepository,
+        CurriculumService curriculumService,
         StudentGradeRepository gradeRepository
     ) {
         this.studentRepository = studentRepository;
-        this.courseRepository = courseRepository;
+        this.curriculumService = curriculumService;
         this.gradeRepository = gradeRepository;
     }
 
@@ -61,9 +60,7 @@ public class GradeService {
         GradeRegistrationRequest request
     ) {
         Student student = findStudent(authUserId);
-        Course course = courseRepository
-            .findByEntityIdAndActiveTrue(request.courseEntityId())
-            .orElseThrow(CourseNotFoundException::new);
+        Course course = curriculumService.requirePublishedCourse(request.academicYear(), request.courseEntityId());
 
         if (gradeRepository.existsByStudentAndCourseAndAcademicYearAndTerm(
             student,
@@ -136,6 +133,10 @@ public class GradeService {
     ) {
         Student student = findStudent(authUserId);
         StudentGrade grade = findGrade(gradeEntityId, student);
+
+        if (grade.getAcademicYear() != request.academicYear()) {
+            curriculumService.requirePublishedCourse(request.academicYear(), grade.getCourse().getEntityId());
+        }
 
         if (gradeRepository.existsByStudentAndCourseAndAcademicYearAndTermAndIdNot(
             student,

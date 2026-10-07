@@ -1,0 +1,2 @@
+ALTER TABLE public.curriculum ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.curriculum_course ENABLE ROW LEVEL SECURITY;

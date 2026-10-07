@@ -4,6 +4,8 @@ The backend OpenAPI document is the single API contract for the mobile and admin
 
 The read-only [grade simulation API](grade-simulation.md) compares current and projected GPA without persisting expected grades.
 
+[연도별 교과과정 가이드](../development/yearly-curriculum.md)는 관리자 초안·공개 API와 학생 연도별 조회, 성적 저장 검증 및 단계별 배포를 설명합니다. 신규 조회는 추가 계약이지만 성적 등록 검증은 동작 변경이므로 모바일·관리자와 함께 배포를 준비해야 합니다.
+
 ## API completion checklist
 
 `GET /api/v1/admin/me` returns the authenticated user's active administrator profile. A valid Supabase session without an active `admin` mapping receives `403 ADMIN_ACCESS_DENIED`.

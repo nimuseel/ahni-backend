@@ -1,0 +1,147 @@
+{
+  "curriculumYear": 2024,
+  "sources": [
+    {
+      "file": "sources/2024_일교1.xlsx",
+      "title": "일반교양-1.인문 · 예술영역 교과과정",
+      "sha256": "68b23eb570e9eb84ffa0c309ecf19cdd6cf9c767d16147fb596ea6760b6597e1",
+      "rows": 10
+    },
+    {
+      "file": "sources/2024_일교2.xlsx",
+      "title": "일반교양-2. 사회 · 자연영역 교과과정",
+      "sha256": "3b1d8299beea2dc7a6222c187c1501b240411cf38207d8b64ea727d023f20b02",
+      "rows": 21
+    },
+    {
+      "file": "sources/2024_일교3.xlsx",
+      "title": "일반교양-3.소통 · 실천영역 교과과정",
+      "sha256": "afb3a6d887187982fb1413a1afa7263abed7946b7b944cff03804160d007478e",
+      "rows": 24
+    },
+    {
+      "file": "sources/2024_일교4.xlsx",
+      "title": "일반교양-4.창의 · 도전영역 교과과정",
+      "sha256": "efb5532ccd6ad189c9d05fadaa878191398f073054076b51fac4ce22886a403f",
+      "rows": 23
+    },
+    {
+      "file": "sources/2024_일교5.xlsx",
+      "title": "일반교양-5.실용 · 진로영역 교과과정",
+      "sha256": "14feee448eaaec37cf84d6b4001d967bb4fa6d3b305ffdcc53120e0ef2b072f1",
+      "rows": 5
+    },
+    {
+      "file": "sources/2024_일교6.xlsx",
+      "title": "일반교양-6.생활 · 건강영역 교과과정",
+      "sha256": "f560c79f641b252fb44394b6a9fd5733cbce377904012c1af9a3ecba3ed83953",
+      "rows": 16
+    },
+    {
+      "file": "sources/2024_일교7.xlsx",
+      "title": "일반교양-7.SW·AI영역 교과과정",
+      "sha256": "9381ee9f0662d9902c4cbd33dc6f8ed3fd090b7b25a3b2033572677490ee1907",
+      "rows": 8
+    },
+    {
+      "file": "sources/2024_창의.xlsx",
+      "title": "창의영역 교과과정",
+      "sha256": "b08dc4b9a87a7bfb7784464be326f56437f84de91cbd612e1dc51883618cb0fa",
+      "rows": 20
+    },
+    {
+      "file": "sources/2024_핵교1.xlsx",
+      "title": "핵심교양-1.인간,가치,공존영역 교과과정",
+      "sha256": "3ed8e7237fb56221f9f2297ea92e9a1a0c83c9a3b2d99e0853864865c16c5060",
+      "rows": 9
+    },
+    {
+      "file": "sources/2024_핵교1_공학인증.xlsx",
+      "title": "핵심교양-1.인간,가치,공존(공학인증)영역 교과과정",
+      "sha256": "a0c912fe871ae7d0d825de16db25ad6a61695e23e5f273bc3010e852ece60afc",
+      "rows": 1
+    },
+    {
+      "file": "sources/2024_핵교2.xlsx",
+      "title": "핵심교양-2.역사, 사상, 문화영역 교과과정",
+      "sha256": "38cde80ecd670de4737baf1e5dfbfa4edf4bc657f559d83f885fb138b014ac7d",
+      "rows": 16
+    },
+    {
+      "file": "sources/2024_핵교3.xlsx",
+      "title": "핵심교양-3.문학, 예술, 상징영역 교과과정",
+      "sha256": "887148732ee8c1135916f22822c456bc007df54c7f5124f54dd587b74b7c2ff2",
+      "rows": 12
+    },
+    {
+      "file": "sources/2024_핵교4.xlsx",
+      "title": "핵심교양-4.사회, 제도, 세계영역 교과과정",
+      "sha256": "31d258dc187a0c92546f82faebd15dee859c5ccb4bc06ac717f63839b5bc86be",
+      "rows": 9
+    },
+    {
+      "file": "sources/2024_핵교5.xlsx",
+      "title": "핵심교양-5.자연, 생명, 환경영역 교과과정",
+      "sha256": "f36b87f56e01eea0448dcfba2e4300e6b14a3741b1ef8dd1de09c9d64ea7d741",
+      "rows": 7
+    },
+    {
+      "file": "sources/2024_핵교6.xlsx",
+      "title": "핵심교양-6.수리, 정보, 기술영역 교과과정",
+      "sha256": "e219ea7efc18fcdbbe65ac5058e224172f49756d9c1b841730ff18ad96fa3648",
+      "rows": 9
+    }
+  ],
+  "sourceRows": 190,
+  "uniqueCourses": 170,
+  "duplicateRows": 20,
+  "defaultSoftwareCurriculumLinks": 161,
+  "deferredLinks": [
+    {
+      "code": "GED1002",
+      "name": "공학윤리와 토론",
+      "reason": "engineering-accreditation"
+    },
+    {
+      "code": "GEE3003",
+      "name": "외국인전용초급한국어",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3004",
+      "name": "외국인전용중급한국어",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3019",
+      "name": "외국인전용 기초한국어",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3030",
+      "name": "외국인전용 한국어 레포트쓰기",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3031",
+      "name": "외국인전용 한국어 프레젠테이션",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3032",
+      "name": "외국인전용 미디어 한국어",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3033",
+      "name": "외국인전용 한국과 세계의 비교문화",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3039",
+      "name": "교환학생 전용 신나는 인하 한국어",
+      "reason": "international-or-exchange-only"
+    }
+  ],
+  "note": "금학기 개설은 원본 문구로만 보존하며 2024학기 개설 여부로 해석하지 않습니다."
+}

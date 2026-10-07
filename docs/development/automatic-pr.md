@@ -1,52 +1,72 @@
-# 작업자 계정으로 자동 PR 생성
+# 팀원 자동 PR 설정 가이드
 
-작업자는 커밋의 author 이름이 아니라 push 이벤트의 GitHub 사용자(`github.actor`)입니다.
-워크플로 재실행 시에도 최초 push 사용자를 기준으로 하며, 재실행한 사람의 계정으로 바꾸지 않습니다.
+본인 GitHub 계정으로 PAT를 발급하고 저장소에 등록하면, push할 때 본인 명의의 PR이 자동으로 생성됩니다.
 
-## 개인 PAT 등록
+## 1. 본인 계정에서 PAT 발급
 
-각 사용자가 **자신의 GitHub 계정**에서 PAT를 발급하고 접근 가능한 대상 저장소에만 등록합니다.
-다른 사람의 토큰을 사용자 이름만 바꾸어 등록하지 않습니다.
+PAT(Personal Access Token)는 GitHub API가 본인 계정으로 작업하도록 허용하는 인증 토큰입니다.
 
-각 저장소의 **Settings → Secrets and variables → Actions → New repository secret**에서 등록합니다.
+### Fine-grained PAT 발급
 
-| GitHub 사용자 | Secret 이름        |
-| ------------- | ------------------ |
-| nimuseel      | GH_PAT_NIMUSEEL    |
-| team-member   | GH_PAT_TEAM_MEMBER |
+[Fine-grained PAT 발급 페이지](https://github.com/settings/personal-access-tokens/new)를 엽니다.
 
-이름은 `GH_PAT_` 뒤에 GitHub 사용자 ID를 대문자로 붙이고, 하이픈은 밑줄로 바꿉니다.
-Secret 값은 그 사용자의 PAT이며 코드, .env, PR 본문이나 로그에 기록하지 않습니다.
+메뉴 경로: **개인 Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**
 
-- 현재 공용 `GH_PAT`는 더 이상 사용하지 않습니다. nimuseel 계정도 `GH_PAT_NIMUSEEL`을 별도로 등록해야 합니다.
-- 세 저장소에서 모두 자동 생성하려면 각 저장소에 해당 사용자의 Secret을 등록해야 합니다.
-- 가능한 경우 fine-grained PAT로 대상 저장소만 선택하고 Contents read, Pull requests read/write 권한과 만료일을 설정합니다.
-- 개인 계정 소유 저장소의 외부 협업자 등 fine-grained PAT가 지원하지 않는 경우가 있습니다. 해당 사용자의 접근 가능 여부를 먼저 확인합니다. classic PAT가 필요하면 공개 저장소에는 public_repo, 비공개에는 repo 범위가 필요하며 범위가 더 넓다는 점을 고려해야 합니다.
-- 등록 권한이 없는 팀원은 저장소 관리자에게 안전한 등록 절차를 요청합니다. 채팅이나 저장소 파일로 토큰을 공유하지 않습니다.
-- Actions 워크플로를 수정할 수 있는 협업자는 Secret을 사용하는 코드를 작성할 수 있습니다. 신뢰할 수 있는 협업자만 쓰기 권한을 갖도록 하고, 퇴사·탈퇴·만료 시 토큰을 폐기하거나 갱신합니다.
+1. Token name에 용도를 입력합니다. 예: `ahni-auto-pr`
+2. Expiration에 만료일을 설정합니다.
+3. Resource owner에 저장소 소유자 `nimuseel`을 선택합니다.
+4. Repository access에서 **Only select repositories**를 선택하고 사용할 AHNI 저장소를 지정합니다.
+5. Repository permissions를 설정합니다.
+   - Contents: **Read-only**
+   - Pull requests: **Read and write**
+   - Metadata: **Read-only** (기본 권한)
+6. **Generate token**을 누르고 발급된 값을 복사합니다.
 
-등록 방법: [GitHub Actions Secrets](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets)
-권한과 제한: [GitHub PAT 관리](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
+팀원은 본인 계정의 Resource owner와 Selected repositories 목록에서 대상 저장소를 선택할 수 있는지 확인합니다.
+선택할 수 없다면 저장소 관리자에게 Fine-grained PAT로 접근 가능한 저장소 소유 구조와 권한 설정을 확인한 뒤 진행합니다.
+토큰은 본인 계정으로 발급하고, 복사한 값은 아래 Repository secret 입력란에만 등록합니다.
 
-## 실행 정책
+토큰 종류와 협업자 제한: [GitHub PAT 공식 안내](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 
-1. 기존 feat/fix/docs/refactor/chore 브랜치 push를 감지합니다.
-2. push 사용자에 해당하는 Secret만 선택합니다. 공용 PAT나 봇 토큰으로 대체하지 않습니다.
-3. Secret이 없으면 등록할 이름을 안내하고 실패합니다. 토큰 값은 출력하지 않습니다.
-4. GitHub의 인증 사용자 조회로 PAT 소유자와 push 사용자의 ID를 대소문자 구분 없이 비교합니다.
-5. 불일치·인증 실패 시 PR 조회·생성·갱신과 Copilot 리뷰 요청 전에 중단합니다.
-6. 일치하면 PR 생성 또는 기존 PR의 커밋 내역 갱신 후 같은 PAT로 Copilot 리뷰를 요청합니다.
+## 2. Secret 이름 정하기
 
-기존 PR은 작성자를 바꿀 수 없으므로 삭제·재생성하지 않습니다. 다른 팀원이 같은 브랜치에 push해도 기존 PR 작성자는 유지됩니다.
-새 정책은 새로 생성되는 PR의 작성자에 적용됩니다. 각 사용자가 자신의 작업 브랜치를 사용하는 것이 기준입니다.
-Copilot 사용 권한과 저장소 리뷰 정책은 별도로 충족해야 합니다.
+이름은 `GH_PAT_{memberId}` 형식으로 만듭니다.
+`memberId` 자리에 **개인 GitHub ID를 대문자로 바꾸고, 하이픈을 밑줄로 바꾼 값**을 넣습니다.
 
-## 검증과 적용
+**GitHub ID는 현재 사용 중인 그대로 유지하고, Secret 이름만 대문자로 작성합니다.**
 
-Node.js 24.19.0에서 `node --test .github/tests/auto-pr.test.cjs`를 실행합니다.
-이 테스트는 실제 워크플로의 JavaScript와 Bash를 실행하며 GitHub 네트워크 응답만 테스트용으로 대체합니다.
-`./scripts/verify`와 CI에도 포함됩니다.
+| 개인 GitHub ID | 등록할 Secret 이름    |
+| -------------- | --------------------- |
+| `nimuseel`     | `GH_PAT_NIMUSEEL`     |
+| `kimdev`       | `GH_PAT_KIMDEV`       |
+| `hong-gildong` | `GH_PAT_HONG_GILDONG` |
 
-브랜치의 변경을 커밋·push하면 해당 브랜치의 새 워크플로가 실행됩니다.
-병합 전에도 push한 사용자의 새 Secret이 필요합니다. main 병합 후 다른 작업 브랜치에도 최신 워크플로를 반영합니다.
-등록 후 실제 push에서 Actions 성공, PR 작성자와 Copilot 리뷰 요청을 확인합니다. 로컬 테스트만으로 실제 토큰 권한·계정·리뷰 실행 성공을 보장하지 않습니다.
+## 3. 사용하는 저장소마다 Secret 등록
+
+아래에서 본인이 작업할 저장소의 설정 페이지를 엽니다.
+
+- [백엔드 Secret 설정](https://github.com/nimuseel/ahni-backend/settings/secrets/actions)
+- [모바일 Secret 설정](https://github.com/nimuseel/ahni-frontend/settings/secrets/actions)
+- [어드민 Secret 설정](https://github.com/nimuseel/ahni-admin/settings/secrets/actions)
+
+메뉴 경로: **저장소 Settings → Secrets and variables → Actions → Secrets → New repository secret**
+
+1. **Name**에 2단계에서 만든 이름을 입력합니다. 예: `GH_PAT_KIMDEV`
+2. **Secret**에 1단계에서 발급한 본인 PAT 값을 붙여 넣습니다.
+3. **Add secret**을 누릅니다.
+4. 다른 저장소에서도 작업한다면 해당 저장소에 반복해서 등록합니다.
+
+등록 메뉴에 접근하기 어려우면 저장소 관리자에게 등록 절차를 요청합니다.
+등록 방법: [GitHub Secrets 공식 안내](https://docs.github.com/en/actions/how-tos/write-workflows/choose-what-workflows-do/use-secrets)
+
+## 4. Push 후 실행 확인
+
+1. 자동 PR 설정이 반영된 코드에서 본인 작업용 `feat/`, `fix/`, `docs/`, `refactor/`, `chore/` 브랜치를 사용합니다.
+2. 본인 GitHub 계정으로 변경을 push합니다.
+3. 저장소 **Actions → Create PR and request Copilot review**에서 실행 결과를 확인합니다.
+4. **Pull requests**에서 새 PR 작성자가 본인인지, Copilot 리뷰 요청이 있는지 확인합니다.
+5. Secret 등록 전에 실패한 실행은 등록 후 **Re-run failed jobs**로 다시 실행합니다. 이때 최초 push한 계정의 Secret을 등록합니다.
+6. 토큰 만료 전 새 PAT를 발급하고 해당 Repository secret 값을 갱신합니다.
+
+Copilot 리뷰 단계가 실패하면 본인 계정의 코드 리뷰 사용 권한과 저장소 리뷰 설정을 확인합니다.
+재실행 방법: [GitHub Actions 재실행 안내](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/re-run-workflows-and-jobs)

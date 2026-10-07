@@ -1,0 +1,12 @@
+{
+  "curriculumYear": 2024,
+  "departmentName": "반도체산업융합학과",
+  "departmentEntityId": "00000000-0000-0000-0000-000000000003",
+  "sourceFile": "source.json",
+  "sourceSha256": "1c59c5e3693031f5744ecc1000ca9c4c136f2f088afd08a0b3c7e04fc38f37c9",
+  "sourceRows": 13,
+  "uniqueCourses": 13,
+  "importableLinks": 13,
+  "published": false,
+  "deferredLinks": []
+}

@@ -1,0 +1,12 @@
+{
+  "curriculumYear": 2024,
+  "departmentName": "금융투자학과",
+  "departmentEntityId": "00000000-0000-0000-0000-000000000001",
+  "sourceFile": "source.json",
+  "sourceSha256": "045a3bdc6c239cc729d3149a9efc9c2845c97d0aa68d5b6d41b041fbc6ce85de",
+  "sourceRows": 40,
+  "uniqueCourses": 40,
+  "importableLinks": 40,
+  "published": false,
+  "deferredLinks": []
+}

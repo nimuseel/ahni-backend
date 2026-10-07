@@ -1,0 +1,23 @@
+{
+  "curriculumYear": 2026,
+  "departmentName": "반도체산업융합학과",
+  "departmentEntityId": "00000000-0000-0000-0000-000000000003",
+  "sourceFile": "source.json",
+  "sourceSha256": "fabce3aaaef1d7604fbf8a58d691b9b053cbc50ebbd2b7d63148af956de406a4",
+  "sourceRows": 33,
+  "uniqueCourses": 33,
+  "importableLinks": 31,
+  "published": false,
+  "deferredLinks": [
+    {
+      "code": "MTH1901",
+      "name": "일반수학 1",
+      "reason": "현재 전공 과목은 한 학과에만 연결할 수 있어 공통 전공기초 지원 승인 전 입력 보류"
+    },
+    {
+      "code": "MTH1902",
+      "name": "일반수학 2",
+      "reason": "현재 전공 과목은 한 학과에만 연결할 수 있어 공통 전공기초 지원 승인 전 입력 보류"
+    }
+  ]
+}

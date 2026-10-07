@@ -1,0 +1,12 @@
+{
+  "curriculumYear": 2026,
+  "departmentName": "산업경영학과",
+  "departmentEntityId": "00000000-0000-0000-0000-000000000004",
+  "sourceFile": "source.json",
+  "sourceSha256": "54ab50c3bbcdae4f42156d2d7c341a031f6fcb8dee185b746d0658bccdde02d1",
+  "sourceRows": 41,
+  "uniqueCourses": 41,
+  "importableLinks": 41,
+  "published": false,
+  "deferredLinks": []
+}

@@ -35,6 +35,8 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GraduationProgressServiceTest {
     @Mock
+    private com.ahni.backend.repository.CurriculumCourseRepository curriculumCourseRepository;
+    @Mock
     private com.ahni.backend.repository.RequiredCourseRepository requiredCourseRepository;
     @Mock
     private StudentRepository studentRepository;
@@ -80,6 +82,11 @@ class GraduationProgressServiceTest {
         when(studentMajorRepository.findAllByStudentAndDeletedAtIsNull(student))
             .thenReturn(List.of(major));
         when(gradeRepository.findAllByStudent(student)).thenReturn(List.of(grade));
+        var curriculum = new com.ahni.backend.entity.Curriculum(department, 2025, "공식 자료", null);
+        curriculum.setPublished(true);
+        when(curriculumCourseRepository.findPublishedRecognitionLinks(List.of(department.getEntityId()), List.of(2025)))
+            .thenReturn(List.of(new com.ahni.backend.entity.CurriculumCourse(curriculum, course,
+                com.ahni.backend.domain.CurriculumDivision.MAJOR_REQUIRED, null, null, null, null, null, null)));
         when(requiredCourseRepository.findAllActiveByGraduationRequirement(requirement)).thenReturn(List.of(new com.ahni.backend.entity.RequiredCourse(requirement, course, com.ahni.backend.domain.RequiredCourseCategory.MAJOR_REQUIRED)));
         when(graduationRequirementRepository.findByDepartmentAndAdmissionYearAndMajorType(
             department,

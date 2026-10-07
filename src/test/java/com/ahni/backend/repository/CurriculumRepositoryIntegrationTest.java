@@ -71,6 +71,37 @@ class CurriculumRepositoryIntegrationTest {
     }
 
     @Test
+    void recognitionQueryLoadsSharedMajorsAndExcludesDraftsOtherYearsAndDeletedDepartments() {
+        var owner = departments.saveAndFlush(new Department("관리학과"));
+        var recognized = departments.saveAndFlush(new Department("인정학과"));
+        var deleted = departments.saveAndFlush(new Department("삭제학과"));
+        entityManager.createNativeQuery("update department set deleted_at = current_timestamp where id = :id")
+            .setParameter("id", deleted.getId()).executeUpdate();
+        var shared = courses.saveAndFlush(new Course(null, "SHARED101", "공통기초", new BigDecimal("3.0"), CourseCategory.MAJOR));
+        var published = new Curriculum(recognized, 2025, "공식 자료", null);
+        published.setPublished(true);
+        var draft = new Curriculum(recognized, 2026, "공식 초안", null);
+        var wrongYear = new Curriculum(recognized, 2024, "공식 자료", null);
+        wrongYear.setPublished(true);
+        var wrongDepartment = new Curriculum(owner, 2025, "다른 학과", null);
+        wrongDepartment.setPublished(true);
+        var deletedCurriculum = new Curriculum(deleted, 2025, "삭제 학과", null);
+        deletedCurriculum.setPublished(true);
+        for (var curriculum : List.of(published, draft, wrongYear, wrongDepartment, deletedCurriculum)) {
+            curricula.saveAndFlush(curriculum);
+            links.saveAndFlush(new CurriculumCourse(curriculum, shared, CurriculumDivision.MAJOR_FOUNDATION,
+                null, null, null, null, null, null));
+        }
+        entityManager.clear();
+        var result = links.findPublishedRecognitionLinks(
+            List.of(recognized.getEntityId(), deleted.getEntityId()), List.of(2025, 2026));
+        assertThat(result).hasSize(1);
+        assertThat(result.getFirst().getCurriculum().getEntityId()).isEqualTo(published.getEntityId());
+        assertThat(result.getFirst().getCourse().getEntityId()).isEqualTo(shared.getEntityId());
+        assertThat(result.getFirst().getCourse().getDepartment()).isNull();
+    }
+
+    @Test
     void staleEditCannotOverwriteAChangedCurriculum() {
         var department = departments.saveAndFlush(new Department("편집충돌검증학과"));
         var stale = curricula.saveAndFlush(new Curriculum(department, 2024, "최초 자료", null));

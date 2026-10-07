@@ -21,7 +21,7 @@ public record CourseResponse(
     @Schema(description = "과목 분류", example = "MAJOR")
     CourseCategory category,
     @Schema(
-        description = "소속 학과. 공통 교양·선택 과목은 null일 수 있습니다.",
+        description = "관리 소속 학과(선택). 공통 전공·교양·선택 과목은 null일 수 있으며 인정 학과는 연도별 교과과정 연결로 결정합니다.",
         nullable = true
     )
     DepartmentResponse department

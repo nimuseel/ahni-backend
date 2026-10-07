@@ -97,14 +97,16 @@ class CourseTest {
     }
 
     @Test
-    void 전공_과목은_학과가_필수다() {
-        assertThatThrownBy(() -> new Course(
+    void 공통_전공_과목은_관리_학과_없이_생성할_수_있다() {
+        Course course = new Course(
             null,
             "CSE101",
             "프로그래밍 기초",
             new BigDecimal("3.0"),
             CourseCategory.MAJOR
-        )).isInstanceOf(IllegalArgumentException.class);
+        );
+        assertThat(course.getDepartment()).isNull();
+        assertThat(course.getCategory()).isEqualTo(CourseCategory.MAJOR);
     }
 
     @Test

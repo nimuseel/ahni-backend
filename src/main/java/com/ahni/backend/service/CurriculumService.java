@@ -104,7 +104,7 @@ public class CurriculumService {
         Curriculum curriculum = locked(entityId, input.version());
         List<CurriculumCourse> assignments = links.findAllByCurriculumOrderByCourseCodeAsc(curriculum);
         if (input.published() && assignments.isEmpty()) throw new IllegalArgumentException("빈 교과과정은 공개할 수 없습니다.");
-        for (CurriculumCourse assignment : assignments) validateCourse(curriculum, assignment.getCourse(), assignment.getDivision());
+        for (CurriculumCourse assignment : assignments) validateCourse(assignment.getCourse(), assignment.getDivision());
         curriculum.setPublished(input.published());
         curricula.flush();
         return response(curriculum);
@@ -125,23 +125,20 @@ public class CurriculumService {
         var next = new ArrayList<CurriculumCourse>();
         for (var row : input) {
             Course course = Optional.ofNullable(catalog.get(row.courseEntityId())).orElseThrow(CourseNotFoundException::new);
-            validateCourse(curriculum, course, row.division());
+            validateCourse(course, row.division());
             next.add(new CurriculumCourse(curriculum, course, row.division(), row.recommendedYear(),
                 row.recommendedTerm(), row.areaCode(), row.areaName(), row.majorArea(), row.note()));
         }
         return next;
     }
 
-    private static void validateCourse(Curriculum curriculum, Course course, CurriculumDivision division) {
+    private static void validateCourse(Course course, CurriculumDivision division) {
         CourseCategory category = switch (division) {
             case MAJOR_REQUIRED, MAJOR_ELECTIVE, MAJOR_FOUNDATION -> CourseCategory.MAJOR;
             case GENERAL_REQUIRED, GENERAL_ELECTIVE -> CourseCategory.GENERAL_EDUCATION;
             case ELECTIVE -> CourseCategory.ELECTIVE;
         };
         if (course.getCategory() != category) throw new IllegalArgumentException("과목 영역과 교과과정 분류가 일치하지 않습니다.");
-        if (category == CourseCategory.MAJOR && !course.getDepartment().getEntityId().equals(curriculum.getDepartment().getEntityId())) {
-            throw new IllegalArgumentException("전공 과목의 학과가 교과과정 학과와 다릅니다.");
-        }
     }
 
     private CurriculumResponse response(Curriculum curriculum) {

@@ -792,7 +792,7 @@
       "areaName": null,
       "majorArea": null,
       "note": "공식 종별: 전공기초\n권장이수: 1학년(1학기)\n원본 비고: ⓐ 핵심 교양 GED1*** ~ GED6*** 중 각기 다른 영역에서 총 4개의 교과목 이수\n또는\nⓑ 그래픽 디자인 이야기, 지속가능성을 위한 화학이야기, 동북아와 한일관계, 희곡의 이해, 생활과 과학, 영화로 보는 문학세계 중 택 4개 이수",
-      "importStatus": "DEFERRED_SHARED_MAJOR"
+      "importStatus": "READY"
     },
     {
       "curriculumYear": 2025,
@@ -810,7 +810,7 @@
       "areaName": null,
       "majorArea": null,
       "note": "공식 종별: 전공기초\n권장이수: 1학년(2학기)\n원본 비고: ⓐ 핵심 교양 GED1*** ~ GED6*** 중 각기 다른 영역에서 총 4개의 교과목 이수\n또는\nⓑ 그래픽 디자인 이야기, 지속가능성을 위한 화학이야기, 동북아와 한일관계, 희곡의 이해, 생활과 과학, 영화로 보는 문학세계 중 택 4개 이수",
-      "importStatus": "DEFERRED_SHARED_MAJOR"
+      "importStatus": "READY"
     }
   ]
 }

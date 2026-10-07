@@ -6,18 +6,7 @@
   "sourceSha256": "7f1c9c2c8b86c62d3e13908046d64a9c5d506f9e03262f4a005d8239e7e0b177",
   "sourceRows": 26,
   "uniqueCourses": 26,
-  "importableLinks": 24,
+  "importableLinks": 26,
   "published": false,
-  "deferredLinks": [
-    {
-      "code": "MTH1901",
-      "name": "일반수학 1",
-      "reason": "현재 전공 과목은 한 학과에만 연결할 수 있어 공통 전공기초 지원 승인 전 입력 보류"
-    },
-    {
-      "code": "MTH1902",
-      "name": "일반수학 2",
-      "reason": "현재 전공 과목은 한 학과에만 연결할 수 있어 공통 전공기초 지원 승인 전 입력 보류"
-    }
-  ]
+  "deferredLinks": []
 }

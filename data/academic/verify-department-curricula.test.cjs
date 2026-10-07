@@ -12,6 +12,24 @@ const departments = [
 ];
 const divisions = { 교양필수: 'GENERAL_REQUIRED', 전공기초: 'MAJOR_FOUNDATION', 전공필수: 'MAJOR_REQUIRED', 전공선택: 'MAJOR_ELECTIVE' };
 
+test('shared-major import matches all eight archived links and four official draft sources', () => {
+  const sql = readFileSync(join(__dirname, 'import-shared-major-courses.sql'), 'utf8');
+  const quote = value => value === null ? 'NULL' : typeof value === 'number' ? String(value) : "'" + String(value).replaceAll("'", "''") + "'";
+  let links = 0;
+  for (const year of [2025, 2026]) for (const slug of ['mechatronics', 'semiconductor-convergence']) {
+    const root = join(__dirname, String(year), slug);
+    const manifest = JSON.parse(readFileSync(join(root, 'manifest.json')));
+    const source = JSON.parse(readFileSync(join(root, 'source.json')));
+    const records = JSON.parse(readFileSync(join(root, 'records.json'))).records;
+    assert.ok(sql.includes('(' + [manifest.departmentEntityId, year, year + ' ' + manifest.departmentName + ' 공식 교과과정표', source.sourceUrl].map(quote).join(',') + ')'));
+    for (const row of records.filter(r => ['MTH1901', 'MTH1902'].includes(r.code))) {
+      assert.ok(sql.includes('(' + [row.departmentEntityId, row.curriculumYear, row.code, row.division, row.recommendedYear, row.recommendedTerm, row.areaCode, row.areaName, row.majorArea, row.note].map(quote).join(',') + ')'));
+      links++;
+    }
+  }
+  assert.equal(links, 8);
+});
+
 for (const [slug, name, counts] of departments) {
   for (const [index, year] of [2024, 2025, 2026].entries()) {
     test(`${year} ${name}: exact official courses remain in their own year and department`, () => {
@@ -37,7 +55,6 @@ for (const [slug, name, counts] of departments) {
       assert.equal(source.rows.length, counts[index]);
       assert.equal(records.length, counts[index]);
       assert.equal(new Set(records.map(r => r.code)).size, counts[index]);
-      const deferred = [];
       records.forEach((row, i) => {
         const raw = source.rows[i];
         assert.equal(raw.KMAJOR, slug === 'semiconductor-convergence' ? '반도체산업융합' : name.replace(/과$/, ''));
@@ -60,14 +77,10 @@ for (const [slug, name, counts] of departments) {
         for (const field of ['KSGUBUN', 'KWAMOK_KGROUP', 'CURRICULUM_BIGO']) {
           if (raw[field]) assert.ok(row.note.includes(raw[field]), `${field} source note lost`);
         }
-        const isShared = ['MTH1901', 'MTH1902'].includes(row.code);
-        assert.equal(row.importStatus, isShared ? 'DEFERRED_SHARED_MAJOR' : 'READY');
-        if (isShared) deferred.push(row.code);
+        assert.equal(row.importStatus, 'READY');
       });
-      const expectedDeferred = year > 2024 && ['mechatronics', 'semiconductor-convergence'].includes(slug) ? ['MTH1901', 'MTH1902'] : [];
-      assert.deepEqual(deferred.sort(), expectedDeferred);
-      assert.deepEqual(manifest.deferredLinks.map(r => r.code).sort(), expectedDeferred);
-      assert.equal(manifest.importableLinks, counts[index] - expectedDeferred.length);
+      assert.deepEqual(manifest.deferredLinks, []);
+      assert.equal(manifest.importableLinks, counts[index]);
     });
   }
 }

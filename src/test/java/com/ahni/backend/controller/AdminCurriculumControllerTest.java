@@ -45,6 +45,10 @@ class AdminCurriculumControllerTest {
     @Autowired ObjectMapper json;
     @Autowired DepartmentRepository departments;
     @Autowired CourseRepository courses;
+    @Autowired com.ahni.backend.repository.StudentRepository students;
+    @Autowired com.ahni.backend.repository.StudentMajorRepository majors;
+    @Autowired com.ahni.backend.repository.StudentGradeRepository grades;
+    @Autowired com.ahni.backend.repository.GraduationRequirementRepository requirements;
     UUID admin;
     UUID department;
     UUID course;
@@ -61,6 +65,80 @@ class AdminCurriculumControllerTest {
         mvc.perform(get("/api/v1/admin/curricula")).andExpect(status().isUnauthorized());
         mvc.perform(get("/api/v1/admin/curricula").with(jwt().jwt(t -> t.subject(UUID.randomUUID().toString()))))
             .andExpect(status().isForbidden()).andExpect(jsonPath("$.code").value("ADMIN_ACCESS_DENIED"));
+    }
+
+    @Test void sharedMajorCourseIsRecognizedByEachDepartmentWithoutDuplicatingTheCourse() throws Exception {
+        var other = departments.saveAndFlush(new Department("공통전공인정학과"));
+        var first = create(input(null, course));
+        var second = create(input(null, course).replace(department.toString(), other.getEntityId().toString()));
+        for (var draft : java.util.List.of(first, second)) {
+            mvc.perform(put("/api/v1/admin/curricula/" + draft.path("entityId").asText() + "/publication")
+                .with(jwt().jwt(t -> t.subject(admin.toString()))).contentType("application/json")
+                .content("{\"published\":true,\"version\":0}")).andExpect(status().isOk());
+        }
+        mvc.perform(get("/api/v1/curriculum-courses").param("academicYear", "2024").with(jwt()))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1))
+            .andExpect(jsonPath("$[0].entityId").value(course.toString()));
+        for (UUID recognizedDepartment : java.util.List.of(department, other.getEntityId())) {
+            mvc.perform(get("/api/v1/curriculum-courses").param("academicYear", "2024")
+                .param("departmentEntityId", recognizedDepartment.toString()).with(jwt()))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].entityId").value(course.toString()));
+        }
+    }
+
+    @Test void sharedMajorProgressUsesPublishedAttendanceYearForPrimaryAndDoubleMajor() throws Exception {
+        var other = departments.saveAndFlush(new Department("복수전공인정학과"));
+        var first = create(input(null, course));
+        var second = create(input(null, course).replace(department.toString(), other.getEntityId().toString()));
+        for (var draft : java.util.List.of(first, second)) {
+            mvc.perform(put("/api/v1/admin/curricula/" + draft.path("entityId").asText() + "/publication")
+                .with(jwt().jwt(t -> t.subject(admin.toString()))).contentType("application/json")
+                .content("{\"published\":true,\"version\":0}")).andExpect(status().isOk());
+        }
+        UUID studentAuth = UUID.randomUUID();
+        var student = students.saveAndFlush(new com.ahni.backend.entity.Student(studentAuth, "shared@inha.edu", 2023,
+            com.ahni.backend.domain.EnrollmentStatus.ENROLLED, "공통전공학생"));
+        var primary = departments.findByEntityIdAndDeletedAtIsNull(department).orElseThrow();
+        var shared = courses.findByEntityId(course).orElseThrow();
+        for (var major : java.util.List.of(
+            new com.ahni.backend.entity.StudentMajor(student, primary, com.ahni.backend.entity.MajorType.PRIMARY),
+            new com.ahni.backend.entity.StudentMajor(student, other, com.ahni.backend.entity.MajorType.DOUBLE_MAJOR))) {
+            majors.saveAndFlush(major);
+            requirements.saveAndFlush(new com.ahni.backend.entity.GraduationRequirement(major.getDepartment(), 2023,
+                major.getMajorType(), new BigDecimal("130.0"), new BigDecimal("60.0"), new BigDecimal("30.0"), "입학연도 기준", null));
+        }
+        grades.saveAndFlush(new com.ahni.backend.entity.StudentGrade(student, shared, 2024,
+            com.ahni.backend.domain.AcademicTerm.FIRST, com.ahni.backend.domain.GradeCode.A_PLUS,
+            new BigDecimal("3.0"), false, null));
+        mvc.perform(get("/api/v1/graduation-progress").with(jwt().jwt(t -> t.subject(studentAuth.toString()))))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.length()").value(2))
+            .andExpect(jsonPath("$[0].admissionYear").value(2023))
+            .andExpect(jsonPath("$[0].credits.department.completed").value(3.0))
+            .andExpect(jsonPath("$[1].credits.department.completed").value(3.0))
+            .andExpect(jsonPath("$[0].credits.total.completed").value(3.0))
+            .andExpect(jsonPath("$[1].credits.total.completed").value(3.0));
+        mvc.perform(put("/api/v1/admin/curricula/" + second.path("entityId").asText() + "/publication")
+            .with(jwt().jwt(t -> t.subject(admin.toString()))).contentType("application/json")
+            .content("{\"published\":false,\"version\":1}")).andExpect(status().isOk());
+        mvc.perform(get("/api/v1/graduation-progress").with(jwt().jwt(t -> t.subject(studentAuth.toString()))))
+            .andExpect(status().isOk()).andExpect(jsonPath("$[0].credits.department.completed").value(3.0))
+            .andExpect(jsonPath("$[1].credits.department.completed").value(0.0))
+            .andExpect(jsonPath("$[1].credits.total.completed").value(3.0));
+    }
+
+    @Test void createsDepartmentlessMajorThroughTheAdminApiButKeepsDivisionValidation() throws Exception {
+        var created = mvc.perform(post("/api/v1/admin/courses").with(jwt().jwt(t -> t.subject(admin.toString())))
+            .contentType("application/json")
+            .content("{\"code\":\"SHARED101\",\"name\":\"공통기초\",\"credit\":3.0,\"category\":\"MAJOR\",\"departmentEntityId\":null}"))
+            .andExpect(status().isCreated()).andExpect(jsonPath("$.department").doesNotExist())
+            .andReturn().getResponse().getContentAsString();
+        UUID sharedId = UUID.fromString(json.readTree(created).path("entityId").asText());
+        var draft = create(input(null, sharedId));
+        mvc.perform(put("/api/v1/admin/curricula/" + draft.path("entityId").asText())
+            .with(jwt().jwt(t -> t.subject(admin.toString()))).contentType("application/json")
+            .content(input(0L, sharedId).replace("MAJOR_REQUIRED", "GENERAL_REQUIRED")))
+            .andExpect(status().isBadRequest()).andExpect(jsonPath("$.code").value("INVALID_REQUEST"));
     }
 
     @Test void createsDraftPublishesAndRejectsStaleEdit() throws Exception {

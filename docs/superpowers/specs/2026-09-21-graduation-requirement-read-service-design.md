@@ -66,8 +66,14 @@ Each active major returns required, completed, and remaining credits plus a
 threshold-met flag for total, department, and general-education credits.
 Completed credits use the same rules as the GPA summary: explicitly replaced
 attempts are excluded; RPL, `P`, and passing letter grades count; `F` and `NP`
-do not. Department credit includes only `MAJOR` courses owned by the policy's
-department. Remaining credit never falls below zero.
+do not. As revised on 2026-10-07, department credit includes only `MAJOR`
+attempts recognized by a published curriculum for the policy's department
+and the attempt's attendance year, matched by course entity ID. Course
+administrative affiliation is optional and does not determine recognition.
+Policy selection still uses department, admission year, and major type.
+Shared courses count once in total credits; each major's progress is separate
+guidance, not an official overlap-credit ruling. Remaining credit never falls
+below zero. See `docs/development/yearly-curriculum.md` for the current rules.
 
 ## Deferred work
 

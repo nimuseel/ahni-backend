@@ -17,19 +17,37 @@ jobs:
   create-pr:
     runs-on: ubuntu-latest
     steps:
-      - name: Validate GH_PAT secret
+      - name: Resolve push actor secret
+        id: actor-token
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const secretName = `GH_PAT_${context.actor.replaceAll('-', '_').toUpperCase()}`;
+            core.setOutput('secret-name', secretName);
+
+      - name: Validate actor PAT
+        id: validate-token
+        env:
+          ACTOR_PAT: ${{ secrets[steps.actor-token.outputs.secret-name] }}
+          SECRET_NAME: ${{ steps.actor-token.outputs.secret-name }}
         run: |
-          if [ -z "${{ secrets.GH_PAT }}" ]; then
-            echo "GH_PAT secret is required to create PRs as a user. Configure it in Settings → Secrets and variables → Actions."
+          if [ -z "$ACTOR_PAT" ]; then
+            echo "::error::Register $SECRET_NAME in Settings → Secrets and variables → Actions using the push actor's own PAT."
             exit 1
           fi
 
-      - name: Create pull request as repository owner
+      - name: Create pull request as push actor
         id: create-pr
         uses: actions/github-script@v8
         with:
-          github-token: ${{ secrets.GH_PAT }}
+          github-token: ${{ secrets[steps.actor-token.outputs.secret-name] }}
           script: |
+            const { data: user } = await github.rest.users.getAuthenticated();
+            if (user.login.toLowerCase() !== context.actor.toLowerCase()) {
+              core.setFailed('The selected PAT must belong to the original push actor. No PR was created or updated.');
+              return;
+            }
+
             const branch = context.ref.replace('refs/heads/', '');
             const head = `${context.repo.owner}:${branch}`;
             const { data: openPulls } = await github.rest.pulls.list({
@@ -79,5 +97,5 @@ jobs:
 
       - name: Request Copilot review
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ secrets[steps.actor-token.outputs.secret-name] }}
         run: gh pr edit "${{ steps.create-pr.outputs.pull-number }}" --repo "$GITHUB_REPOSITORY" --add-reviewer "@copilot"

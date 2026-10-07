@@ -35,6 +35,8 @@ Conventional Commits 형식을 사용합니다.
 
 ## 푸시와 리뷰
 
+자동 PR은 [작업자별 PAT 설정](automatic-pr.md)을 따릅니다. push 사용자와 토큰 소유자가 일치해야 하며 공용 PAT로 대체하지 않습니다.
+
 - 커밋 후 `git log -1 --oneline`으로 커밋을 확인한 뒤 `git push -u origin <branch>`로 현재 브랜치를 푸시합니다.
 - `main`에 직접 푸시하지 않고 Pull Request를 통해 병합합니다.
 - 강제 푸시(`--force`, `--force-with-lease`)는 사용하지 않습니다.

@@ -1,0 +1,208 @@
+{
+  "curriculumYear": 2025,
+  "areaCode": "GEE1",
+  "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg68KI8SAxMirljfz6HeEOPUcmqUX%252fzfJQV36XKGPGncjv",
+  "retrievedAt": "2026-10-07",
+  "responseSha256": "b53267cfccf43ac55c1a92e260e145ff5c516f3111c1811c3019ea3e917b4e00",
+  "reportedCount": 19,
+  "rows": [
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "한국어문학",
+      "HAKSU_NO": "GEE1001",
+      "KWAMOK_KNAME": "명언으로 배우는 한자와 한문",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "19",
+      "RowNum": "3"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "한국어문학",
+      "HAKSU_NO": "GEE1002",
+      "KWAMOK_KNAME": "동화와 마법의 상상력",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "19",
+      "RowNum": "4"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "문화콘텐츠",
+      "HAKSU_NO": "GEE1005",
+      "KWAMOK_KNAME": "영화로 보는 한국문화",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "19",
+      "RowNum": "10"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "문화경영",
+      "HAKSU_NO": "GEE1006",
+      "KWAMOK_KNAME": "동화의이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "19",
+      "RowNum": "11"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "한국어문학",
+      "HAKSU_NO": "GEE1012",
+      "KWAMOK_KNAME": "창작을 위한 글쓰기 실습",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "19",
+      "RowNum": "5"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "교육학",
+      "HAKSU_NO": "GEE1016",
+      "KWAMOK_KNAME": "평생교육실습",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "19",
+      "RowNum": "2"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "의예",
+      "HAKSU_NO": "GEE1019",
+      "KWAMOK_KNAME": "와인으로 보는 세계 문화",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "19",
+      "RowNum": "12"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "중국학",
+      "HAKSU_NO": "GEE1022",
+      "KWAMOK_KNAME": "한중 서사콘텐츠의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "19",
+      "RowNum": "9"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "교무처",
+      "HAKSU_NO": "GEE1023",
+      "KWAMOK_KNAME": "인하특강 : 인하와 인천",
+      "CREDIT": "2.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "19",
+      "RowNum": "1"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "예술체육학부",
+      "HAKSU_NO": "GEE1024",
+      "KWAMOK_KNAME": "클래식 음악 감상 실습",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "19",
+      "RowNum": "13"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "철학",
+      "HAKSU_NO": "GEE1025",
+      "KWAMOK_KNAME": "생각하는 힘: 논리와 사고의 기술",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "19",
+      "RowNum": "7"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "조형예술학",
+      "HAKSU_NO": "GEE1026",
+      "KWAMOK_KNAME": "드로잉의 기초",
+      "CREDIT": "2.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "19",
+      "RowNum": "14"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "의류디자인학",
+      "HAKSU_NO": "GEE1027",
+      "KWAMOK_KNAME": "영화로 만나는 패션",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "19",
+      "RowNum": "18"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "한국어문학",
+      "HAKSU_NO": "GEE1028",
+      "KWAMOK_KNAME": "스무살에 읽는 동양고전",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "19",
+      "RowNum": "6"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "조형예술학",
+      "HAKSU_NO": "GEE1029",
+      "KWAMOK_KNAME": "미술과 여행",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "19",
+      "RowNum": "15"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "디자인융합학",
+      "HAKSU_NO": "GEE1030",
+      "KWAMOK_KNAME": "세계디자인여행",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "19",
+      "RowNum": "16"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "연극영화학",
+      "HAKSU_NO": "GEE1031",
+      "KWAMOK_KNAME": "영화와 대중문화",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "19",
+      "RowNum": "17"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-1.인문 · 예술영역",
+      "KDEPT": "철학",
+      "HAKSU_NO": "GEE1033",
+      "KWAMOK_KNAME": "철학의 기본 질문들",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "19",
+      "RowNum": "8"
+    }
+  ]
+}

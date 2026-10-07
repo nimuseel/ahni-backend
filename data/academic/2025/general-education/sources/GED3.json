@@ -1,0 +1,164 @@
+{
+  "curriculumYear": 2025,
+  "areaCode": "GED3",
+  "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg68KI8SAxMirljfz6HeEOPUe83bFqQDYAOgIVM%252fyDVl1P",
+  "retrievedAt": "2026-10-07",
+  "responseSha256": "61e8f8d24aa8a96234ad4e2e830a10883469a5d7e22bb65aa54b00b2f179d5cd",
+  "reportedCount": 14,
+  "rows": [
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "한국어문학",
+      "HAKSU_NO": "GED3001",
+      "KWAMOK_KNAME": "대중문학의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "14",
+      "RowNum": "2"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "문화경영",
+      "HAKSU_NO": "GED3002",
+      "KWAMOK_KNAME": "영화로보는문학세계",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "14",
+      "RowNum": "5"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED3005",
+      "KWAMOK_KNAME": "사이언스 픽션: 과학, 문학, 상상력",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "14",
+      "RowNum": "11"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "산업경영학",
+      "HAKSU_NO": "GED3007",
+      "KWAMOK_KNAME": "인문학으로 바라본 마케팅",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "14",
+      "RowNum": "7"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "한국어문학",
+      "HAKSU_NO": "GED3009",
+      "KWAMOK_KNAME": "풍경에 관하여 : 인문학과 시각예술의 만남",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "14",
+      "RowNum": "3"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "연극영화학",
+      "HAKSU_NO": "GED3014",
+      "KWAMOK_KNAME": "영화와 테크놀러지",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "14",
+      "RowNum": "8"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "문화경영",
+      "HAKSU_NO": "GED3015",
+      "KWAMOK_KNAME": "희곡의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "14",
+      "RowNum": "6"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "한국어문학과",
+      "HAKSU_NO": "GED3016",
+      "KWAMOK_KNAME": "애니메이션속의 상상과 인식",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "14",
+      "RowNum": "4"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED3017",
+      "KWAMOK_KNAME": "지평융합을 위한 명저 읽기",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "14",
+      "RowNum": "12"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "디자인융합학",
+      "HAKSU_NO": "GED3018",
+      "KWAMOK_KNAME": "그래픽 디자인 이야기",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "14",
+      "RowNum": "9"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GED3019",
+      "KWAMOK_KNAME": "스포츠 창의융합 프로젝트",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "14",
+      "RowNum": "1"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED3020",
+      "KWAMOK_KNAME": "독서세미나 : 문학, 예술, 상징",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "14",
+      "RowNum": "13"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "예술체육학부",
+      "HAKSU_NO": "GED3021",
+      "KWAMOK_KNAME": "예술가곡의 가창실습",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "14",
+      "RowNum": "10"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-3.문학, 예술, 상징영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED3022",
+      "KWAMOK_KNAME": "영화 속 클래식 음악",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "14",
+      "RowNum": "14"
+    }
+  ]
+}

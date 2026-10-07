@@ -1,0 +1,109 @@
+{
+  "curriculumYear": 2025,
+  "areaCode": "GED5",
+  "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg68KI8SAxMirljfz6HeEOPUdSqKe2xzqiMqKWtpnzAG83",
+  "retrievedAt": "2026-10-07",
+  "responseSha256": "9ab718c7dfabaae65b3e6cfaba92d3207a541388a2cb2c9bf0a1722d6bff6ac6",
+  "reportedCount": 9,
+  "rows": [
+    {
+      "KYOSUN_KAREA": "핵심교양-5.자연, 생명, 환경영역",
+      "KDEPT": "생명과학",
+      "HAKSU_NO": "GED5001",
+      "KWAMOK_KNAME": "환경과 인간",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "9",
+      "RowNum": "9"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-5.자연, 생명, 환경영역",
+      "KDEPT": "생명공학",
+      "HAKSU_NO": "GED5002",
+      "KWAMOK_KNAME": "생활 속 바이오이야기",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "9",
+      "RowNum": "6"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-5.자연, 생명, 환경영역",
+      "KDEPT": "물리학",
+      "HAKSU_NO": "GED5003",
+      "KWAMOK_KNAME": "생활과과학",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "9",
+      "RowNum": "1"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-5.자연, 생명, 환경영역",
+      "KDEPT": "화학",
+      "HAKSU_NO": "GED5004",
+      "KWAMOK_KNAME": "지속가능성을 위한 화학 이야기",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "9",
+      "RowNum": "3"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-5.자연, 생명, 환경영역",
+      "KDEPT": "화학",
+      "HAKSU_NO": "GED5005",
+      "KWAMOK_KNAME": "현대생명과학의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "9",
+      "RowNum": "4"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-5.자연, 생명, 환경영역",
+      "KDEPT": "생명공학",
+      "HAKSU_NO": "GED5007",
+      "KWAMOK_KNAME": "첨단 바이오테크놀로지의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "9",
+      "RowNum": "7"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-5.자연, 생명, 환경영역",
+      "KDEPT": "물리학",
+      "HAKSU_NO": "GED5008",
+      "KWAMOK_KNAME": "과학으로 세상읽기",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "9",
+      "RowNum": "2"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-5.자연, 생명, 환경영역",
+      "KDEPT": "스포츠과학",
+      "HAKSU_NO": "GED5010",
+      "KWAMOK_KNAME": "신비로운 인체와 맞춤운동",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "9",
+      "RowNum": "5"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-5.자연, 생명, 환경영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED5011",
+      "KWAMOK_KNAME": "독서세미나 : 자연, 생명, 환경",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "9",
+      "RowNum": "8"
+    }
+  ]
+}

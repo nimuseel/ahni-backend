@@ -1,0 +1,176 @@
+{
+  "curriculumYear": 2026,
+  "sourcePage": "https://sugang.inha.ac.kr/sugang/SU_51001/curriculum_common.aspx",
+  "retrievedAt": "2026-10-07",
+  "sourceFormat": "official XML field projection; course synopsis omitted",
+  "sources": [
+    {
+      "file": "sources/GED1.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o7%252fFHYwFRSjURtCeL4Hd2MaS",
+      "sha256": "5d0eb343acc9627aaf0d8337d7e6de5f53ba5615e1238dfeb615931b6eb9b3e9",
+      "rows": 15,
+      "reportedCount": 15
+    },
+    {
+      "file": "sources/GED1_ENGINEERING.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o78LqMHVbypytxXgwaI5Tl%252bn",
+      "sha256": "1da61e88a81f3c6fa912a1d8d7ccab5728206ab9fd35f0236c118dc1c10067eb",
+      "rows": 1,
+      "reportedCount": 1
+    },
+    {
+      "file": "sources/GED2.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o782L1FJkQnxi8k1SDxx6dmZ",
+      "sha256": "3a8c354a1fc51b3838c24d5c70e8f8e5314ffbf372cf5ff0be1fd86c013a475c",
+      "rows": 17,
+      "reportedCount": 18
+    },
+    {
+      "file": "sources/GED3.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o796LorDCp4kLMRJKuL54djf",
+      "sha256": "e31a54d304a83c1665dc68b84bec1a902f168cf99da765e611aace6aec8098d0",
+      "rows": 14,
+      "reportedCount": 14
+    },
+    {
+      "file": "sources/GED4.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o7%252fTtq8ES1cduk7kDH%252bpZxqH",
+      "sha256": "6addc69b1b3c4d312e32ce056af1928044247a08b4b7e226574be7dba09ed2f4",
+      "rows": 12,
+      "reportedCount": 12
+    },
+    {
+      "file": "sources/GED5.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o79ZbASP8RZPFjSQW8UWniV0",
+      "sha256": "973e808d49ca1e2ac03c071800370c56fce015d70b8001f491e8915dae817d87",
+      "rows": 9,
+      "reportedCount": 9
+    },
+    {
+      "file": "sources/GED6.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o791KKEuzwhw%252btbDEcjc7agO",
+      "sha256": "343ac101c634787966399deee07e1e02fe5da0127a2fa6f77e7ef8f238078bf2",
+      "rows": 9,
+      "reportedCount": 9
+    },
+    {
+      "file": "sources/GEE1.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o78XL6rotebHnlxa%252bWXWctYz",
+      "sha256": "cd26779a723860e9f10dbe6d7220b1a141d7db4cff2fb54101d717b61c967004",
+      "rows": 18,
+      "reportedCount": 19
+    },
+    {
+      "file": "sources/GEE2.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o78MU3WCb28Xro0w2Qu1wBJm",
+      "sha256": "c971b8b783482b76d60478571a99b0a9e7a7dbef902d1929fc80e676b2ce040d",
+      "rows": 28,
+      "reportedCount": 28
+    },
+    {
+      "file": "sources/GEE3.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o7%252btV8QObxiscJH03deE98sP",
+      "sha256": "75e6bf627af0a08fcea928b9de10cfe1c0c98aeb53acc23760a37748754a2cf8",
+      "rows": 23,
+      "reportedCount": 23
+    },
+    {
+      "file": "sources/GEE4.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o7%252ffNUNwOrlz%252bkwXMx%252f4kZx2",
+      "sha256": "0e3885150093d883a7fa5bcade44585940d49c1c3a3a8ea69d9f05164fdf4d4e",
+      "rows": 24,
+      "reportedCount": 24
+    },
+    {
+      "file": "sources/GEE5.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o78fsMdfNT%252f17v76KzY4xEDK",
+      "sha256": "7925ef97066887833c5853d6232daf85fe2f9ed76219dcde203a7cb160235e6d",
+      "rows": 9,
+      "reportedCount": 9
+    },
+    {
+      "file": "sources/GEE6.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o7%252bbTM3OTKUHe1huiZR8xAz9",
+      "sha256": "c25fad9f5a09f8af3ac1379fb8b9473bfc7c8ee436ee9c77fac01e6a0ca64e6d",
+      "rows": 19,
+      "reportedCount": 19
+    },
+    {
+      "file": "sources/GEE7.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o7%252bSpfM0sJVtFP%252fG3ZAAywev",
+      "sha256": "ef97fd04e3edee633ab07849bc73b2e77b318f8ef9bff2273540785e2dffaf2c",
+      "rows": 17,
+      "reportedCount": 17
+    },
+    {
+      "file": "sources/CREATIVE.json",
+      "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o7%252bZX7%252f6gQLZHZlG2T4oHDvl",
+      "sha256": "5aac524772951fa9a1732139b035d981efeee8cb33552b904103c73ca000248b",
+      "rows": 21,
+      "reportedCount": 21
+    }
+  ],
+  "sourceRows": 236,
+  "uniqueCourses": 215,
+  "duplicateRows": 21,
+  "defaultSoftwareCurriculumLinks": 207,
+  "deferredLinks": [
+    {
+      "code": "GED1002",
+      "name": "공학윤리와 토론",
+      "reason": "engineering-accreditation"
+    },
+    {
+      "code": "GEE3003",
+      "name": "외국인전용초급한국어",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3004",
+      "name": "외국인전용중급한국어",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3019",
+      "name": "외국인전용 기초한국어",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3031",
+      "name": "외국인전용 한국어 프레젠테이션",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3032",
+      "name": "외국인전용 미디어 한국어",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3033",
+      "name": "외국인전용 한국과 세계의 비교문화",
+      "reason": "international-or-exchange-only"
+    },
+    {
+      "code": "GEE3039",
+      "name": "교환학생 전용 신나는 인하 한국어",
+      "reason": "international-or-exchange-only"
+    }
+  ],
+  "sourceCountDiscrepancies": [
+    {
+      "file": "sources/GED2.json",
+      "reportedCount": 18,
+      "actualRows": 17,
+      "outlineCrossCheckRows": 17,
+      "outlineSourceFile": "sources/GED2-outline.json"
+    },
+    {
+      "file": "sources/GEE1.json",
+      "reportedCount": 19,
+      "actualRows": 18,
+      "outlineCrossCheckRows": 18,
+      "outlineSourceFile": "sources/GEE1-outline.json"
+    }
+  ],
+  "note": "금학기 개설은 조회 시점 원문 비고이며 해당 연도의 특정 학기 개설 증거로 사용하지 않습니다."
+}

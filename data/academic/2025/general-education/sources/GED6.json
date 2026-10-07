@@ -1,0 +1,109 @@
+{
+  "curriculumYear": 2025,
+  "areaCode": "GED6",
+  "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg68KI8SAxMirljfz6HeEOPUcPebuVrzMzkf8Hpy0RLM4Y",
+  "retrievedAt": "2026-10-07",
+  "responseSha256": "857adee6571dd836998e625b0d4124cc753000181d5f48961a74ea1b4f5ae3b3",
+  "reportedCount": 9,
+  "rows": [
+    {
+      "KYOSUN_KAREA": "핵심교양-6.수리, 정보, 기술영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED6002",
+      "KWAMOK_KNAME": "초연결사회와 모바일 소프트웨어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "9",
+      "RowNum": "3"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-6.수리, 정보, 기술영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED6003",
+      "KWAMOK_KNAME": "컴퓨팅사고와 데이터분석 기초",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "9",
+      "RowNum": "4"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-6.수리, 정보, 기술영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED6004",
+      "KWAMOK_KNAME": "블록코딩과 AI기초",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "9",
+      "RowNum": "5"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-6.수리, 정보, 기술영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED6005",
+      "KWAMOK_KNAME": "지능정보서비스와 소프트웨어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "9",
+      "RowNum": "6"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-6.수리, 정보, 기술영역",
+      "KDEPT": "물리학",
+      "HAKSU_NO": "GED6007",
+      "KWAMOK_KNAME": "디지털 트랜스포메이션과 미래사회의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "9",
+      "RowNum": "2"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-6.수리, 정보, 기술영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED6008",
+      "KWAMOK_KNAME": "4차 산업혁명 기술의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "9",
+      "RowNum": "7"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-6.수리, 정보, 기술영역",
+      "KDEPT": "인공지능공학",
+      "HAKSU_NO": "GED6009",
+      "KWAMOK_KNAME": "인공지능과 소프트웨어를 활용한 탄소중립",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "9",
+      "RowNum": "9"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-6.수리, 정보, 기술영역",
+      "KDEPT": "이차전지공학",
+      "HAKSU_NO": "GED6010",
+      "KWAMOK_KNAME": "배터리속 소재 이야기",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "9",
+      "RowNum": "1"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-6.수리, 정보, 기술영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED6011",
+      "KWAMOK_KNAME": "프로그래밍과 문제해결",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "9",
+      "RowNum": "8"
+    }
+  ]
+}

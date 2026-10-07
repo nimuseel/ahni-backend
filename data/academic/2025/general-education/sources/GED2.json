@@ -1,0 +1,197 @@
+{
+  "curriculumYear": 2025,
+  "areaCode": "GED2",
+  "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg68KI8SAxMirljfz6HeEOPUf7Ye5tbdZRUiUn2U06SfrL",
+  "retrievedAt": "2026-10-07",
+  "responseSha256": "2cfa231930c2c124a6015496be5d29fcb4fef7d3bcc7d07e8cd89201189f7dcb",
+  "reportedCount": 17,
+  "rows": [
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "사학",
+      "HAKSU_NO": "GED2001",
+      "KWAMOK_KNAME": "역사 속의 라이벌",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "6"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "사학",
+      "HAKSU_NO": "GED2002",
+      "KWAMOK_KNAME": "한국 역사속의 생활과 민속",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "7"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "사학",
+      "HAKSU_NO": "GED2003",
+      "KWAMOK_KNAME": "종교와 문화",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "8"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "철학",
+      "HAKSU_NO": "GED2004",
+      "KWAMOK_KNAME": "서양철학 : 거인들의 어깨",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "9"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "철학",
+      "HAKSU_NO": "GED2005",
+      "KWAMOK_KNAME": "동양철학 : 마르지 않는 샘",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "17",
+      "RowNum": "10"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "아동학",
+      "HAKSU_NO": "GED2006",
+      "KWAMOK_KNAME": "인간의 성장과 발달",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "12"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "의류디자인학",
+      "HAKSU_NO": "GED2007",
+      "KWAMOK_KNAME": "현대사회와패션",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "13"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "사회교육",
+      "HAKSU_NO": "GED2008",
+      "KWAMOK_KNAME": "문화유산의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "4"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "교무처",
+      "HAKSU_NO": "GED2009",
+      "KWAMOK_KNAME": "문화심리",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "1"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "교무처",
+      "HAKSU_NO": "GED2010",
+      "KWAMOK_KNAME": "축제와 인간사회",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "2"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED2011",
+      "KWAMOK_KNAME": "지역인문학",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "14"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED2012",
+      "KWAMOK_KNAME": "문제탐색을 위한 명저읽기",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "15"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED2013",
+      "KWAMOK_KNAME": "독서세미나 : 역사, 사상, 문화",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "16"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "교무처",
+      "HAKSU_NO": "GED2014",
+      "KWAMOK_KNAME": "인하 라이프 아카데미 : 역사, 사상, 문화",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "17",
+      "RowNum": "3"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "프랑스언어문화",
+      "HAKSU_NO": "GED2016",
+      "KWAMOK_KNAME": "그리스신화의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "11"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "사회교육",
+      "HAKSU_NO": "GED2018",
+      "KWAMOK_KNAME": "전염병의 지리학",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "5"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-2.역사, 사상, 문화영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED2019",
+      "KWAMOK_KNAME": "디지털 시민성과 관계적 인간",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "17"
+    }
+  ]
+}

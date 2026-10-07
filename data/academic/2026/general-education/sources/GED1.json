@@ -1,0 +1,175 @@
+{
+  "curriculumYear": 2026,
+  "areaCode": "GED1",
+  "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o7%252fFHYwFRSjURtCeL4Hd2MaS",
+  "retrievedAt": "2026-10-07",
+  "responseSha256": "8d0afc012fc66f6d51cf579a4147026de38523563f36196fc1898c60a356e6c0",
+  "reportedCount": 15,
+  "rows": [
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "미래융합교육원",
+      "HAKSU_NO": "GED1003",
+      "KWAMOK_KNAME": "나눔 프로젝트",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "15",
+      "RowNum": "2"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED1004",
+      "KWAMOK_KNAME": "가치창조를 위한 명저 읽기",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "15",
+      "RowNum": "5"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED1005",
+      "KWAMOK_KNAME": "인간-AI-기계",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "15",
+      "RowNum": "6"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED1006",
+      "KWAMOK_KNAME": "창의적 사고와 소통",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "15",
+      "RowNum": "7"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED1007",
+      "KWAMOK_KNAME": "독서세미나 : 인간, 가치, 공존",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "15",
+      "RowNum": "8"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "교무처",
+      "HAKSU_NO": "GED1008",
+      "KWAMOK_KNAME": "인하 라이프 아카데미 : 인간, 가치, 공존",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "15",
+      "RowNum": "1"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "산업경영학",
+      "HAKSU_NO": "GED1009",
+      "KWAMOK_KNAME": "마음을 움직이는 리더십",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "15",
+      "RowNum": "4"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED1010",
+      "KWAMOK_KNAME": "오래된 미래: 동양고전에서의 인간다움",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "15",
+      "RowNum": "9"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED1011",
+      "KWAMOK_KNAME": "SF와 인간의 미래",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "15",
+      "RowNum": "10"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED1012",
+      "KWAMOK_KNAME": "4차 산업혁명 시대의 리더십",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "15",
+      "RowNum": "11"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "행정학",
+      "HAKSU_NO": "GED1013",
+      "KWAMOK_KNAME": "현대 사회의 가치관",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "15",
+      "RowNum": "3"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED1014",
+      "KWAMOK_KNAME": "인공지능 시대의 사랑, 행복, 정의",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "15",
+      "RowNum": "12"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED1015",
+      "KWAMOK_KNAME": "ESG와 사회적 가치 실천",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "15",
+      "RowNum": "13"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED1016",
+      "KWAMOK_KNAME": "윤리적 리더십",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "15",
+      "RowNum": "14"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED1017",
+      "KWAMOK_KNAME": "우리가 배우는 이유, 대학과 좋은 삶",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "15",
+      "RowNum": "15"
+    }
+  ]
+}

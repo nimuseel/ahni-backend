@@ -76,7 +76,6 @@ public class Course {
         this.name = normalizeName(name);
         this.credit = validateCredit(credit);
         this.category = validateCategory(category);
-        validateDepartment(department, category);
         this.department = department;
     }
 
@@ -122,12 +121,6 @@ public class Course {
             throw new IllegalArgumentException("과목 분류는 필수입니다.");
         }
         return category;
-    }
-
-    private static void validateDepartment(Department department, CourseCategory category) {
-        if (category == CourseCategory.MAJOR && department == null) {
-            throw new IllegalArgumentException("전공 과목은 학과가 필수입니다.");
-        }
     }
 
     public void update(Department department, String code, String name, BigDecimal credit, CourseCategory category) {

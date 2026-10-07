@@ -7,6 +7,8 @@ import com.ahni.backend.entity.GraduationRequirement;
 import com.ahni.backend.entity.Student;
 import com.ahni.backend.entity.StudentGrade;
 import com.ahni.backend.entity.StudentMajor;
+import com.ahni.backend.entity.CurriculumCourse;
+import com.ahni.backend.repository.CurriculumCourseRepository;
 import com.ahni.backend.exception.GraduationRequirementNotFoundException;
 import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.repository.GraduationRequirementRepository;
@@ -32,19 +34,22 @@ public class GraduationProgressService {
     private final GraduationRequirementRepository graduationRequirementRepository;
     private final StudentGradeRepository gradeRepository;
     private final RequiredCourseRepository requiredCourseRepository;
+    private final CurriculumCourseRepository curriculumCourseRepository;
 
     public GraduationProgressService(
         StudentRepository studentRepository,
         StudentMajorRepository studentMajorRepository,
         GraduationRequirementRepository graduationRequirementRepository,
         StudentGradeRepository gradeRepository,
-        RequiredCourseRepository requiredCourseRepository
+        RequiredCourseRepository requiredCourseRepository,
+        CurriculumCourseRepository curriculumCourseRepository
     ) {
         this.studentRepository = studentRepository;
         this.studentMajorRepository = studentMajorRepository;
         this.graduationRequirementRepository = graduationRequirementRepository;
         this.gradeRepository = gradeRepository;
         this.requiredCourseRepository = requiredCourseRepository;
+        this.curriculumCourseRepository = curriculumCourseRepository;
     }
 
     public List<GraduationProgressResponse> getProgress(UUID authUserId) {
@@ -52,16 +57,22 @@ public class GraduationProgressService {
             .orElseThrow(StudentNotFoundException::new);
         List<StudentGrade> grades = gradeRepository.findAllByStudent(student);
 
-        return studentMajorRepository.findAllByStudentAndDeletedAtIsNull(student).stream()
+        List<StudentMajor> majors = studentMajorRepository.findAllByStudentAndDeletedAtIsNull(student);
+        List<CurriculumCourse> recognitionLinks = grades.isEmpty() || majors.isEmpty() ? List.of()
+            : curriculumCourseRepository.findPublishedRecognitionLinks(
+                majors.stream().map(major -> major.getDepartment().getEntityId()).distinct().toList(),
+                grades.stream().map(StudentGrade::getAcademicYear).distinct().toList());
+        return majors.stream()
             .sorted(MAJOR_TYPE_ORDER)
-            .map(major -> progress(student, major, grades))
+            .map(major -> progress(student, major, grades, recognitionLinks))
             .toList();
     }
 
     private GraduationProgressResponse progress(
         Student student,
         StudentMajor major,
-        List<StudentGrade> grades
+        List<StudentGrade> grades,
+        List<CurriculumCourse> recognitionLinks
     ) {
         GraduationRequirement requirement = graduationRequirementRepository
             .findByDepartmentAndAdmissionYearAndMajorType(
@@ -71,7 +82,7 @@ public class GraduationProgressService {
             )
             .orElseThrow(GraduationRequirementNotFoundException::new);
         Department department = requirement.getDepartment();
-        var credits = GraduationProgressCalculator.calculate(requirement, grades);
+        var credits = GraduationProgressCalculator.calculate(requirement, grades, recognitionLinks);
         var requiredCourses = RequiredCourseProgressCalculator.calculate(requiredCourseRepository.findAllActiveByGraduationRequirement(requirement), grades);
 
         return new GraduationProgressResponse(

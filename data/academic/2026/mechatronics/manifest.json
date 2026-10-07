@@ -1,0 +1,12 @@
+{
+  "curriculumYear": 2026,
+  "departmentName": "메카트로닉스공학과",
+  "departmentEntityId": "00000000-0000-0000-0000-000000000002",
+  "sourceFile": "source.json",
+  "sourceSha256": "8594a1cdf796223c83a585d2cf9348acb523d916f964a1ac427a78ac6d5a14c0",
+  "sourceRows": 45,
+  "uniqueCourses": 45,
+  "importableLinks": 45,
+  "published": false,
+  "deferredLinks": []
+}

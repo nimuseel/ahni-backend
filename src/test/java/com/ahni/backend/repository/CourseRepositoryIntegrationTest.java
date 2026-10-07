@@ -229,9 +229,12 @@ class CourseRepositoryIntegrationTest {
     }
 
     @Test
-    void 데이터베이스는_학과가_없는_전공_과목을_거부한다() {
-        assertThatThrownBy(() -> insertRawCourse("CSE101", "3.0", "MAJOR"))
-            .isInstanceOf(DataIntegrityViolationException.class);
+    void 데이터베이스는_관리_학과가_없는_공통_전공_과목을_허용한다() {
+        Course course = courseRepository.saveAndFlush(majorCourse(null, "CSE101", "공통 전공기초"));
+        entityManager.clear();
+        Course saved = courseRepository.findByEntityId(course.getEntityId()).orElseThrow();
+        assertThat(saved.getDepartment()).isNull();
+        assertThat(saved.getCategory()).isEqualTo(CourseCategory.MAJOR);
     }
 
     private Department saveDepartment(String name) {

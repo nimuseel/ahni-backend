@@ -1,0 +1,21 @@
+{
+  "curriculumYear": 2026,
+  "areaCode": "GED1_ENGINEERING",
+  "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o78LqMHVbypytxXgwaI5Tl%252bn",
+  "retrievedAt": "2026-10-07",
+  "responseSha256": "c747858c2e323980144806769a71d2c25e7501e1c5d06d35996a497996fb5c1f",
+  "reportedCount": 1,
+  "rows": [
+    {
+      "KYOSUN_KAREA": "핵심교양-1.인간,가치,공존(공학윤리와 토론)영역",
+      "KDEPT": "인하공학교육혁신센터",
+      "HAKSU_NO": "GED1002",
+      "KWAMOK_KNAME": "공학윤리와 토론",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "1",
+      "RowNum": "1"
+    }
+  ]
+}

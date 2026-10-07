@@ -4,30 +4,42 @@ import com.ahni.backend.domain.CourseCategory;
 import com.ahni.backend.dto.CreditProgressResponse;
 import com.ahni.backend.dto.GraduationCreditProgressResponse;
 import com.ahni.backend.entity.GraduationRequirement;
+import com.ahni.backend.entity.CurriculumCourse;
 import com.ahni.backend.entity.StudentGrade;
 
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 final class GraduationProgressCalculator {
     private GraduationProgressCalculator() { }
 
     static GraduationCreditProgressResponse calculate(
         GraduationRequirement requirement,
-        List<StudentGrade> grades
+        List<StudentGrade> grades,
+        List<CurriculumCourse> recognitionLinks
     ) {
         BigDecimal totalCompleted = GradeSummaryCalculator.calculate(grades)
             .completedCredits();
         UUID departmentEntityId = requirement.getDepartment().getEntityId();
-        BigDecimal departmentCompleted = completedCredits(grades.stream()
+        Set<AnnualCourse> recognized = recognitionLinks.stream()
+            .filter(link -> link.getCurriculum().isPublished())
+            .filter(link -> link.getCurriculum().getDepartment().getDeletedAt() == null)
+            .filter(link -> departmentEntityId.equals(link.getCurriculum().getDepartment().getEntityId()))
+            .filter(link -> switch (link.getDivision()) {
+                case MAJOR_REQUIRED, MAJOR_ELECTIVE, MAJOR_FOUNDATION -> true;
+                default -> false;
+            })
+            .map(link -> new AnnualCourse(link.getCurriculum().getCurriculumYear(), link.getCourse().getEntityId()))
+            .collect(Collectors.toSet());
+        List<StudentGrade> effectiveGrades = GradeSummaryCalculator.effectiveAttempts(grades);
+        BigDecimal departmentCompleted = completedCredits(effectiveGrades.stream()
             .filter(grade -> grade.getCourse().getCategory() == CourseCategory.MAJOR)
-            .filter(grade -> grade.getCourse().getDepartment() != null)
-            .filter(grade -> departmentEntityId.equals(
-                grade.getCourse().getDepartment().getEntityId()
-            ))
+            .filter(grade -> recognized.contains(new AnnualCourse(grade.getAcademicYear(), grade.getCourse().getEntityId())))
             .toList());
-        BigDecimal generalCompleted = completedCredits(grades.stream()
+        BigDecimal generalCompleted = completedCredits(effectiveGrades.stream()
             .filter(grade -> grade.getCourse().getCategory()
                 == CourseCategory.GENERAL_EDUCATION)
             .toList());
@@ -38,6 +50,8 @@ final class GraduationProgressCalculator {
             progress(requirement.getMinGeneralCredit(), generalCompleted)
         );
     }
+
+    private record AnnualCourse(int year, UUID courseEntityId) { }
 
     private static BigDecimal completedCredits(List<StudentGrade> grades) {
         return GradeSummaryCalculator.calculate(grades).completedCredits();

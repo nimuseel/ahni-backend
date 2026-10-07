@@ -1,0 +1,98 @@
+{
+  "curriculumYear": 2025,
+  "areaCode": "GEE5",
+  "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg68KI8SAxMirljfz6HeEOPUc1VhC9vBxo39huOx0YBpVK",
+  "retrievedAt": "2026-10-07",
+  "responseSha256": "6e5fbd1cf29a61bbcef61e52d2188648f8e4d58df7c78b747b9bf0952f0ad5a9",
+  "reportedCount": 8,
+  "rows": [
+    {
+      "KYOSUN_KAREA": "일반교양-5.실용 · 진로영역",
+      "KDEPT": "경영학",
+      "HAKSU_NO": "GEE5002",
+      "KWAMOK_KNAME": "증권투자의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "8",
+      "RowNum": "4"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-5.실용 · 진로영역",
+      "KDEPT": "경영학",
+      "HAKSU_NO": "GEE5006",
+      "KWAMOK_KNAME": "생활과 재테크",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "8",
+      "RowNum": "5"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-5.실용 · 진로영역",
+      "KDEPT": "화학공학",
+      "HAKSU_NO": "GEE5007",
+      "KWAMOK_KNAME": "공학과 여성",
+      "CREDIT": "2.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "8",
+      "RowNum": "3"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-5.실용 · 진로영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE5012",
+      "KWAMOK_KNAME": "인하특강 : 언론을 통한 세상보기",
+      "CREDIT": "2.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "8",
+      "RowNum": "8"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-5.실용 · 진로영역",
+      "KDEPT": "교무처",
+      "HAKSU_NO": "GEE5014",
+      "KWAMOK_KNAME": "인하 스콜라 특강",
+      "CREDIT": "1.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "8",
+      "RowNum": "1"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-5.실용 · 진로영역",
+      "KDEPT": "행정학",
+      "HAKSU_NO": "GEE5015",
+      "KWAMOK_KNAME": "적성탐색과 자기관리",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "8",
+      "RowNum": "7"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-5.실용 · 진로영역",
+      "KDEPT": "인하공학교육혁신센터",
+      "HAKSU_NO": "GEE5016",
+      "KWAMOK_KNAME": "진로설계 이해와 전략",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "8",
+      "RowNum": "2"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-5.실용 · 진로영역",
+      "KDEPT": "경영학",
+      "HAKSU_NO": "GEE5017",
+      "KWAMOK_KNAME": "품질의 차원",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "8",
+      "RowNum": "6"
+    }
+  ]
+}

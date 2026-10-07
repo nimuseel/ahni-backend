@@ -6,6 +6,8 @@ The read-only [grade simulation API](grade-simulation.md) compares current and p
 
 [연도별 교과과정 가이드](../development/yearly-curriculum.md)는 관리자 초안·공개 API와 학생 연도별 조회, 성적 저장 검증 및 단계별 배포를 설명합니다. 신규 조회는 추가 계약이지만 성적 등록 검증은 동작 변경이므로 모바일·관리자와 함께 배포를 준비해야 합니다.
 
+공통전공 지원은 JSON 필드 변경 없이 동작을 확장합니다. 관리자 과목 생성은 `MAJOR`도 `departmentEntityId=null`을 허용하고, 교과과정은 다른 관리 학과의 전공과목을 연결할 수 있습니다. 과목 분류 일치·중복 방지·관리자 권한·version 검증은 유지합니다. 졸업 전공학점은 관리 소속이 아닌 공개된 학과·수강연도 연결을 사용하므로 누락/초안 연결은 전공학점에 포함되지 않습니다. 기존 총학점·성적 ID·스냅샷·GPA는 보존합니다. V20을 먼저 적용하고 새 백엔드·어드민을 함께 반영한 뒤 공식 자료를 검토·공개해 주세요.
+
 ## API completion checklist
 
 `GET /api/v1/admin/me` returns the authenticated user's active administrator profile. A valid Supabase session without an active `admin` mapping receives `403 ADMIN_ACCESS_DENIED`.

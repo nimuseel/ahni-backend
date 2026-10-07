@@ -1,0 +1,142 @@
+{
+  "curriculumYear": 2025,
+  "areaCode": "GED4",
+  "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg68KI8SAxMirljfz6HeEOPUfyrNNjMFukGi40M%252f8NGT%252fC",
+  "retrievedAt": "2026-10-07",
+  "responseSha256": "9bd945ee651c153a1c7ff14c7dfe052a9ce735e76639e53940d0d2b4416aab09",
+  "reportedCount": 12,
+  "rows": [
+    {
+      "KYOSUN_KAREA": "핵심교양-4.사회, 제도, 세계영역",
+      "KDEPT": "사회교육",
+      "HAKSU_NO": "GED4001",
+      "KWAMOK_KNAME": "다문화사회와 공존의 인문학",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "12",
+      "RowNum": "4"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-4.사회, 제도, 세계영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED4002",
+      "KWAMOK_KNAME": "세계이해를 위한 명저 읽기",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "12",
+      "RowNum": "11"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-4.사회, 제도, 세계영역",
+      "KDEPT": "사회교육",
+      "HAKSU_NO": "GED4004",
+      "KWAMOK_KNAME": "부와 빈곤의 글로벌 지도",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "12",
+      "RowNum": "5"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-4.사회, 제도, 세계영역",
+      "KDEPT": "사회교육",
+      "HAKSU_NO": "GED4005",
+      "KWAMOK_KNAME": "글로벌 사회의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "12",
+      "RowNum": "6"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-4.사회, 제도, 세계영역",
+      "KDEPT": "정치외교학",
+      "HAKSU_NO": "GED4006",
+      "KWAMOK_KNAME": "국제관계학개론",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "12",
+      "RowNum": "8"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-4.사회, 제도, 세계영역",
+      "KDEPT": "철학",
+      "HAKSU_NO": "GED4007",
+      "KWAMOK_KNAME": "동아시아 정치와 철학의 재발견",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "12",
+      "RowNum": "9"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-4.사회, 제도, 세계영역",
+      "KDEPT": "아동학",
+      "HAKSU_NO": "GED4008",
+      "KWAMOK_KNAME": "결혼과 부모역할",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "12",
+      "RowNum": "10"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-4.사회, 제도, 세계영역",
+      "KDEPT": "국제통상학",
+      "HAKSU_NO": "GED4009",
+      "KWAMOK_KNAME": "동북아와 한일관계",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "12",
+      "RowNum": "3"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-4.사회, 제도, 세계영역",
+      "KDEPT": "법학부",
+      "HAKSU_NO": "GED4010",
+      "KWAMOK_KNAME": "인권의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "12",
+      "RowNum": "7"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-4.사회, 제도, 세계영역",
+      "KDEPT": "미래융합교육원",
+      "HAKSU_NO": "GED4011",
+      "KWAMOK_KNAME": "지식재산 이론과 실제",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "12",
+      "RowNum": "1"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-4.사회, 제도, 세계영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GED4014",
+      "KWAMOK_KNAME": "독서세미나 : 사회, 제도, 세계",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "12",
+      "RowNum": "12"
+    },
+    {
+      "KYOSUN_KAREA": "핵심교양-4.사회, 제도, 세계영역",
+      "KDEPT": "이차전지공학",
+      "HAKSU_NO": "GED4015",
+      "KWAMOK_KNAME": "인류문명과 에너지원의 변천사",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "12",
+      "RowNum": "2"
+    }
+  ]
+}

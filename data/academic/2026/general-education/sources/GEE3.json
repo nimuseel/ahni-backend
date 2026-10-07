@@ -1,0 +1,263 @@
+{
+  "curriculumYear": 2026,
+  "areaCode": "GEE3",
+  "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg67EM0Ajs231PkzZe1wc4o7%252btV8QObxiscJH03deE98sP",
+  "retrievedAt": "2026-10-07",
+  "responseSha256": "a370cd5a68ff0ce896cbcd631e077ebb2fc7bf686f4cb22dd399df80da83461c",
+  "reportedCount": 23,
+  "rows": [
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "교무처",
+      "HAKSU_NO": "GEE3001",
+      "KWAMOK_KNAME": "졸업인증실용영어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "23",
+      "RowNum": "1"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3003",
+      "KWAMOK_KNAME": "외국인전용초급한국어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "23",
+      "RowNum": "11"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3004",
+      "KWAMOK_KNAME": "외국인전용중급한국어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "23",
+      "RowNum": "12"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "일본언어문화",
+      "HAKSU_NO": "GEE3012",
+      "KWAMOK_KNAME": "스타트일본어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "23",
+      "RowNum": "6"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3013",
+      "KWAMOK_KNAME": "대학기초영어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "23",
+      "RowNum": "13"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "교무처",
+      "HAKSU_NO": "GEE3014",
+      "KWAMOK_KNAME": "토크쇼로 배우는 영어대화기술",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "23",
+      "RowNum": "2"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "일본언어문화",
+      "HAKSU_NO": "GEE3016",
+      "KWAMOK_KNAME": "초급일본어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "23",
+      "RowNum": "7"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프랑스언어문화",
+      "HAKSU_NO": "GEE3017",
+      "KWAMOK_KNAME": "초급 프랑스어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "23",
+      "RowNum": "10"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3019",
+      "KWAMOK_KNAME": "외국인전용 기초한국어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "23",
+      "RowNum": "14"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "영어영문학",
+      "HAKSU_NO": "GEE3021",
+      "KWAMOK_KNAME": "미국문화의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "23",
+      "RowNum": "8"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3025",
+      "KWAMOK_KNAME": "장애인과 함께 하는 삶",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "23",
+      "RowNum": "15"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3026",
+      "KWAMOK_KNAME": "생활한문",
+      "CREDIT": "1.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "23",
+      "RowNum": "16"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3027",
+      "KWAMOK_KNAME": "실용영어 L/S",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "23",
+      "RowNum": "17"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3028",
+      "KWAMOK_KNAME": "실용영어 R/W",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "23",
+      "RowNum": "18"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3031",
+      "KWAMOK_KNAME": "외국인전용 한국어 프레젠테이션",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "23",
+      "RowNum": "19"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3032",
+      "KWAMOK_KNAME": "외국인전용 미디어 한국어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "23",
+      "RowNum": "20"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3033",
+      "KWAMOK_KNAME": "외국인전용 한국과 세계의 비교문화",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "23",
+      "RowNum": "21"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "교무처",
+      "HAKSU_NO": "GEE3035",
+      "KWAMOK_KNAME": "서바이벌베트남어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "23",
+      "RowNum": "3"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "영어영문학",
+      "HAKSU_NO": "GEE3037",
+      "KWAMOK_KNAME": "국제 비즈니스 영어회화와 작문",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "23",
+      "RowNum": "9"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3039",
+      "KWAMOK_KNAME": "교환학생 전용 신나는 인하 한국어",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "23",
+      "RowNum": "22"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "중국학",
+      "HAKSU_NO": "GEE3040",
+      "KWAMOK_KNAME": "한중 언어문화 비교",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "23",
+      "RowNum": "5"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "프런티어창의대학",
+      "HAKSU_NO": "GEE3041",
+      "KWAMOK_KNAME": "스페인·중남미 문화의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "23",
+      "RowNum": "23"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-3.소통 · 실천영역",
+      "KDEPT": "교무처",
+      "HAKSU_NO": "GEE3043",
+      "KWAMOK_KNAME": "미국드라마로 배우는 영어표현",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "23",
+      "RowNum": "4"
+    }
+  ]
+}

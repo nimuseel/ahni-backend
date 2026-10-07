@@ -1,0 +1,230 @@
+{
+  "curriculumYear": 2025,
+  "areaCode": "GEE6",
+  "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg68KI8SAxMirljfz6HeEOPUd1Fih88mhk9Gkohc2y5J9b",
+  "retrievedAt": "2026-10-07",
+  "responseSha256": "5184c1cfd9b98cfca6888df6c3ea0c6f28df3aab6a1b156d8ca3e52bff62a57c",
+  "reportedCount": 20,
+  "rows": [
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "식품영양학",
+      "HAKSU_NO": "GEE6001",
+      "KWAMOK_KNAME": "건강한 체중조절을 위한 맞춤영양",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "20",
+      "RowNum": "16"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GEE6002",
+      "KWAMOK_KNAME": "댄스스포츠",
+      "CREDIT": "1.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "4"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GEE6003",
+      "KWAMOK_KNAME": "수영",
+      "CREDIT": "1.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "20",
+      "RowNum": "5"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GEE6004",
+      "KWAMOK_KNAME": "테니스",
+      "CREDIT": "1.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "6"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GEE6005",
+      "KWAMOK_KNAME": "요가와 명상",
+      "CREDIT": "1.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "7"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GEE6006",
+      "KWAMOK_KNAME": "호신술",
+      "CREDIT": "1.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "8"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GEE6007",
+      "KWAMOK_KNAME": "골프",
+      "CREDIT": "1.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "9"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GEE6008",
+      "KWAMOK_KNAME": "스키",
+      "CREDIT": "1.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "20",
+      "RowNum": "10"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GEE6009",
+      "KWAMOK_KNAME": "야구소프트볼",
+      "CREDIT": "1.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "11"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "교무처",
+      "HAKSU_NO": "GEE6014",
+      "KWAMOK_KNAME": "미술치료로 알아가는 가족이야기",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "1"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GEE6015",
+      "KWAMOK_KNAME": "피트니스 트레이닝",
+      "CREDIT": "1.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "12"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "교무처",
+      "HAKSU_NO": "GEE6016",
+      "KWAMOK_KNAME": "금연과 건강한 삶",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "20",
+      "RowNum": "2"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GEE6017",
+      "KWAMOK_KNAME": "스포츠 트레이닝 과학",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "20",
+      "RowNum": "13"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GEE6018",
+      "KWAMOK_KNAME": "운동과 건강",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "14"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "스포츠과학",
+      "HAKSU_NO": "GEE6019",
+      "KWAMOK_KNAME": "스포츠과학과 건강",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "17"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "화학",
+      "HAKSU_NO": "GEE6020",
+      "KWAMOK_KNAME": "암세포 이야기",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "3"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "예술체육학부",
+      "HAKSU_NO": "GEE6021",
+      "KWAMOK_KNAME": "피아노 연주 실습",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "18"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "예술체육학부",
+      "HAKSU_NO": "GEE6022",
+      "KWAMOK_KNAME": "합창 실기 및 연주",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "20",
+      "RowNum": "19"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "예술체육학부",
+      "HAKSU_NO": "GEE6023",
+      "KWAMOK_KNAME": "시창청음실습",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "20"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-6.생활 · 건강영역",
+      "KDEPT": "체육교육",
+      "HAKSU_NO": "GEE6024",
+      "KWAMOK_KNAME": "웰니스를 위한 걷기와 달리기",
+      "CREDIT": "1.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "20",
+      "RowNum": "15"
+    }
+  ]
+}

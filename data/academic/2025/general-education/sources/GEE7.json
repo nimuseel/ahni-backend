@@ -1,0 +1,197 @@
+{
+  "curriculumYear": 2025,
+  "areaCode": "GEE7",
+  "sourceUrl": "https://sugang.inha.ac.kr/sugang/SU_51001/Curriculum_Xml.aspx?Value=Bp%252fZ1AvOYFDkoVzxLDtg68KI8SAxMirljfz6HeEOPUe9zyVEgvBactWDqBxhgV9D",
+  "retrievedAt": "2026-10-07",
+  "responseSha256": "9ac6405a11b00e4e7650b2c3f73c49b30d3fd408c0b539c9eac5e7a3c0c5b695",
+  "reportedCount": 17,
+  "rows": [
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "컴퓨터공학",
+      "HAKSU_NO": "GEE7002",
+      "KWAMOK_KNAME": "객체지향 기반 응용 프로그래밍",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "11"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "인공지능공학",
+      "HAKSU_NO": "GEE7003",
+      "KWAMOK_KNAME": "인공지능 개론 및 프로그래밍 기초",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "12"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "컴퓨터공학과",
+      "HAKSU_NO": "GEE7004",
+      "KWAMOK_KNAME": "객체지향언어와 SW활용",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "8"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "이차전지공학",
+      "HAKSU_NO": "GEE7005",
+      "KWAMOK_KNAME": "이차전지와 인공지능",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "3"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "간호학",
+      "HAKSU_NO": "GEE7006",
+      "KWAMOK_KNAME": "보건의료정보학과 인공지능",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "17",
+      "RowNum": "10"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "경영학",
+      "HAKSU_NO": "GEE7007",
+      "KWAMOK_KNAME": "디지털 경영",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "9"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "기계공학",
+      "HAKSU_NO": "GEE7008",
+      "KWAMOK_KNAME": "탄소중립과 4차산업",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "17",
+      "RowNum": "1"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "디자인테크놀로지학",
+      "HAKSU_NO": "GEE7010",
+      "KWAMOK_KNAME": "게임 기획 및 시각화",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "15"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "디자인테크놀로지학",
+      "HAKSU_NO": "GEE7011",
+      "KWAMOK_KNAME": "스마트 시티와 미래모빌리티",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "16"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "신소재공학",
+      "HAKSU_NO": "GEE7012",
+      "KWAMOK_KNAME": "신소재와 에너지",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "17",
+      "RowNum": "5"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "전기공학",
+      "HAKSU_NO": "GEE7013",
+      "KWAMOK_KNAME": "신재생에너지의 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "17",
+      "RowNum": "6"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "전자공학",
+      "HAKSU_NO": "GEE7014",
+      "KWAMOK_KNAME": "컴퓨터비전 중심 인공지능 입문",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "17",
+      "RowNum": "7"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "항공우주공학",
+      "HAKSU_NO": "GEE7015",
+      "KWAMOK_KNAME": "친환경 항공우주 시스템",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "17",
+      "RowNum": "2"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "화학공학",
+      "HAKSU_NO": "GEE7016",
+      "KWAMOK_KNAME": "탄소중립과 에너지의 흐름",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": null,
+      "CNT": "17",
+      "RowNum": "4"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "인공지능공학",
+      "HAKSU_NO": "GEE7017",
+      "KWAMOK_KNAME": "소프트웨어와 인공지능 이해 및 응용",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "13"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "데이터사이언스학",
+      "HAKSU_NO": "GEE7018",
+      "KWAMOK_KNAME": "데이터사이언스 이해",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "14"
+    },
+    {
+      "KYOSUN_KAREA": "일반교양-7.SW·AI영역",
+      "KDEPT": "디자인테크놀로지학",
+      "HAKSU_NO": "GEE7019",
+      "KWAMOK_KNAME": "미래산업과 AI이미지",
+      "CREDIT": "3.0",
+      "JONG_KNAME": "교양선택",
+      "BIGO": "금학기 개설",
+      "CNT": "17",
+      "RowNum": "17"
+    }
+  ]
+}

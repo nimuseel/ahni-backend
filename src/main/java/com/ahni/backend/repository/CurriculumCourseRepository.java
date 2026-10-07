@@ -18,6 +18,19 @@ public interface CurriculumCourseRepository extends JpaRepository<CurriculumCour
     @EntityGraph(attributePaths = {"course", "course.department"})
     List<CurriculumCourse> findAllByCurriculumInOrderByCourseCodeAsc(List<Curriculum> curricula);
 
+    @EntityGraph(attributePaths = {"curriculum", "curriculum.department", "course"})
+    @Query("""
+        select link from CurriculumCourse link
+        where link.curriculum.published = true
+          and link.curriculum.department.deletedAt is null
+          and link.curriculum.department.entityId in :departmentIds
+          and link.curriculum.curriculumYear in :years
+        """)
+    List<CurriculumCourse> findPublishedRecognitionLinks(
+        @Param("departmentIds") List<UUID> departmentIds,
+        @Param("years") List<Integer> years
+    );
+
     @Query("""
         select distinct course from CurriculumCourse link
         join link.course course

@@ -29,7 +29,8 @@ class SharedMajorMigrationIntegrationTest {
                 assertEquals("23514", assertThrows(SQLException.class,
                     () -> sql.executeUpdate("INSERT INTO course(code,name,credit,category) VALUES ('SHARED102','공통 전공2',3.0,'MAJOR')")).getSQLState());
             }
-            var flyway = Flyway.configure().dataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword()).load();
+            var flyway = Flyway.configure().dataSource(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword())
+                .target("20").load();
             assertEquals(1, flyway.migrate().migrationsExecuted);
             flyway.validate();
             try (var connection = DriverManager.getConnection(postgres.getJdbcUrl(), postgres.getUsername(), postgres.getPassword());

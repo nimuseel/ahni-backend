@@ -102,6 +102,40 @@ class OpenApiContractTest {
 	}
 
 	@Test
+	void studentInquiryEndpointsAreDocumented() throws Exception {
+		String actual = mockMvc.perform(get("/v3/api-docs"))
+			.andExpect(status().isOk())
+			.andReturn()
+			.getResponse()
+			.getContentAsString();
+		var document = objectMapper.readTree(actual);
+		var collectionPost = document.at("/paths/~1api~1v1~1inquiries/post");
+		var collectionGet = document.at("/paths/~1api~1v1~1inquiries/get");
+		var itemGet = document.at("/paths/~1api~1v1~1inquiries~1{inquiryEntityId}/get");
+
+		assertTrue(collectionPost.at("/security/0/bearerAuth").isArray());
+		assertEquals(
+			"#/components/schemas/InquiryCreateRequest",
+			collectionPost.at("/requestBody/content/application~1json/schema/$ref").asText()
+		);
+		assertEquals(
+			"#/components/schemas/InquiryResponse",
+			collectionPost.at("/responses/201/content/application~1json/schema/$ref").asText()
+		);
+		assertTrue(collectionGet.at("/security/0/bearerAuth").isArray());
+		assertEquals(
+			"array",
+			collectionGet.at("/responses/200/content/application~1json/schema/type").asText()
+		);
+		assertTrue(itemGet.at("/security/0/bearerAuth").isArray());
+		assertEquals(
+			"#/components/schemas/InquiryResponse",
+			itemGet.at("/responses/200/content/application~1json/schema/$ref").asText()
+		);
+		assertTrue(document.at("/components/schemas/InquiryResponse/properties/status/enum").toString().contains("ANSWERED"));
+	}
+
+	@Test
 	void adminIdentityEndpointIsDocumentedForAuthenticatedAdministrators() throws Exception {
 		String actual = mockMvc.perform(get("/v3/api-docs"))
 			.andExpect(status().isOk())

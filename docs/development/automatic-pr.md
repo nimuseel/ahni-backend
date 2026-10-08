@@ -14,7 +14,7 @@ PAT(Personal Access Token)는 GitHub API가 본인 계정으로 작업하도록 
 
 1. Token name에 용도를 입력합니다. 예: `ahni-auto-pr`
 2. Expiration에 만료일을 설정합니다.
-3. Resource owner에 저장소 소유자 `nimuseel`을 선택합니다.
+3. Resource owner에 조직 `team-ahni`를 선택합니다. 개인 계정을 고르면 조직 저장소에 접근하지 못해 403이 발생합니다.
 4. Repository access에서 **Only select repositories**를 선택하고 사용할 AHNI 저장소를 지정합니다.
 5. Repository permissions를 설정합니다.
    - Contents: **Read-only**
@@ -24,6 +24,7 @@ PAT(Personal Access Token)는 GitHub API가 본인 계정으로 작업하도록 
 
 팀원은 본인 계정의 Resource owner와 Selected repositories 목록에서 대상 저장소를 선택할 수 있는지 확인합니다.
 선택할 수 없다면 저장소 관리자에게 Fine-grained PAT로 접근 가능한 저장소 소유 구조와 권한 설정을 확인한 뒤 진행합니다.
+발급 직후 토큰은 조직 승인 대기 상태일 수 있습니다. 조직 관리자가 [승인 요청 목록](https://github.com/organizations/team-ahni/settings/personal-access-token-requests)에서 승인해야 동작합니다.
 토큰은 본인 계정으로 발급하고, 복사한 값은 아래 Repository secret 입력란에만 등록합니다.
 
 토큰 종류와 협업자 제한: [GitHub PAT 공식 안내](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
@@ -45,9 +46,9 @@ PAT(Personal Access Token)는 GitHub API가 본인 계정으로 작업하도록 
 
 아래에서 본인이 작업할 저장소의 설정 페이지를 엽니다.
 
-- [백엔드 Secret 설정](https://github.com/nimuseel/ahni-backend/settings/secrets/actions)
-- [모바일 Secret 설정](https://github.com/nimuseel/ahni-frontend/settings/secrets/actions)
-- [어드민 Secret 설정](https://github.com/nimuseel/ahni-admin/settings/secrets/actions)
+- [백엔드 Secret 설정](https://github.com/team-ahni/ahni-backend/settings/secrets/actions)
+- [모바일 Secret 설정](https://github.com/team-ahni/ahni-frontend/settings/secrets/actions)
+- [어드민 Secret 설정](https://github.com/team-ahni/ahni-admin/settings/secrets/actions)
 
 메뉴 경로: **저장소 Settings → Secrets and variables → Actions → Secrets → New repository secret**
 

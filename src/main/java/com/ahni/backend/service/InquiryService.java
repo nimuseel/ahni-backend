@@ -5,6 +5,7 @@ import com.ahni.backend.dto.InquiryResponse;
 import com.ahni.backend.entity.Student;
 import com.ahni.backend.entity.Inquiry;
 import com.ahni.backend.exception.InquiryNotFoundException;
+import com.ahni.backend.exception.InquiryUpdateConflictException;
 import com.ahni.backend.exception.InvalidInquiryException;
 import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.repository.InquiryRepository;
@@ -43,15 +44,40 @@ public class InquiryService {
 
     public List<InquiryResponse> getMine(UUID authUserId) {
         Student student = findStudent(authUserId);
-        return inquiries.findAllByStudentOrderByCreatedAtDesc(student).stream()
+        return inquiries.findAllByStudentAndDeletedAtIsNullOrderByCreatedAtDesc(student).stream()
             .map(InquiryService::toResponse)
             .toList();
     }
 
     public InquiryResponse getMine(UUID authUserId, UUID inquiryEntityId) {
+        return toResponse(findInquiry(authUserId, inquiryEntityId));
+    }
+
+    @Transactional
+    public InquiryResponse update(
+        UUID authUserId,
+        UUID inquiryEntityId,
+        InquiryCreateRequest request
+    ) {
+        Inquiry inquiry = findInquiry(authUserId, inquiryEntityId);
+        try {
+            inquiry.update(request.title(), request.content());
+            return toResponse(inquiry);
+        } catch (IllegalStateException exception) {
+            throw new InquiryUpdateConflictException(exception.getMessage());
+        } catch (IllegalArgumentException exception) {
+            throw new InvalidInquiryException(exception.getMessage());
+        }
+    }
+
+    @Transactional
+    public void delete(UUID authUserId, UUID inquiryEntityId) {
+        findInquiry(authUserId, inquiryEntityId).delete();
+    }
+
+    private Inquiry findInquiry(UUID authUserId, UUID inquiryEntityId) {
         Student student = findStudent(authUserId);
-        return inquiries.findByEntityIdAndStudent(inquiryEntityId, student)
-            .map(InquiryService::toResponse)
+        return inquiries.findByEntityIdAndStudentAndDeletedAtIsNull(inquiryEntityId, student)
             .orElseThrow(InquiryNotFoundException::new);
     }
 

@@ -5,6 +5,7 @@ import com.ahni.backend.domain.InquiryStatus;
 import com.ahni.backend.dto.InquiryCreateRequest;
 import com.ahni.backend.dto.InquiryResponse;
 import com.ahni.backend.exception.InquiryNotFoundException;
+import com.ahni.backend.exception.InquiryUpdateConflictException;
 import com.ahni.backend.exception.StudentNotFoundException;
 import com.ahni.backend.service.InquiryService;
 import org.junit.jupiter.api.Tag;
@@ -25,8 +26,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -132,6 +135,62 @@ class InquiryControllerTest {
     }
 
     @Test
+    void 인증된_학생이_답변_전_문의를_수정한다() throws Exception {
+        InquiryCreateRequest request = new InquiryCreateRequest(
+            "수정 문의",
+            "수정 내용입니다."
+        );
+        when(inquiryService.update(AUTH_USER_ID, INQUIRY_ENTITY_ID, request))
+            .thenReturn(response("수정 문의", "수정 내용입니다.", InquiryStatus.IN_REVIEW, null, null));
+
+        mockMvc.perform(put("/api/v1/inquiries/" + INQUIRY_ENTITY_ID)
+                .with(jwt().jwt(token -> token.subject(AUTH_USER_ID.toString())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "title": "수정 문의",
+                      "content": "수정 내용입니다."
+                    }
+                    """))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.title").value("수정 문의"))
+            .andExpect(jsonPath("$.content").value("수정 내용입니다."))
+            .andExpect(jsonPath("$.status").value("IN_REVIEW"));
+
+        verify(inquiryService).update(AUTH_USER_ID, INQUIRY_ENTITY_ID, request);
+    }
+
+    @Test
+    void 답변된_문의_수정은_409를_응답한다() throws Exception {
+        when(inquiryService.update(
+            AUTH_USER_ID,
+            INQUIRY_ENTITY_ID,
+            new InquiryCreateRequest("수정 문의", "수정 내용입니다.")
+        )).thenThrow(new InquiryUpdateConflictException("답변이 등록된 문의는 수정할 수 없습니다."));
+
+        mockMvc.perform(put("/api/v1/inquiries/" + INQUIRY_ENTITY_ID)
+                .with(jwt().jwt(token -> token.subject(AUTH_USER_ID.toString())))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                    {
+                      "title": "수정 문의",
+                      "content": "수정 내용입니다."
+                    }
+                    """))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.code").value("INQUIRY_UPDATE_CONFLICT"));
+    }
+
+    @Test
+    void 인증된_학생이_자신의_문의를_삭제한다() throws Exception {
+        mockMvc.perform(delete("/api/v1/inquiries/" + INQUIRY_ENTITY_ID)
+                .with(jwt().jwt(token -> token.subject(AUTH_USER_ID.toString()))))
+            .andExpect(status().isNoContent());
+
+        verify(inquiryService).delete(AUTH_USER_ID, INQUIRY_ENTITY_ID);
+    }
+
+    @Test
     void 다른_학생의_문의처럼_찾을_수_없으면_404를_응답한다() throws Exception {
         when(inquiryService.getMine(AUTH_USER_ID, INQUIRY_ENTITY_ID))
             .thenThrow(new InquiryNotFoundException());
@@ -165,6 +224,9 @@ class InquiryControllerTest {
         mockMvc.perform(get("/api/v1/inquiries"))
             .andExpect(status().isUnauthorized());
 
+        mockMvc.perform(delete("/api/v1/inquiries/" + INQUIRY_ENTITY_ID))
+            .andExpect(status().isUnauthorized());
+
         verifyNoInteractions(inquiryService);
     }
 
@@ -173,10 +235,26 @@ class InquiryControllerTest {
         String answer,
         Instant answeredAt
     ) {
-        return new InquiryResponse(
-            INQUIRY_ENTITY_ID,
+        return response(
             "성적 등록 문의",
             "2025년 과목이 성적 등록 화면에 보이지 않습니다.",
+            status,
+            answer,
+            answeredAt
+        );
+    }
+
+    private static InquiryResponse response(
+        String title,
+        String content,
+        InquiryStatus status,
+        String answer,
+        Instant answeredAt
+    ) {
+        return new InquiryResponse(
+            INQUIRY_ENTITY_ID,
+            title,
+            content,
             status,
             answer,
             answeredAt,

@@ -112,6 +112,8 @@ class OpenApiContractTest {
 		var collectionPost = document.at("/paths/~1api~1v1~1inquiries/post");
 		var collectionGet = document.at("/paths/~1api~1v1~1inquiries/get");
 		var itemGet = document.at("/paths/~1api~1v1~1inquiries~1{inquiryEntityId}/get");
+		var itemPut = document.at("/paths/~1api~1v1~1inquiries~1{inquiryEntityId}/put");
+		var itemDelete = document.at("/paths/~1api~1v1~1inquiries~1{inquiryEntityId}/delete");
 
 		assertTrue(collectionPost.at("/security/0/bearerAuth").isArray());
 		assertEquals(
@@ -132,6 +134,14 @@ class OpenApiContractTest {
 			"#/components/schemas/InquiryResponse",
 			itemGet.at("/responses/200/content/application~1json/schema/$ref").asText()
 		);
+		assertTrue(itemPut.at("/security/0/bearerAuth").isArray());
+		assertEquals(
+			"#/components/schemas/InquiryCreateRequest",
+			itemPut.at("/requestBody/content/application~1json/schema/$ref").asText()
+		);
+		assertTrue(itemPut.at("/responses/409").isObject());
+		assertTrue(itemDelete.at("/security/0/bearerAuth").isArray());
+		assertTrue(itemDelete.at("/responses/204").isObject());
 		assertTrue(document.at("/components/schemas/InquiryResponse/properties/status/enum").toString().contains("ANSWERED"));
 	}
 

@@ -11,8 +11,8 @@ import java.util.UUID;
 
 public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
     @EntityGraph(attributePaths = {"answeredByAdmin"})
-    List<Inquiry> findAllByStudentOrderByCreatedAtDesc(Student student);
+    List<Inquiry> findAllByStudentAndDeletedAtIsNullOrderByCreatedAtDesc(Student student);
 
     @EntityGraph(attributePaths = {"answeredByAdmin"})
-    Optional<Inquiry> findByEntityIdAndStudent(UUID entityId, Student student);
+    Optional<Inquiry> findByEntityIdAndStudentAndDeletedAtIsNull(UUID entityId, Student student);
 }

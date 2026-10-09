@@ -76,6 +76,18 @@ public class Inquiry {
         this.content = requireText(content, MAX_CONTENT_LENGTH, "내용");
     }
 
+    public void update(String title, String content) {
+        if (status == InquiryStatus.ANSWERED || status == InquiryStatus.CLOSED) {
+            throw new IllegalStateException("답변이 등록된 문의는 수정할 수 없습니다.");
+        }
+        this.title = requireText(title, MAX_TITLE_LENGTH, "제목");
+        this.content = requireText(content, MAX_CONTENT_LENGTH, "내용");
+    }
+
+    public void delete() {
+        this.deletedAt = Instant.now();
+    }
+
     private static String requireText(String value, int maxLength, String label) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(label + "은 필수입니다.");

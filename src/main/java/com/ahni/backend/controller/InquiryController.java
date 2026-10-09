@@ -16,9 +16,11 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -110,5 +112,55 @@ public class InquiryController {
         @PathVariable UUID inquiryEntityId
     ) {
         return inquiryService.getMine(UUID.fromString(jwt.getSubject()), inquiryEntityId);
+    }
+
+    @Operation(
+        summary = "내 문의 수정",
+        description = "[인증 O] 답변 전 문의의 제목과 내용을 수정합니다.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "문의 수정 성공",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = InquiryResponse.class))),
+        @ApiResponse(responseCode = "400", description = "요청값 오류",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content),
+        @ApiResponse(responseCode = "404", description = "학생 프로필 또는 문의를 찾을 수 없음",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class))),
+        @ApiResponse(responseCode = "409", description = "이미 답변된 문의",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class),
+                examples = @ExampleObject(value = "{\"code\":\"INQUIRY_UPDATE_CONFLICT\",\"message\":\"답변이 등록된 문의는 수정할 수 없습니다.\"}")))
+    })
+    @PutMapping("/{inquiryEntityId}")
+    public InquiryResponse update(
+        @AuthenticationPrincipal Jwt jwt,
+        @PathVariable UUID inquiryEntityId,
+        @Valid @RequestBody InquiryCreateRequest request
+    ) {
+        return inquiryService.update(
+            UUID.fromString(jwt.getSubject()),
+            inquiryEntityId,
+            request
+        );
+    }
+
+    @Operation(
+        summary = "내 문의 삭제",
+        description = "[인증 O] 문의를 학생 화면에서 숨깁니다. 관리자 이력은 보존합니다.",
+        security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "문의 삭제 성공", content = @Content),
+        @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content),
+        @ApiResponse(responseCode = "404", description = "학생 프로필 또는 문의를 찾을 수 없음",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = ApiErrorResponse.class)))
+    })
+    @DeleteMapping("/{inquiryEntityId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(
+        @AuthenticationPrincipal Jwt jwt,
+        @PathVariable UUID inquiryEntityId
+    ) {
+        inquiryService.delete(UUID.fromString(jwt.getSubject()), inquiryEntityId);
     }
 }

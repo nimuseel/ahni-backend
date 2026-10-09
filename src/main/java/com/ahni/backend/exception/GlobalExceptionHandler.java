@@ -134,6 +134,12 @@ public class GlobalExceptionHandler {
         return new ApiErrorResponse("INVALID_INQUIRY", exception.getMessage());
     }
 
+    @ExceptionHandler(InquiryUpdateConflictException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiErrorResponse handleInquiryUpdateConflict(InquiryUpdateConflictException exception) {
+        return new ApiErrorResponse("INQUIRY_UPDATE_CONFLICT", exception.getMessage());
+    }
+
     @ExceptionHandler(GraduationRequirementNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ApiErrorResponse handleGraduationRequirementNotFound(

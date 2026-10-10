@@ -19,12 +19,16 @@ public class AdminAccessService {
     }
 
     public AdminIdentityResponse getCurrentAdmin(UUID authUserId) {
-        Admin admin = adminRepository.findByAuthUserIdAndDeletedAtIsNull(authUserId)
-            .orElseThrow(AdminAccessDeniedException::new);
+        Admin admin = getAdmin(authUserId);
         return new AdminIdentityResponse(
             admin.getEntityId(),
             admin.getName(),
             admin.getEmail()
         );
+    }
+
+    public Admin getAdmin(UUID authUserId) {
+        return adminRepository.findByAuthUserIdAndDeletedAtIsNull(authUserId)
+            .orElseThrow(AdminAccessDeniedException::new);
     }
 }

@@ -15,4 +15,10 @@ public interface InquiryRepository extends JpaRepository<Inquiry, Long> {
 
     @EntityGraph(attributePaths = {"answeredByAdmin"})
     Optional<Inquiry> findByEntityIdAndStudentAndDeletedAtIsNull(UUID entityId, Student student);
+
+    @EntityGraph(attributePaths = {"student", "answeredByAdmin"})
+    List<Inquiry> findAllByOrderByCreatedAtDesc();
+
+    @EntityGraph(attributePaths = {"student", "answeredByAdmin"})
+    Optional<Inquiry> findByEntityId(UUID entityId);
 }

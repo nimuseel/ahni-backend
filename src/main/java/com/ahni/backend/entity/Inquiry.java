@@ -88,6 +88,22 @@ public class Inquiry {
         this.deletedAt = Instant.now();
     }
 
+    public void markInReview() {
+        if (status == InquiryStatus.SUBMITTED) {
+            this.status = InquiryStatus.IN_REVIEW;
+        }
+    }
+
+    public void answer(Admin admin, String answer) {
+        if (admin == null) {
+            throw new IllegalArgumentException("답변 관리자는 필수입니다.");
+        }
+        this.answer = requireText(answer, MAX_ANSWER_LENGTH, "답변");
+        this.answeredByAdmin = admin;
+        this.answeredAt = Instant.now();
+        this.status = InquiryStatus.ANSWERED;
+    }
+
     private static String requireText(String value, int maxLength, String label) {
         if (value == null || value.isBlank()) {
             throw new IllegalArgumentException(label + "은 필수입니다.");
